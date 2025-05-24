@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 import { getContract } from 'viem';
 import { BasePaintBrushAbi } from '../../abi/BasePaintBrushAbi';
 import { BrushData } from '../../types/types';
-import { baseClient } from '../../hooks/useDateUtils';
+import { baseClient, alternativeClient } from '../../hooks/useDateUtils';
 
 const contractAddress = '0xD68fe5b53e7E1AbeB5A4d0A6660667791f39263a';
 
@@ -88,7 +88,7 @@ export const useBrushData = () => {
           
           break; // Exit retry loop if successful
         } catch (err) {
-          console.error(`Intento ${i+1} falló:`, err);
+          console.error(`Attempt ${i+1} failed:`, err);
           if (i === 1) throw err; // Re-throw on final attempt
         }
       }
@@ -96,7 +96,7 @@ export const useBrushData = () => {
       setBalance(balanceResult);
       return { balance: balanceResult, totalSupply: totalSupplyResult };
     } catch (error) {
-      console.error('Error obteniendo datos del contrato:', error);
+      console.error('Error obtaining contract data:', error);
       return { balance: undefined, totalSupply: undefined };
     } finally {
       setIsLoading(false);
@@ -128,6 +128,19 @@ export const useBrushData = () => {
         client: baseClient,
       });
 
+      // Contracts for parallel search
+      const contractMain = getContract({
+        address: contractAddress,
+        abi: BasePaintBrushAbi,
+        client: baseClient,
+      });
+
+      const contractAlt = getContract({
+        address: contractAddress,
+        abi: BasePaintBrushAbi,
+        client: alternativeClient,
+      });
+
       const tokenIds: number[] = [];
       const balanceNum = Number(balance);
       const totalSupplyNum = Number(totalSupply);
@@ -144,10 +157,12 @@ export const useBrushData = () => {
         for (let j = 0; j < batch.length; j += 20) {
           const chunk = batch.slice(j, j + 20);
           
-          const ownerPromises = chunk.map(tokenId => 
-            contract.read.ownerOf([BigInt(tokenId)])
-              .catch(() => null)
-          );
+          // Parallel search: even numbers with main client, odd numbers with alternative client
+          const ownerPromises = chunk.map(tokenId => {
+            const contract = tokenId % 2 === 0 ? contractMain : contractAlt;
+            return contract.read.ownerOf([BigInt(tokenId)])
+              .catch(() => null);
+          });
 
           // Reduced delay between chunks
           if (j > 0) await delay(200);
@@ -158,6 +173,11 @@ export const useBrushData = () => {
             if (owner) {
               const tokenId = chunk[index];
               if (owner.toLowerCase() === address.toLowerCase()) {
+                // Log to show which client found the brush
+                const clientUsed = tokenId % 2 === 0 ? 'Main (BlastAPI)' : 'Alternative (PublicNode)';
+                const clientUrl = tokenId % 2 === 0 ? 'base-mainnet.public.blastapi.io' : 'base-rpc.publicnode.com';
+                console.log(`🎨 Brush found! Token ID: ${tokenId} | Client: ${clientUsed} | URL: ${clientUrl}`);
+                
                 tokenIds.push(tokenId);
               }
             }
@@ -183,7 +203,7 @@ export const useBrushData = () => {
     if (userTokenIds.length > 0) {
       try {
         const response = await fetch(`/api/brush/${userTokenIds[0]}`);
-        if (!response.ok) throw new Error('Error al obtener datos del pincel');
+        if (!response.ok) throw new Error('Error obtaining brush data');
         const data = await response.json();
         
         const pixelsPerDay = data.attributes.find((attr: { trait_type: string; value: any }) => 

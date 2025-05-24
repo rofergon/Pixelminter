@@ -29,9 +29,9 @@ const cache = {
 
 // Create an array of transport providers with reliable RPCs only
 const transports = [
-  // Usar únicamente la URL que funciona como principal
+  // Most reliable and fastest RPC nodes for Base mainnet
   http('https://base-mainnet.public.blastapi.io', { timeout: 15000 }),
-  // Mantener una sola URL adicional como fallback mínimo
+  // Keep only one additional URL as minimal fallback
   http('https://base.publicnode.com', { timeout: 30000 }),
 ];
 
@@ -46,12 +46,21 @@ const client = createPublicClient({
 // Export the client for use in other files
 export { client as baseClient };
 
+// Additional client for parallel brush searches
+const alternativeClient = createPublicClient({
+  chain: base,
+  transport: http('https://base-rpc.publicnode.com', { timeout: 15000 }),
+});
+
+// Export the alternative client for parallel searches
+export { alternativeClient };
+
 const CONTRACT_ADDRESS = '0xBa5e05cb26b78eDa3A2f8e3b3814726305dcAc83';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * Obtiene el día actual consultando el contrato BasePaint con cache.
+ * Obtiene el día actual consultando el contrato BasePaint with cache.
  * @returns {Promise<number>} - Promesa que resuelve al número de día actual.
  */
 export const calculateDay = async (retries = 3, backoff = 2000): Promise<number> => {
@@ -99,7 +108,7 @@ export function getCurrentDayUTC(): string {
 }
 
 /**
- * Obtiene la cantidad total de píxeles pintados para el día actual con cache.
+ * Obtiene la cantidad total de píxeles pintados para el día actual with cache.
  * @returns {Promise<bigint>} - Promesa que resuelve a la cantidad total de píxeles pintados.
  */
 export const getTotalPixelsPaintedToday = async (retries = 3, backoff = 2000): Promise<bigint> => {
