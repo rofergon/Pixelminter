@@ -29,14 +29,10 @@ const cache = {
 
 // Create an array of transport providers with reliable RPCs only
 const transports = [
-  http('https://base.publicnode.com', { timeout: 15000 }),
-  http('https://base.llamarpc.com', { timeout: 15000 }),
-  http('https://1rpc.io/base', { timeout: 15000 }),
-  http('https://base.meowrpc.com', { timeout: 15000 }),
+  // Usar únicamente la URL que funciona como principal
   http('https://base-mainnet.public.blastapi.io', { timeout: 15000 }),
-  // Add your custom API key if you have one
-  // http('https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY', { timeout: 15000 }),
-  // http('https://base.infura.io/v3/YOUR_API_KEY', { timeout: 15000 }),
+  // Mantener una sola URL adicional como fallback mínimo
+  http('https://base.publicnode.com', { timeout: 30000 }),
 ];
 
 // Create client with fallback functionality

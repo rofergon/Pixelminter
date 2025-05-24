@@ -7,12 +7,12 @@ import { baseClient } from '../../hooks/useDateUtils';
 
 const contractAddress = '0xD68fe5b53e7E1AbeB5A4d0A6660667791f39263a';
 
-// Cache for brush data to reduce requests
+// Cache for brush data to reduce requests with optimized RPC
 const brushTokenCache = {
   balanceOf: { address: null as string | null, value: null as bigint | null, timestamp: 0 },
   totalSupply: { value: null as bigint | null, timestamp: 0 },
   userTokens: { address: null as string | null, tokens: [] as number[], timestamp: 0 },
-  CACHE_TTL: 300000 // 5 minutes
+  CACHE_TTL: 300000 // 5 minutes - optimal for reliable RPC
 };
 
 // Helper for retries
@@ -53,12 +53,12 @@ export const useBrushData = () => {
     try {
       setIsLoading(true);
       
-      // Fetch balance with retries
+      // Fetch balance with fewer retries since we're using reliable RPC
       let balanceResult: bigint | undefined;
       let totalSupplyResult: bigint | undefined;
 
-      // Try up to 3 times with increasing backoff
-      for (let i = 0; i < 3; i++) {
+      // Reduced retries to 2 since we have reliable RPC
+      for (let i = 0; i < 2; i++) {
         try {
           const contract = getContract({
             address: contractAddress,
@@ -66,14 +66,14 @@ export const useBrushData = () => {
             client: baseClient,
           });
 
-          // Add small delay between requests
-          if (i > 0) await delay(1000 * i);
+          // Shorter delay since RPC is more reliable
+          if (i > 0) await delay(500);
 
           // Get balance
           balanceResult = await contract.read.balanceOf([address]);
           
-          // Add small delay between requests
-          await delay(500);
+          // Shorter delay between requests
+          await delay(200);
 
           // Get total supply
           totalSupplyResult = await contract.read.totalSupply();
@@ -88,15 +88,15 @@ export const useBrushData = () => {
           
           break; // Exit retry loop if successful
         } catch (err) {
-          console.error(`Attempt ${i+1} failed:`, err);
-          if (i === 2) throw err; // Re-throw on final attempt
+          console.error(`Intento ${i+1} falló:`, err);
+          if (i === 1) throw err; // Re-throw on final attempt
         }
       }
 
       setBalance(balanceResult);
       return { balance: balanceResult, totalSupply: totalSupplyResult };
     } catch (error) {
-      console.error('Error fetching contract data:', error);
+      console.error('Error obteniendo datos del contrato:', error);
       return { balance: undefined, totalSupply: undefined };
     } finally {
       setIsLoading(false);
@@ -132,25 +132,25 @@ export const useBrushData = () => {
       const balanceNum = Number(balance);
       const totalSupplyNum = Number(totalSupply);
 
-      // Use a smaller batch size to reduce rate limiting issues
-      const batchSize = 100;
+      // Use a larger batch size since RPC is more reliable
+      const batchSize = 200;
       for (let i = 1; i <= totalSupplyNum && tokenIds.length < balanceNum; i += batchSize) {
         const batch = Array.from(
           { length: Math.min(batchSize, totalSupplyNum - i + 1) }, 
           (_, index) => i + index
         );
         
-        // Process in smaller chunks with delay
-        for (let j = 0; j < batch.length; j += 10) {
-          const chunk = batch.slice(j, j + 10);
+        // Process in larger chunks with reduced delay
+        for (let j = 0; j < batch.length; j += 20) {
+          const chunk = batch.slice(j, j + 20);
           
           const ownerPromises = chunk.map(tokenId => 
             contract.read.ownerOf([BigInt(tokenId)])
               .catch(() => null)
           );
 
-          // Add delay between chunks
-          if (j > 0) await delay(500);
+          // Reduced delay between chunks
+          if (j > 0) await delay(200);
 
           const owners = await Promise.all(ownerPromises);
 
