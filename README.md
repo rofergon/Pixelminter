@@ -1,70 +1,336 @@
-# Getting Started with Create React App
+# 🎨 Pixelminter
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**A powerful, decentralized pixel art creator and animator with blockchain integration on Base chain**
 
-## Available Scripts
+![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)
+![React](https://img.shields.io/badge/React-18.3.1-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-15.0.2-black.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.5.4-blue.svg)
+![Base](https://img.shields.io/badge/Chain-Base-0052FF.svg)
 
-In the project directory, you can run:
+## 🌟 Overview
 
-### `npm start`
+Pixelminter is a sophisticated pixel art creation platform that combines traditional digital art tools with modern blockchain technology. Built on Base chain, it allows artists to create, animate, and mint their pixel art as NFTs while participating in collaborative daily painting sessions through BasePaint integration.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+**🎨 BasePaint Integration**: If you own a BasePaint brush from [basepaint.xyz](https://basepaint.xyz), Pixelminter enables you to interact directly with the daily collaborative canvas. You can create animations within the BasePaint ecosystem, bringing your pixel art to life on the shared daily canvas that the entire community contributes to.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## ✨ Features
 
-### `npm test`
+### 🎭 **Core Art Tools**
+- **Multi-Tool Support**: Brush, eraser, bucket fill, line tool, and move tool
+- **Layer System**: Create unlimited layers with individual opacity and visibility controls
+- **Drag & Drop Layers**: Reorder layers with intuitive drag-and-drop interface
+- **Advanced Brush**: Customizable brush sizes (1-10px)
+- **Color Management**: Built-in color picker with custom palette support
+- **Grid System**: Toggleable pixel grid for precision drawing
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 🎬 **Animation Suite**
+- **Multi-Frame Animation**: Create complex animations with unlimited frames
+- **Onion Skinning**: Visual previous frame overlay with adjustable opacity
+- **Frame Controls**: Play, pause, skip forward/backward through animations
+- **FPS Control**: Adjustable frame rate (1-30 FPS)
+- **GIF Export**: High-quality GIF generation and download
+- **Real-time Preview**: Live animation preview with recording timer
 
-### `npm run build`
+### 🔗 **Blockchain Integration**
+- **Base Chain Native**: Built specifically for Base ecosystem
+- **BasePaint Brush Compatibility**: Use your BasePaint.xyz brushes to paint on daily collaborative canvases
+- **Animated BasePaint Contributions**: Create animated sequences directly on the daily BasePaint canvas
+- **Daily Canvas Interaction**: Participate in the community-driven daily painting sessions
+- **NFT Minting**: Mint individual pixel art pieces as NFTs
+- **Wallet Connection**: Seamless integration with Coinbase Wallet and WalletConnect
+- **Smart Contracts**: Custom ERC721 and ERC1155 implementations
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 🛠 **Advanced Features**
+- **Undo/Redo System**: Complete history management with keyboard shortcuts
+- **Canvas Zoom**: Smooth zoom controls for detailed work
+- **Image Upload**: Import and work with reference images
+- **State Persistence**: Automatic saving and cache management
+- **Responsive Design**: Works on desktop and mobile devices
+- **Touch Support**: Full touch interface for mobile creation
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🏗 Technical Architecture
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### **Frontend Stack**
+- **React 18.3.1** with TypeScript for type-safe development
+- **Next.js 15.0.2** for server-side rendering and optimization
+- **Tailwind CSS** for responsive, utility-first styling
+- **Radix UI** components for accessible user interface
+- **Lucide React** for consistent iconography
 
-### `npm run eject`
+### **Blockchain Technologies**
+- **Wagmi 2.12.11** for Ethereum interactions
+- **RainbowKit 2.1.6** for wallet connection UI
+- **Coinbase OnchainKit 0.31.3** for transaction management
+- **Base Chain** as the primary blockchain network
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### **Animation & Graphics**
+- **GIF.js** for client-side GIF generation
+- **Canvas API** for high-performance pixel rendering
+- **Custom rendering engine** optimized for pixel art
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### **Smart Contracts**
+```solidity
+// BasePaint Integration
+contract BasePaint is ERC1155
+- Daily collaborative painting sessions
+- Pixel-by-pixel contribution tracking
+- Revenue sharing for contributors
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+// Pixelminter NFT
+contract PixelminterNFT is ERC721
+- Individual art piece minting
+- Metadata management
+- Ownership verification
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🚀 Getting Started
 
-## Learn More
+### Prerequisites
+- Node.js 18.x or higher
+- npm or yarn package manager
+- Web3 wallet (Coinbase Wallet recommended)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Installation
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **Clone the repository**
+```bash
+git clone https://github.com/your-username/Pixelminter.git
+cd Pixelminter
+```
 
-### Code Splitting
+2. **Install dependencies**
+```bash
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. **Set up environment variables**
+```bash
+cp .env.example .env
+# Configure your environment variables
+```
 
-### Analyzing the Bundle Size
+4. **Run the development server**
+```bash
+npm run dev
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+5. **Open your browser**
+Navigate to `http://localhost:3000`
 
-### Making a Progressive Web App
+### Build for Production
+```bash
+npm run build
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 📱 Usage Guide
 
-### Advanced Configuration
+### **Creating Your First Pixel Art**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. **Select a Tool**: Choose from brush, eraser, bucket fill, line, or move tool
+2. **Pick Colors**: Use the color picker or select from predefined palettes
+3. **Start Drawing**: Click and drag on the canvas to create your masterpiece
+4. **Use Layers**: Add multiple layers for complex compositions
+5. **Animate**: Add frames to create animated sequences
 
-### Deployment
+### **Working with Animations**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+1. **Add Frames**: Click the "+" button to add new animation frames
+2. **Set FPS**: Adjust the frames per second for your animation speed
+3. **Use Onion Skinning**: Enable to see previous frames while drawing
+4. **Preview**: Use play controls to preview your animation
+5. **Export**: Download your animation as a GIF file
 
-### `npm run build` fails to minify
+### **Blockchain Features**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. **Connect Wallet**: Use the wallet connection button in the top right
+2. **BasePaint Integration**: Encode your art and paint on daily canvases
+3. **Mint NFTs**: Convert your pixel art into tradeable NFTs
+4. **View on Base**: Check your creations on Base block explorer
+
+## 🎯 Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl/Cmd + Z` | Undo |
+| `Ctrl/Cmd + Y` | Redo |
+| `Ctrl/Cmd + F` | Flip canvas horizontally |
+| `Arrow Keys` | Shift frame content in direction |
+| `Spacebar` | Play/pause animation |
+
+## 🔧 Configuration
+
+### Canvas Settings
+- **Grid Size**: 16x16 to 128x128 pixels
+- **Canvas Size**: 256x256 pixel resolution
+- **Zoom Levels**: 0.3x to 3x magnification
+- **Background**: Toggle daily reference images
+
+### Animation Settings
+- **Frame Rate**: 1-30 FPS
+- **Onion Skin Opacity**: 0-100%
+- **Auto-save**: Enabled by default
+
+## 🎨 Art Tools Reference
+
+### **Brush Tool**
+- Variable size (1-5px)
+- Color picker integration
+- Pressure sensitivity (on supported devices)
+
+### **Layer System**
+- **Add/Remove**: Unlimited layer creation
+- **Opacity Control**: 0-100% transparency
+- **Visibility Toggle**: Show/hide individual layers
+- **Reordering**: Drag and drop layer arrangement
+
+### **Animation Tools**
+- **Frame Management**: Add, delete, duplicate frames
+- **Onion Skinning**: Semi-transparent previous frame overlay
+- **Timeline Controls**: Play, pause, step through frames
+
+## 🌐 Blockchain Integration
+
+### BasePaint Protocol
+Pixelminter integrates with BasePaint, a collaborative art protocol where:
+- Artists contribute pixels to daily canvases using their BasePaint brushes
+- **Animation Support**: Create animated pixel art directly on the daily BasePaint canvas
+- **Brush Requirements**: Own a BasePaint brush from basepaint.xyz to participate
+- Contributions are tracked on-chain with pixel-by-pixel precision
+- Revenue is shared among contributors based on their participation
+- Each day features a new collaborative canvas for the community
+
+### Smart Contract Addresses (Base Mainnet)
+```
+BasePaint Contract: 0xBa5e05cb26b78eDa3A2f8e3b3814726305dcAc83
+BasePaint Brush: [Contract Address]
+Pixelminter NFT: [Contract Address]
+```
+
+### Minting Process
+1. Create your pixel art in Pixelminter
+2. Encode the artwork data
+3. Connect your wallet
+4. Execute the minting transaction
+5. Receive your NFT in your wallet
+
+## 🛠 Development
+
+### Project Structure
+```
+Pixelminter/
+├── src/
+│   ├── components/          # React components
+│   │   ├── ui/             # Reusable UI components
+│   │   ├── PixelArt.tsx    # Main canvas component
+│   │   ├── ToolPanel.tsx   # Drawing tools
+│   │   └── SidePanel.tsx   # Settings and layers
+│   ├── hooks/              # Custom React hooks
+│   │   ├── canvas/         # Canvas-related hooks
+│   │   ├── animation/      # Animation utilities
+│   │   └── tools/          # Tool-specific logic
+│   ├── types/              # TypeScript definitions
+│   ├── abi/                # Smart contract ABIs
+│   └── styles/             # Global styles
+├── pages/                  # Next.js pages
+└── public/                 # Static assets
+```
+
+### Key Components
+
+- **`PixelArt.tsx`**: Main application component managing state and canvas
+- **`PixelArtUI.tsx`**: UI layout and component composition
+- **`CanvasComponent.tsx`**: High-performance canvas rendering
+- **`AnimationControls.tsx`**: Animation playback and export
+- **`LayerPanel.tsx`**: Layer management interface
+- **`MintBPButton.tsx`**: BasePaint integration component
+
+### State Management
+The application uses a custom state manager (`usePixelArtStateManager`) that handles:
+- Canvas state and pixel data
+- Layer management
+- Animation frames
+- History for undo/redo
+- Blockchain integration data
+
+## 🧪 Testing
+
+```bash
+# Run tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Run linting
+npm run lint
+```
+
+## 🚢 Deployment
+
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables
+3. Deploy automatically on push to main
+
+### Manual Deployment
+```bash
+npm run build
+npm run export
+# Deploy the `out` directory to your hosting provider
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+- Follow TypeScript best practices
+- Maintain test coverage above 80%
+- Use conventional commit messages
+- Update documentation for new features
+
+## 📄 License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
+**Key points about GPL v3:**
+- ✅ **Freedom to use**: Run the program for any purpose
+- ✅ **Freedom to study**: Access and modify the source code  
+- ✅ **Freedom to share**: Distribute copies to help others
+- ✅ **Freedom to improve**: Distribute modified versions
+- ⚠️ **Copyleft**: Any distributed modifications must also be GPL v3
+- ⚠️ **Source requirement**: Must provide source code with distributions
+
+## 🔗 Links
+
+- **Website**: [pixelminter.com](https://pixelminter.com)
+- **Base Explorer**: [basescan.org](https://basescan.org)
+- **BasePaint**: [basepaint.xyz](https://basepaint.xyz)
+- **Documentation**: [docs.pixelminter.com](https://docs.pixelminter.com)
+
+## 🙏 Acknowledgments
+
+- **Base Team** for the amazing L2 infrastructure
+- **BasePaint ** for collaborative art inspiration
+- **Coinbase** for OnchainKit and wallet tools
+- **Open Source Community** for the incredible tools and libraries
+
+## 📞 Support
+
+- **Discord**: [Join our community](https://discord.gg/pixelminter)
+- **Twitter**: [@pixelminter](https://twitter.com/pixelminter)
+- **Email**: sebas.2023@gmail.com
+- **GitHub Issues**: [Report bugs or request features](https://github.com/your-username/Pixelminter/issues)
+
+---
+
+**Built with ❤️ for the BasePaint digital art community**
