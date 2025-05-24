@@ -315,7 +315,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 - **Website**: [pixelminter.com](https://pixelminter.com)
 - **Base Explorer**: [basescan.org](https://basescan.org)
 - **BasePaint**: [basepaint.xyz](https://basepaint.xyz)
-- **Documentation**: [docs.pixelminter.com](https://docs.pixelminter.com)
+- **Documentation**: [docs.pixelminter.com](https://docs.pixelminter.com) 
 
 ## 🙏 Acknowledgments
 
@@ -326,10 +326,9 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ## 📞 Support
 
-- **Discord**: [Join our community](https://discord.gg/pixelminter)
 - **Twitter**: [@pixelminter](https://twitter.com/pixelminter)
 - **Email**: sebas.2023@gmail.com
-- **GitHub Issues**: [Report bugs or request features](https://github.com/your-username/Pixelminter/issues)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/rofergon/Pixelminter/issues)
 
 ---
 
