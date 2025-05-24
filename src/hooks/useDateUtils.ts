@@ -1,0 +1,183 @@
+/* eslint-disable no-unused-vars */
+import { createPublicClient, http, fallback } from 'viem';
+import { base } from 'viem/chains';
+import { BasePaintAbi } from '../abi/BasePaintAbi';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+
+// Cache implementation to avoid repeated API calls
+const cache = {
+  today: { value: null as number | null, timestamp: 0 },
+  totalPixels: { value: null as bigint | null, timestamp: 0, day: 0 },
+  
+  // Cache valid for 5 minutes (300000ms)
+  CACHE_TTL: 300000,
+  
+  isTodayValid: function() {
+    return this.today.value !== null && 
+           (Date.now() - this.today.timestamp) < this.CACHE_TTL;
+  },
+  
+  isTotalPixelsValid: function(day: number) {
+    return this.totalPixels.value !== null && 
+           this.totalPixels.day === day && 
+           (Date.now() - this.totalPixels.timestamp) < this.CACHE_TTL;
+  }
+};
+
+// Create an array of transport providers with reliable RPCs only
+const transports = [
+  http('https://base.publicnode.com', { timeout: 15000 }),
+  http('https://base.llamarpc.com', { timeout: 15000 }),
+  http('https://1rpc.io/base', { timeout: 15000 }),
+  http('https://base.meowrpc.com', { timeout: 15000 }),
+  http('https://base-mainnet.public.blastapi.io', { timeout: 15000 }),
+  // Add your custom API key if you have one
+  // http('https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY', { timeout: 15000 }),
+  // http('https://base.infura.io/v3/YOUR_API_KEY', { timeout: 15000 }),
+];
+
+// Create client with fallback functionality
+const client = createPublicClient({
+  chain: base,
+  transport: fallback(transports, {
+    rank: true,
+  }),
+});
+
+// Export the client for use in other files
+export { client as baseClient };
+
+const CONTRACT_ADDRESS = '0xBa5e05cb26b78eDa3A2f8e3b3814726305dcAc83';
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Obtiene el día actual consultando el contrato BasePaint con cache.
+ * @returns {Promise<number>} - Promesa que resuelve al número de día actual.
+ */
+export const calculateDay = async (retries = 3, backoff = 2000): Promise<number> => {
+  // Check cache first
+  if (cache.isTodayValid()) {
+    return cache.today.value as number;
+  }
+  
+  try {
+    const today = await client.readContract({
+      address: CONTRACT_ADDRESS,
+      abi: BasePaintAbi,
+      functionName: 'today',
+    });
+    
+    const todayNumber = Number(today);
+    
+    // Update cache
+    cache.today.value = todayNumber;
+    cache.today.timestamp = Date.now();
+    
+    return todayNumber;
+  } catch (error) {
+    console.error('Error fetching today:', error);
+    
+    if (retries > 0) {
+      // Longer exponential backoff
+      await delay(backoff);
+      return calculateDay(retries - 1, backoff * 2);
+    } else {
+      // If all retries fail, return cached value if available
+      if (cache.today.value !== null) {
+        console.warn('Using cached value for today after all retries failed');
+        return cache.today.value;
+      }
+      // If no cache available, use a hardcoded fallback value
+      console.warn('Using fallback value for day after all retries failed');
+      return 616; // Hardcoded fallback value based on error message
+    }
+  }
+};
+
+export function getCurrentDayUTC(): string {
+    return dayjs().utc().format('YYYY-MM-DD');
+}
+
+/**
+ * Obtiene la cantidad total de píxeles pintados para el día actual con cache.
+ * @returns {Promise<bigint>} - Promesa que resuelve a la cantidad total de píxeles pintados.
+ */
+export const getTotalPixelsPaintedToday = async (retries = 3, backoff = 2000): Promise<bigint> => {
+  try {
+    // Use cached day if available to avoid extra requests
+    const today = cache.isTodayValid() 
+      ? cache.today.value as number
+      : await calculateDay();
+    
+    // Check cache first
+    if (cache.isTotalPixelsValid(today)) {
+      return cache.totalPixels.value as bigint;
+    }
+    
+    // Add a small delay to avoid burst requests
+    await delay(500);
+    
+    const canvas = await client.readContract({
+      address: CONTRACT_ADDRESS,
+      abi: BasePaintAbi,
+      functionName: 'canvases',
+      args: [BigInt(today)],
+    });
+    
+    // Verificamos que canvas sea un array y tenga al menos un elemento
+    if (Array.isArray(canvas) && canvas.length > 0) {
+      const totalContributions = canvas[0];
+      
+      // Update cache
+      cache.totalPixels.value = totalContributions;
+      cache.totalPixels.timestamp = Date.now();
+      cache.totalPixels.day = today;
+      
+      return totalContributions;
+    } else {
+      console.error('Formato de respuesta del canvas inesperado:', canvas);
+      return BigInt(0);
+    }
+  } catch (error) {
+    console.error('Error al obtener los píxeles pintados:', error);
+    if (retries > 0) {
+      await delay(backoff);
+      return getTotalPixelsPaintedToday(retries - 1, backoff * 2);
+    } else {
+      // If all retries fail, return cached value if available
+      if (cache.totalPixels.value !== null) {
+        console.warn('Using cached value for total pixels after all retries failed');
+        return cache.totalPixels.value;
+      }
+      console.error('Se agotaron los reintentos para obtener los píxeles pintados');
+      return BigInt(0);
+    }
+  }
+};
+
+/**
+ * Imprime el número de píxeles pintados cada 5 minutos para reducir la carga.
+ * @returns {() => void} - Función para detener el intervalo.
+ */
+export const logPixelsPaintedInterval = (): () => void => {
+  // Further reduced frequency to every 5 minutes
+  const intervalId = setInterval(async () => {
+    try {
+      if (!cache.isTodayValid() || !cache.isTotalPixelsValid(cache.today.value as number)) {
+        const pixelesPintados = await getTotalPixelsPaintedToday();
+        // Log or use the value if needed
+      }
+    } catch (error) {
+      console.error('Error al obtener los píxeles pintados:', error);
+    }
+  }, 300000); // 5 minutes (300000ms)
+
+  return () => clearInterval(intervalId);
+};
+
+// Initialize but don't automatically start logging
+// const stopLogging = logPixelsPaintedInterval();

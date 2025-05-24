@@ -1,0 +1,58 @@
+<Identity />
+Identity is a React context provider and arranges identity components.
+
+Usage
+Show user avatar, name with attestation and address:
+
+import { Avatar, Identity, Name, Badge, Address } from '@coinbase/onchainkit/identity';
+ 
+<Identity
+  address="0x838aD0EAE54F99F1926dA7C3b6bFbF617389B4D9"
+  schemaId="0xf8b05c79f090979bf4a80270aba232dff11a10d9ca55c4f88de95317970f0de9"
+>
+  <Avatar />
+  <Name>
+    <Badge />
+  </Name>
+  <Address />
+</Identity> 
+nickprince.eth
+0x838a...B4D9
+Modify any styles with className prop.
+
+import { Avatar, Identity, Name, Badge, Address } from '@coinbase/onchainkit/identity';
+ 
+<Identity
+  address="0x838aD0EAE54F99F1926dA7C3b6bFbF617389B4D9"
+  schemaId="0xf8b05c79f090979bf4a80270aba232dff11a10d9ca55c4f88de95317970f0de9"
+>
+  <Avatar>
+    <Badge className="bg-error" />
+  </Avatar>
+  <Name className="text-orange-600" />
+  <Address className="text-gray-500 font-bold"/>
+</Identity>
+nickprince.eth
+0x838a...B4D9
+Choose which identity components to render:
+
+import { Avatar, Identity, Name, Badge, Address } from '@coinbase/onchainkit/identity';
+ 
+<Identity address="0x838..." schemaId="0xf8b...">
+  <Avatar />
+  <Name>
+    <Badge />
+  </Name>
+</Identity>
+ 
+<Identity address="0x838..." schemaId="0xf8b...">
+  <Name>
+    <Badge />
+  </Name>
+  <Address />
+</Identity>
+nickprince.eth
+nickprince.eth
+0x838a...B4D9
+Props
+IdentityReact

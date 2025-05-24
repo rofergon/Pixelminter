@@ -1,0 +1,161 @@
+<Transaction />
+The <Transaction /> components provide a high-level wrap around the entire transaction flow. It handles the transaction lifecycle, including gas estimation, fee sponsorship, and status updates.
+
+Before using them, ensure you've completed all Getting Started steps.
+
+Walkthrough
+Add contracts
+Execute one or multiple contracts using the Transaction component. Each contract should include:
+
+address: the contract address;
+abi: the contract's ABI;
+functionName: a function to extract from the ABI;
+args: arguments to pass to the function call.
+TransactionComponents.tsx
+contracts.ts
+import { useCallback } from 'react';
+import { Avatar, Name } from '@coinbase/onchainkit/identity';
+import { 
+  Transaction, 
+  TransactionButton,
+  TransactionSponsor,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+} from '@coinbase/onchainkit/transaction'; 
+import type { LifeCycleStatus } from '@coinbase/onchainkit/transaction';
+import { Wallet, ConnectWallet } from '@coinbase/onchainkit/wallet';
+import { useAccount } from 'wagmi';
+import { contracts } from './contracts'; 
+ 
+export default function TransactionComponents() {
+  const { address } = useAccount();
+  
+  const handleOnStatus = useCallback((status: LifeCycleStatus) => {
+    console.log('LifecycleStatus', status);
+  }, []);
+ 
+  return address ? (
+    <Transaction
+      chainId={BASE_SEPOLIA_CHAIN_ID}
+      contracts={contracts}
+      onStatus={handleOnStatus}
+    >
+      <TransactionButton />
+      <TransactionSponsor />
+      <TransactionStatus>
+        <TransactionStatusLabel />
+        <TransactionStatusAction />
+      </TransactionStatus>
+    </Transaction>  
+  ) : (
+    <Wallet>
+      <ConnectWallet>
+        <Avatar className='h-6 w-6' />
+        <Name />
+      </ConnectWallet>
+    </Wallet>
+  );
+};
+
+Connect Wallet
+Listen to LifeCycleStatus
+Take full control of your transactions data with the LifeCycleStatus object via the onStatus prop. This TypeScript object provides statusName and statusData to keep you informed.
+
+import type { LifeCycleStatus } from '@coinbase/onchainkit/transaction'; 
+ 
+// ommited for brevity
+ 
+const handleOnStatus = useCallback((status: LifeCycleStatus) => { 
+  console.log('LifecycleStatus', status); 
+}, []); 
+ 
+// ommited for brevity
+ 
+<Transaction
+  contracts={contracts}
+  onStatus={handleOnStatus}
+>
+  <TransactionButton />
+  <TransactionSponsor />
+  <TransactionToast>
+    <TransactionToastIcon />
+    <TransactionToastLabel />
+    <TransactionToastAction />
+  </TransactionToast>
+</Transaction> 
+The Lifecycle Status features six states for the transaction experience.
+
+type LifeCycleStatus =
+  | {
+      statusName: 'init';
+      statusData: null;
+    }
+  | {
+      statusName: 'error';
+      statusData: TransactionError;
+    }
+  | {
+      statusName: 'transactionIdle'; // initial status prior to the mutation function executing
+      statusData: null;
+    }
+  | {
+      statusName: 'transactionPending'; // if the mutation is currently executing
+      statusData: null;
+    }
+  | {
+      statusName: 'transactionLegacyExecuted';
+      statusData: {
+        transactionHashList: Address[];
+      };
+    }
+  | {
+      statusName: 'success'; // if the last mutation attempt was successful
+      statusData: {
+        transactionReceipts: TransactionReceipt[];
+      };
+    };
+Sponsor with Paymaster capabilities
+To sponsor your transactions with Paymaster capabilities, provide the paymasterService object.
+
+Obtain a Paymaster and Bundler endpoint from the Coinbase Developer Platform.
+
+OnchainKit Paymaster and Bundler endpoint
+// ommited for brevity
+<Transaction
+  capabilities={{ 
+    paymasterService: { 
+      url: process.env.PAYMASTER_AND_BUNDLER_ENDPOINT, 
+    }, 
+  }}
+  contracts={contracts}
+  >
+  <TransactionButton />
+  <TransactionSponsor />
+</Transaction>
+Components
+OnchainKit transaction anatomy component diagram
+The components are designed to work together hierarchically. For each component, ensure the following:
+
+<Transaction /> - Serves as the main container for all transaction-related components.
+<TransactionButton /> - Handles the transaction initiation process.
+<TransactionSponsor /> - Displays information about the sponsorship of transaction gas fees.
+<TransactionStatus /> - Contains transaction status information and actions.
+<TransactionStatusLabel /> - Displays the current status of the transaction.
+<TransactionStatusAction /> - Provides additional actions based on the transaction status.
+<TransactionToast /> - Displays a toast notification for the transaction status.
+<TransactionToastIcon /> - Displays an icon in the transaction toast notification.
+<TransactionToastLabel /> - Displays the label text in the transaction toast notification.
+<TransactionToastAction /> - Provides additional actions within the transaction toast notification.
+Props
+TransactionButtonReact
+TransactionError
+TransactionReact
+TransactionSponsorReact
+TransactionStatusReact
+TransactionStatusActionReact
+TransactionStatusLabelReact
+TransactionToastReact
+TransactionToastActionReact
+TransactionToastIconReact
+TransactionToastLabelReact

@@ -1,0 +1,186 @@
+
+On this page
+Usage
+Override styles
+Override text
+Required providers
+Use wallet aggregator
+Components
+Props
+<Wallet />
+The Wallet components provide a comprehensive interface for users to connect their Smart Wallet, view their identity information, and manage their wallet connection. Before using them, ensure you've completed all Getting Started steps.
+
+Usage
+import { 
+  ConnectWallet, 
+  Wallet, 
+  WalletDropdown, 
+  WalletDropdownLink, 
+  WalletDropdownDisconnect, 
+} from '@coinbase/onchainkit/wallet'; 
+import {
+  Address,
+  Avatar,
+  Name,
+  Identity,
+  EthBalance,
+} from '@coinbase/onchainkit/identity';
+import { color } from '@coinbase/onchainkit/theme';
+ 
+export function WalletComponents() {
+  return (
+    <div className="flex justify-end">
+      <Wallet>
+        <ConnectWallet>
+          <Avatar className="h-6 w-6" />
+          <Name />
+        </ConnectWallet>
+        <WalletDropdown>
+          <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+            <Avatar />
+            <Name />
+            <Address className={color.foregroundMuted} />
+            <EthBalance />
+          </Identity>
+          <WalletDropdownLink icon="wallet" href="https://keys.coinbase.com">
+            Wallet
+          </WalletDropdownLink>
+          <WalletDropdownDisconnect />
+        </WalletDropdown>
+      </Wallet>
+    </div>
+  );
+}
+
+Connect Wallet
+Override styles
+You can override component styles using className.
+
+// omitted for brevity
+ 
+<Wallet>
+  <ConnectWallet className='bg-blue-800'>
+    <Avatar className="h-6 w-6" />
+    <Name className='text-white' />
+  </ConnectWallet>
+  <WalletDropdown>
+    <Identity 
+      className="px-4 pt-3 pb-2 hover:bg-blue-200" 
+      hasCopyAddressOnClick
+    >
+      <Avatar />
+      <Name />
+      <Address />
+      <EthBalance />
+    </Identity>
+    <WalletDropdownLink 
+      className='hover:bg-blue-200' 
+      icon="wallet" 
+      href="https://keys.coinbase.com"
+    >
+      Wallet
+    </WalletDropdownLink>
+    <WalletDropdownDisconnect className='hover:bg-blue-200' />
+  </WalletDropdown>
+</Wallet>
+
+Connect Wallet
+Override text
+You can override component text using text.
+
+// omitted for brevity
+ 
+<Wallet>
+  <ConnectWallet text="Log In">
+    <Avatar/>
+    <Name/>
+  </ConnectWallet>
+</Wallet>
+
+Log In
+Required providers
+If you are using any of the provided components, you will need to install and configure wagmi and wrap your app in <WagmiProvider>.
+
+import { ReactNode } from 'react';
+import { WagmiProvider, createConfig, http } from 'wagmi';
+import { baseSepolia } from 'wagmi/chains';
+import { coinbaseWallet } from 'wagmi/connectors';
+ 
+const wagmiConfig = createConfig({
+  chains: [baseSepolia],
+  connectors: [
+    coinbaseWallet({
+      appName: 'onchainkit',
+    }),
+  ],
+  ssr: true,
+  transports: {
+    [baseSepolia.id]: http(),
+  },
+});
+ 
+function App({ children }: { children: ReactNode }) {
+  return <WagmiProvider config={wagmiConfig}>{children}</WagmiProvider>;
+}
+Use wallet aggregator
+You can expand the wallet connection options by using the withWalletAggregator prop in the <ConnectWallet /> component. This will present users with a list of recommended and other wallets to choose from.
+
+OnchainKit leverages RainbowKit to offer this feature. To use it correctly, follow these steps:
+
+Import the necessary components from RainbowKit.
+Create a list of recommended and other wallets.
+Use getDefaultConfig to configure the Wagmi provider.
+Wrap your app in the RainbowKit provider.
+myApp.tsx
+OnchainProviders.tsx
+// omitted for brevity
+ 
+<Wallet>
+  <ConnectWallet withWalletAggregator>
+    <Avatar className="h-6 w-6" />
+    <Name />
+  </ConnectWallet>
+  <WalletDropdown>
+    <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+      <Avatar />
+      <Name />
+      <Address />
+      <EthBalance />
+    </Identity>
+    <WalletDropdownLink 
+      icon="wallet" 
+      href="https://keys.coinbase.com"
+    >
+      Wallet
+    </WalletDropdownLink>
+    <WalletDropdownDisconnect />
+  </WalletDropdown>
+</Wallet>
+
+Connect Wallet
+Components
+The components are designed to work together hierarchically. For each component, ensure the following:
+
+<Wallet /> - Serves as the main container for all wallet-related components.
+<ConnectWallet /> - Handles the wallet connection process. Place child components inside to customize the connect button appearance.
+<WalletDropdown /> - Contains additional wallet information and options. Place inside the <Wallet /> component.
+<Identity /> - Displays user identity information. Place inside <WalletDropdown /> for a complete profile view.
+<WalletDropdownBasename /> - Displays the user's Basename within the dropdown.
+<WalletDropdownLink /> - Creates a custom link within the dropdown. Use the icon prop to add an icon, and href to specify the destination.
+<WalletDropdownDisconnect /> - Provides a disconnect option within the dropdown.
+Additional components for customizing the wallet interface include:
+
+<Avatar /> - Displays the user's avatar image.
+<Name /> - Shows the user's name or ENS.
+<Badge /> - Can be used to display additional user status or information.
+<Address /> - Shows the user's wallet address.
+<EthBalance /> - Displays the user's ETH balance.
+The Wallet component automatically handles the wallet connection state and updates the UI accordingly. You need to wrap your application or relevant part of it with these components to provide a complete wallet interaction experience.
+
+Props
+WalletReact
+ConnectWalletReact
+WalletDropdownReact
+WalletDropdownBasenameReact
+WalletDropdownDisconnectReact
+WalletDropdownLinkReact
