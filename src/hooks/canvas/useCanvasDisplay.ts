@@ -23,6 +23,9 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Disable image smoothing to preserve exact pixel colors
+    ctx.imageSmoothingEnabled = false;
+
     const { frames, currentFrameIndex, canvasSize, gridSize } = stateRef.current;
     const currentFrame = frames[currentFrameIndex];
     if (!currentFrame) return;
@@ -35,6 +38,9 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
       offScreenCanvasRef.current.width = canvasSize;
       offScreenCanvasRef.current.height = canvasSize;
       offCtxRef.current = offScreenCanvasRef.current.getContext('2d');
+      if (offCtxRef.current) {
+        offCtxRef.current.imageSmoothingEnabled = false;
+      }
     }
 
     const offScreenCanvas = offScreenCanvasRef.current!;

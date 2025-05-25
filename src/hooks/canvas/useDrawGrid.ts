@@ -12,6 +12,9 @@ function useDrawGrid(
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Disable image smoothing to preserve exact pixel colors
+    ctx.imageSmoothingEnabled = false;
+
     const { canvasSize, zoom, gridSize } = stateRef.current;
     const scaledSize = canvasSize * zoom;
 

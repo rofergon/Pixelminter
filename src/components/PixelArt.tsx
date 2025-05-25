@@ -71,6 +71,8 @@ const PixelArt: React.FC = () => {
     if (canvas) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
+        // Disable image smoothing to preserve exact pixel colors
+        ctx.imageSmoothingEnabled = false;
         const { frames, currentFrameIndex, gridSize, canvasSize } = stateRef.current;
         const currentFrame = frames[currentFrameIndex] || { layers: [] };
         const cellSize = canvasSize / gridSize;

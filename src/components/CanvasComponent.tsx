@@ -43,6 +43,10 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     const offscreenCtx = offscreenCanvas.getContext('2d');
     if (!ctx || !offscreenCtx) return;
 
+    // Disable image smoothing to preserve exact pixel colors
+    ctx.imageSmoothingEnabled = false;
+    offscreenCtx.imageSmoothingEnabled = false;
+
     const currentFrame = state.frames[state.currentFrameIndex] || { layers: [] };
     const layers = currentFrame.layers || [];
     const cellSize = state.canvasSize / state.gridSize;
@@ -81,6 +85,9 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Disable image smoothing to preserve exact pixel colors
+    ctx.imageSmoothingEnabled = false;
 
     const scaledSize = state.canvasSize * state.zoom;
     canvas.width = scaledSize;
@@ -181,7 +188,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     <div className="overflow-auto max-w-full max-h-full p-4">
       <div
         ref={containerRef}
-        className={`relative ${state.touchEnabled ? '' : 'touch-none'} mx-auto rounded-2xl shadow-2xl border-2 border-slate-600 bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-sm overflow-hidden`}
+        className={`relative ${state.touchEnabled ? '' : 'touch-none'} mx-auto rounded-2xl shadow-2xl border-2 border-slate-600 bg-gradient-to-br from-slate-800/30 to-slate-900/30 overflow-hidden`}
         style={canvasStyle}
         onContextMenu={(e) => e.preventDefault()}
       >
@@ -192,7 +199,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
             style={{ 
               backgroundImage: `url(${state.dailyImageUrl})`,
               opacity: state.backgroundOpacity,
-              filter: 'blur(0.5px) contrast(1.1)',
             }}
           />
         )}
@@ -200,10 +206,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         {/* Canvas with Enhanced Shadow and Border */}
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 z-10 w-full h-full rounded-2xl shadow-inner pixel-perfect"
-          style={{
-            filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.3))',
-          }}
+          className="absolute inset-0 z-10 w-full h-full rounded-2xl pixel-perfect"
         />
 
         {/* Grid Canvas with Subtle Styling */}
@@ -223,7 +226,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
           style={{
             opacity: state.onionSkinning ? 1 : 0,
             transition: 'opacity 0.3s ease',
-            filter: 'hue-rotate(180deg) saturate(0.7)',
           }}
         />
 
