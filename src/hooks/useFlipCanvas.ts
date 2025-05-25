@@ -1,8 +1,8 @@
 import { Frame } from '../types/types';
 
 export const useFlipCanvas = (
-  updatePixel: (x: number, y: number, color: string, layerId: string) => void,
-  saveState: (changes: [string, string][]) => void,
+  updatePixel: (_x: number, _y: number, _color: string, _layerId: string) => void,
+  saveState: (_changes: [string, string][]) => void,
   gridSize: number
 ) => {
   const handleFlip = (currentFrame: Frame) => {

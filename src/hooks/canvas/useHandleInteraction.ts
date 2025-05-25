@@ -1,12 +1,12 @@
-import { useCallback, useRef, MutableRefObject, useEffect } from 'react';
+import { useCallback, useRef, MutableRefObject, useEffect, RefObject } from 'react';
 import { State, Layer } from '../../types/types';
 import { bucketFill } from '../tools/useBucketFill';
 import { draw, interpolate } from './drawUtils';
 
 interface UseHandleInteractionProps {
   stateRef: MutableRefObject<State>;
-  canvasRef: React.RefObject<HTMLCanvasElement>;
-  containerRef: React.RefObject<HTMLDivElement>;
+  canvasRef: RefObject<HTMLCanvasElement>;
+  containerRef: RefObject<HTMLDivElement>;
   updatePixel: (_x: number, _y: number, _color: string | null) => void;
   updateCanvasDisplay: () => void;
   saveState: (_changes: [string, string][]) => void;
@@ -48,7 +48,6 @@ export const useHandleInteraction = ({
     const rect = canvas.getBoundingClientRect();
     const { scrollLeft, scrollTop } = container;
     const state = stateRef.current;
-    const scale = state.canvasSize / (state.gridSize * state.zoom);
     const x = (clientX - rect.left + scrollLeft) / state.zoom;
     const y = (clientY - rect.top + scrollTop) / state.zoom;
 

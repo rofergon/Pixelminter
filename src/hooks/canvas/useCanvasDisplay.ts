@@ -1,8 +1,8 @@
-import { useCallback, useRef, MutableRefObject, useEffect } from 'react';
+import { useCallback, useRef, MutableRefObject, useEffect, RefObject } from 'react';
 import { State, Layer } from '../../types/types';
 
 interface CanvasRefs {
-  canvasRef: React.RefObject<HTMLCanvasElement>;
+  canvasRef: RefObject<HTMLCanvasElement>;
   stateRef: MutableRefObject<State>;
 }
 

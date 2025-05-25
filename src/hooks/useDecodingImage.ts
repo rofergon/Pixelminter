@@ -140,7 +140,7 @@ const findClosestPaletteColor = (hexColor: string, palette: string[]): string =>
 export const applyDecodedImage = (
   decodedData: DecodedImageData,
   state: State,
-  updatePixel: (x: number, y: number, color: string | null) => void
+  updatePixel: (_x: number, _y: number, _color: string | null) => void
 ): void => {
   const { pixels, width, height } = decodedData;
   

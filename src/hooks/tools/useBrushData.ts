@@ -122,12 +122,6 @@ export const useBrushData = () => {
         return;
       }
 
-      const contract = getContract({
-        address: contractAddress,
-        abi: BasePaintBrushAbi,
-        client: baseClient,
-      });
-
       // Contracts for parallel search
       const contractMain = getContract({
         address: contractAddress,

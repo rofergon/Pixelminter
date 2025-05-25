@@ -6,7 +6,7 @@ import Alert from './Alert';
 
 interface UploadPixelArtProps {
   state: State;
-  updateState: (newState: Partial<State> | ((_prevState: State) => Partial<State>)) => void;
+  updateState: (_newState: Partial<State> | ((_prevState: State) => Partial<State>)) => void;
 }
 
 const UploadPixelArt: React.FC<UploadPixelArtProps> = ({ state, updateState }) => {

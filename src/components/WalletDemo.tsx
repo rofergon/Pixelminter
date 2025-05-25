@@ -4,7 +4,7 @@ import EnhancedWallet from './EnhancedWallet';
 import { BrushData } from '@/types/types';
 
 interface WalletDemoProps {
-  updateBrushData: (data: BrushData | null) => void;
+  updateBrushData: (_data: BrushData | null) => void;
 }
 
 const WalletDemo: React.FC<WalletDemoProps> = ({ updateBrushData }) => {
