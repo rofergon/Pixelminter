@@ -10,6 +10,7 @@ const PaletteButton: React.FC<PaletteButtonProps> = ({ color, isSelected, onClic
   return (
     <button
       className={`palette-button ${isSelected ? 'selected' : ''}`}
+      style={{ backgroundColor: color }}
       onClick={onClick}
       title={color}
       data-color={color}
