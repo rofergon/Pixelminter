@@ -107,7 +107,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
     <div
       id='side-panel'
       className={`flex-grow bg-gray-900 text-gray-200 transition-all duration-300 ${
-        isOpen ? 'w-full max-w-xs p-3 space-y-3' : 'w-12 p-1'
+        isOpen ? 'w-full max-w-sm p-3 space-y-3' : 'w-12 p-1'
       }`}
     >
       {isOpen ? (
@@ -122,15 +122,17 @@ const SidePanel: React.FC<SidePanelProps> = ({
                 )}
               </h3>
 
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="h-8 bg-gray-700 px-3 py-1 rounded-md shadow-sm flex items-center justify-center">
+              <div className="flex items-center gap-5 mb-3">
+                <div className="h-8 w-16 bg-gray-700 px-3 py-1 rounded-md shadow-sm flex items-center justify-center flex-shrink-0">
                   <Droplet className="text-yellow-300 fill-yellow-300" size={12} />
                   <span className="text-yellow-300 font-semibold text-xs ml-1 font-variant-numeric tabular-nums">
                     {droplets}
                   </span>
                 </div>
-
-                <ConnectWalletButton updateBrushData={updateBrushData} />
+                
+                <div className="flex-1 min-w-0">
+                  <ConnectWalletButton updateBrushData={updateBrushData} />
+                </div>
               </div>
 
               <Button

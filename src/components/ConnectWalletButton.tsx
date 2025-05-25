@@ -21,75 +21,73 @@ import { BasePaintBrushAbi } from '@/abi/BasePaintBrushAbi';
 import { getContract, ContractFunctionExecutionError } from 'viem';
 import { BrushData } from '@/types/types';
 import { useBrushData } from '@/hooks/tools/useBrushData';
-import { Moon, Sun, CircleUserIcon, Wallet as WalletIcon } from "lucide-react";
+import { CircleUserIcon, Wallet as WalletIcon } from "lucide-react";
 
 const DefaultAvatar = () => (
-  <div className="h-6 w-6 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-sm">
-    <WalletIcon className="h-3 w-3 text-white" />
+  <div className="h-4 w-4 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-sm">
+    <WalletIcon className="h-2 w-2 text-white" />
   </div>
 );
 
 const LoadingAvatar = () => (
-  <div className="h-6 w-6 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full animate-pulse shadow-sm"></div>
+  <div className="h-4 w-4 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full animate-pulse shadow-sm"></div>
 );
+
+// Componente personalizado para el nombre truncado con tooltip
+const TruncatedName: React.FC<{ className?: string }> = ({ className = "" }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  
+  return (
+    <div 
+      className={`relative ${className}`}
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+      title="Hover to see full name"
+    >
+      <Name className="text-white font-medium truncate max-w-[120px] block text-sm" />
+      {showTooltip && (
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg whitespace-nowrap z-50 border border-gray-600">
+          <Name className="text-white" />
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ConnectWalletButton: React.FC<{ updateBrushData: (data: BrushData | null) => void }> = ({ updateBrushData }) => {
   const { userTokenIds, brushData, isLoading, balance } = useBrushData();
-  const [theme, setTheme] = useState("dark");
   const { isConnected } = useAccount();
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(savedTheme);
-    document.documentElement.classList.toggle("dark", savedTheme === "dark");
-
     if (brushData) {
       updateBrushData(brushData);
     }
   }, [brushData, updateBrushData]);
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-  };
-
   return (
-    <div className="flex items-center justify-end space-x-2">
-      {/* Theme Toggle Button */}
-      <button
-        onClick={toggleTheme}
-        className="h-8 w-8 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 flex items-center justify-center transition-all duration-200 hover:scale-105"
-        aria-label="Toggle theme"
-      >
-        {theme === "light" ? (
-          <Moon className="h-4 w-4 text-gray-300" />
-        ) : (
-          <Sun className="h-4 w-4 text-yellow-400" />
-        )}
-      </button>
-
+    <div className="flex items-center justify-end flex-shrink-0 w-full">
       {/* Wallet Component */}
       <Wallet>
         <ConnectWallet
-          className="h-8 px-4 text-sm font-medium rounded-lg transition-all duration-200 
+          className={`h-8 px-4 text-sm font-medium rounded-lg transition-all duration-200 
                      bg-gradient-to-r from-blue-600 to-purple-600 
                      hover:from-blue-700 hover:to-purple-700 
                      active:from-blue-800 active:to-purple-800
                      text-white border border-blue-500/20
-                     shadow-lg hover:shadow-xl hover:scale-105
+                     shadow-lg hover:shadow-xl hover:scale-[1.02]
                      flex items-center space-x-2
                      disabled:opacity-50 disabled:cursor-not-allowed
-                     backdrop-blur-sm"
+                     backdrop-blur-sm flex-shrink-0
+                     ${isConnected ? 'min-w-[140px] max-w-[180px]' : 'min-w-[100px]'}`}
           text={isConnected ? undefined : "Connect Wallet"}
         >
           <Avatar
-            className="h-5 w-5"
+            className="h-5 w-5 flex-shrink-0"
             defaultComponent={<DefaultAvatar />}
             loadingComponent={<LoadingAvatar />}
           />
-          {isConnected && <Name className="text-white font-medium" />}
+          {isConnected && <TruncatedName />}
         </ConnectWallet>
 
         <WalletDropdown className="min-w-[300px] rounded-2xl shadow-2xl bg-gray-800/95 backdrop-blur-xl border border-gray-700/50">

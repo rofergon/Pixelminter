@@ -228,4 +228,46 @@
 
 .ockModal_Content .ockText_foreground_muted {
   color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Mejoras para el nombre del usuario en el botón conectado */
+.ockConnectWallet_Name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+/* Tooltip para mostrar el nombre completo en hover */
+.ockConnectWallet_Name:hover {
+  position: relative;
+}
+
+.ockConnectWallet_Name:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Responsive adjustments for wallet button */
+@media (max-width: 768px) {
+  .ockConnectWallet_Name {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ockConnectWallet_Name {
+    max-width: 80px;
+  }
 } 
