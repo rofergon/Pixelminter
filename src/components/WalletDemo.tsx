@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import ConnectWalletButton from './ConnectWalletButton';
 import EnhancedWallet from './EnhancedWallet';
 import { BrushData } from '@/types/types';
-import { Button } from '@/components/ui/button';
 
 interface WalletDemoProps {
   updateBrushData: (data: BrushData | null) => void;
@@ -166,7 +165,7 @@ const WalletDemo: React.FC<WalletDemoProps> = ({ updateBrushData }) => {
             <strong>2. Logo personalizado:</strong> Reemplaza la URL del logo en la configuración con la URL de tu logo.
           </p>
           <p>
-            <strong>3. Uso recomendado:</strong> Utiliza `EnhancedWallet` con variant="default" para la mayoría de casos, o "island" para experiencias premium.
+            <strong>3. Uso recomendado:</strong> Utiliza `EnhancedWallet` con variant=&quot;default&quot; para la mayoría de casos, o &quot;island&quot; para experiencias premium.
           </p>
           <p>
             <strong>4. Estilos personalizados:</strong> Los estilos CSS están en `src/styles/wallet.css` y se pueden personalizar según tu brand.

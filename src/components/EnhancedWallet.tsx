@@ -2,16 +2,16 @@ import React from 'react';
 import {
   ConnectWallet,
   Wallet,
+  WalletDropdown,
+  WalletDropdownLink,
+  WalletDropdownBasename,
+  WalletDropdownDisconnect,
   WalletIsland,
   WalletAdvancedDefault,
 } from '@coinbase/onchainkit/wallet';
 import {
-  Address,
   Avatar,
   Name,
-  Identity,
-  EthBalance,
-  Badge,
 } from '@coinbase/onchainkit/identity';
 import { useAccount } from 'wagmi';
 import { Wallet as WalletIcon } from "lucide-react";
