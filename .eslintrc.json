@@ -3,7 +3,11 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
-    "no-unused-vars": ["warn", { "varsIgnorePattern": "^_" }],
+    "no-unused-vars": ["warn", { 
+      "varsIgnorePattern": "^_",
+      "argsIgnorePattern": "^_",
+      "ignoreRestSiblings": true
+    }],
     "jsx-a11y/alt-text": "warn",
     "no-undef": "warn"
   }
