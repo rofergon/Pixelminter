@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Draggable from 'react-draggable';
 import { ResizableBox } from 'react-resizable';
 import CustomImage from './CustomImage';
@@ -27,6 +27,30 @@ const ReferenceImage: React.FC<ReferenceImageProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const nodeRef = useRef(null);
 
+  const isValidImageUrl = (url: string) => {
+    return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('blob:');
+  };
+
+  const handlePaste = useCallback((event: ClipboardEvent) => {
+    const items = event.clipboardData?.items;
+    if (items) {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const blob = items[i].getAsFile();
+          if (blob) {
+            const objectUrl = URL.createObjectURL(blob);
+            onUrlChange(objectUrl);
+            setIsValidUrl(true);
+            if (inputRef.current) {
+              inputRef.current.value = objectUrl;
+            }
+            break;
+          }
+        }
+      }
+    }
+  }, [onUrlChange]);
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.value = url;
@@ -40,11 +64,7 @@ const ReferenceImage: React.FC<ReferenceImageProps> = ({
     return () => {
       document.removeEventListener('paste', handlePaste);
     };
-  }, []);
-
-  const isValidImageUrl = (url: string) => {
-    return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('blob:');
-  };
+  }, [handlePaste]);
 
   const handleImageError = () => {
     console.error('Error al cargar la imagen:', imageUrl);
@@ -63,26 +83,6 @@ const ReferenceImage: React.FC<ReferenceImageProps> = ({
   const handleUrlChange = (newUrl: string) => {
     onUrlChange(newUrl);
     setIsValidUrl(isValidImageUrl(newUrl));
-  };
-
-  const handlePaste = (event: ClipboardEvent) => {
-    const items = event.clipboardData?.items;
-    if (items) {
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-          const blob = items[i].getAsFile();
-          if (blob) {
-            const objectUrl = URL.createObjectURL(blob);
-            onUrlChange(objectUrl);
-            setIsValidUrl(true);
-            if (inputRef.current) {
-              inputRef.current.value = objectUrl;
-            }
-            break;
-          }
-        }
-      }
-    }
   };
 
   return (
