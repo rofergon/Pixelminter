@@ -106,7 +106,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
   return (
     <div
       id='side-panel'
-      className={`flex-grow glass-panel pixel-scrollbar transition-all duration-300 ${
+      className={`flex-grow glass-panel pixel-scrollbar transition-all duration-300 bg-slate-800 ${
         isOpen ? 'w-full max-w-md p-3 space-y-3' : 'w-12 p-1'
       }`}
     >

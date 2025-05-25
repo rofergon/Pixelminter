@@ -121,7 +121,7 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
   }, [handleShiftFrame]);
 
   return (
-    <div className="flex flex-col h-screen bg-slate-900 text-slate-200">
+    <div className="flex flex-col h-screen bg-slate-800 text-slate-200">
       <div className="flex flex-1 overflow-hidden relative">
         <ToolPanel
           state={state}
@@ -154,7 +154,7 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
         <div
           className={`transition-all duration-300 relative ${
             isSidePanelOpen ? 'w-80' : 'w-12'
-          } overflow-hidden`}
+          } overflow-hidden bg-slate-800`}
         >
           <button
             onClick={toggleSidePanel}
@@ -193,7 +193,7 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
         </div>
       </div>
 
-      <div className="w-full bg-slate-800/60 border-t border-slate-700 shadow-lg backdrop-blur-sm">
+      <div className="w-full bg-slate-800 border-t border-slate-700 shadow-lg">
         <AnimationControls
           state={state}
           fps={fps}
