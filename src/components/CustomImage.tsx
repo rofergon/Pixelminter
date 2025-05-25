@@ -32,6 +32,7 @@ const CustomImage: React.FC<CustomImageProps> = ({ src, alt, layout, objectFit, 
 
   if (isBlob) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={imageSrc}
         alt={alt}
