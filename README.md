@@ -287,7 +287,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 ## 🙏 Acknowledgments
 
 - **Base Team** for the amazing L2 infrastructure
-- **BasePaint ** for collaborative art inspiration
+- **BasePaint** for collaborative art inspiration
 - **Coinbase** for OnchainKit and wallet tools
 - **Open Source Community** for the incredible tools and libraries
 
