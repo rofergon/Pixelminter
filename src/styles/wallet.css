@@ -1,0 +1,231 @@
+/* Estilos personalizados para OnchainKit Wallet */
+/* Estos estilos complementan los estilos base de OnchainKit */
+
+/* Modal overlay improvements - usando selectores más específicos */
+.ockModal_Container {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(8px);
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal content improvements */
+.ockModal_Content {
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.95) 0%,
+    rgba(15, 23, 42, 0.95) 100%
+  ) !important;
+  backdrop-filter: blur(20px);
+  animation: modalSlideIn 0.3s ease-out;
+  max-width: 420px;
+  width: 100%;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Modal header improvements */
+.ockModal_Content h2,
+.ockModal_Content .ockModal_Title {
+  color: white !important;
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Wallet connection options */
+.ockConnectWalletButton {
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(51, 65, 85, 0.3) !important;
+  transition: all 0.2s ease-in-out !important;
+  padding: 16px !important;
+  margin-bottom: 12px;
+  color: white !important;
+}
+
+.ockConnectWalletButton:hover {
+  background: rgba(51, 65, 85, 0.5) !important;
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Wallet option text */
+.ockConnectWalletButton span,
+.ockConnectWalletButton p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Wallet icons improvements */
+.ockConnectWalletButton img {
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+}
+
+/* Loading states */
+.ockSpinner {
+  background: linear-gradient(
+    90deg,
+    rgba(51, 65, 85, 0.3) 25%,
+    rgba(71, 85, 105, 0.4) 50%,
+    rgba(51, 65, 85, 0.3) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Error states */
+.ockError {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #fca5a5 !important;
+}
+
+/* Success states */
+.ockSuccess {
+  background: rgba(34, 197, 94, 0.1) !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+  color: #86efac !important;
+}
+
+/* Close button improvements */
+.ockModal_CloseButton {
+  color: rgba(255, 255, 255, 0.6) !important;
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.ockModal_CloseButton:hover {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* QR Code container (for smart wallet creation) */
+.ockQRCode_Container {
+  background: white !important;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 16px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Connect button styling */
+.ockConnectButton {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
+  border: none !important;
+  border-radius: 12px;
+  padding: 14px 24px;
+  color: white !important;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.ockConnectButton:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.3);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .ockModal_Content {
+    margin: 16px;
+    max-width: calc(100vw - 32px);
+    border-radius: 20px !important;
+  }
+  
+  .ockModal_Container {
+    padding: 16px;
+  }
+}
+
+/* Dark mode specific improvements */
+@media (prefers-color-scheme: dark) {
+  .ockModal_Content {
+    background: linear-gradient(
+      135deg,
+      rgba(17, 24, 39, 0.95) 0%,
+      rgba(6, 12, 34, 0.95) 100%
+    ) !important;
+  }
+}
+
+/* Wallet dropdown improvements */
+.ockWalletDropdown {
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  background: rgba(31, 41, 55, 0.95) !important;
+}
+
+/* Identity section improvements */
+.ockIdentity {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px;
+}
+
+/* Avatar improvements */
+.ockAvatar {
+  border: 2px solid rgba(59, 130, 246, 0.3) !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+/* Balance text improvements */
+.ockEthBalance {
+  color: #10b981 !important;
+  font-weight: 600;
+}
+
+/* Text color fixes for modal content */
+.ockModal_Content * {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ockModal_Content .ockText_foreground {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ockModal_Content .ockText_foreground_muted {
+  color: rgba(255, 255, 255, 0.6) !important;
+} 

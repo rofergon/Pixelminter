@@ -35,6 +35,24 @@ const OnchainProviders: React.FC<OnchainProvidersProps> = ({ children }) => {
         <OnchainKitProvider
           apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
           chain={base}
+          config={{
+            appearance: {
+              name: 'PixelMinter',
+              logo: '/logo192.png', // Logo local de PixelMinter
+              mode: 'auto', // 'light' | 'dark' | 'auto'
+              theme: 'default',
+            },
+            wallet: {
+              display: 'modal',
+              termsUrl: 'https://your-website.com/terms', // Reemplaza con tu URL de términos
+              privacyUrl: 'https://your-website.com/privacy', // Reemplaza con tu URL de privacidad
+              supportedWallets: {
+                rabby: true,
+                trust: true,
+                frame: true,
+              },
+            },
+          }}
         >
           {children}
         </OnchainKitProvider>

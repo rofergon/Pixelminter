@@ -5,6 +5,12 @@
 /* @tailwind utilities; */
 @tailwind utilities;
 
+/* Import OnchainKit base styles - ESSENTIAL for proper styling */
+@import '@coinbase/onchainkit/styles.css';
+
+/* Import OnchainKit Wallet custom styles */
+@import './wallet.css';
+
 @layer base {
   :root {
     --background: 0 0% 100%;
