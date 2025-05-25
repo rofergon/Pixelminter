@@ -2,7 +2,7 @@
 
 **A powerful, decentralized pixel art creator and animator with blockchain integration on Base chain**
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)
 ![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)
 ![React](https://img.shields.io/badge/React-18.3.1-blue.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-15.0.2-black.svg)
