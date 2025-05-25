@@ -177,17 +177,17 @@ const PixelArt: React.FC = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       const events = ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'touchstart', 'touchmove', 'touchend'];
-      const options: AddEventListenerOptions = { passive: state.tool === 'move' };
+      const options = { passive: state.tool === 'move' };
       
       events.forEach(event => {
-        canvas.addEventListener(event, handleInteraction as unknown as EventListener, options);
+        canvas.addEventListener(event, handleInteraction as any, options);
       });
       
       canvas.addEventListener('contextmenu', (e) => e.preventDefault());
       
       return () => {
         events.forEach(event => {
-          canvas.removeEventListener(event, handleInteraction as unknown as EventListener);
+          canvas.removeEventListener(event, handleInteraction as any);
         });
         canvas.removeEventListener('contextmenu', (e) => e.preventDefault());
       };
