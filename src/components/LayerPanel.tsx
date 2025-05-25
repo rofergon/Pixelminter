@@ -5,21 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Layers, X, GripVertical } from 'lucide-react';
-import { State, Layer } from '../types/types';
+import { State } from '../types/types';
 import { Input } from "@/components/ui/input";
 import { getCurrentLayers } from '../hooks/layers/layerStateManager';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
 import StrictModeDroppable from './StrictModeDroppable';
 
 interface LayerManagerProps {
   state: State;
   addLayer: () => void;
-  removeLayer: (id: string) => void;
-  updateLayerVisibility: (id: string, visible: boolean) => void;
-  updateLayerOpacity: (id: string, opacity: number) => void;
-  setActiveLayerId: (id: string) => void;
-  updateLayerName: (id: string, name: string) => void;
-  reorderLayers: (sourceIndex: number, targetIndex: number) => void;
+  removeLayer: (_id: string) => void;
+  updateLayerVisibility: (_id: string, _visible: boolean) => void;
+  updateLayerOpacity: (_id: string, _opacity: number) => void;
+  setActiveLayerId: (_id: string) => void;
+  updateLayerName: (_id: string, _name: string) => void;
+  reorderLayers: (_sourceIndex: number, _targetIndex: number) => void;
 }
 
 const LayerManager: React.FC<LayerManagerProps> = ({
