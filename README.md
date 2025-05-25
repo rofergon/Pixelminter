@@ -19,19 +19,14 @@ Pixelminter is a sophisticated pixel art creation platform that combines traditi
 
 ### 🎭 **Core Art Tools**
 - **Multi-Tool Support**: Brush, eraser, bucket fill, line tool, and move tool
-- **Layer System**: Create unlimited layers with individual opacity and visibility controls
-- **Drag & Drop Layers**: Reorder layers with intuitive drag-and-drop interface
-- **Advanced Brush**: Customizable brush sizes (1-10px)
-- **Color Management**: Built-in color picker with custom palette support
+- **Layer System**: Unlimited layers with opacity, visibility, and drag-and-drop reordering
+- **Advanced Brush**: Customizable sizes (1-10px) with color picker and custom palettes
 - **Grid System**: Toggleable pixel grid for precision drawing
 
 ### 🎬 **Animation Suite**
-- **Multi-Frame Animation**: Create complex animations with unlimited frames
-- **Onion Skinning**: Visual previous frame overlay with adjustable opacity
-- **Frame Controls**: Play, pause, skip forward/backward through animations
-- **FPS Control**: Adjustable frame rate (1-30 FPS)
-- **GIF Export**: High-quality GIF generation and download
-- **Real-time Preview**: Live animation preview with recording timer
+- **Multi-Frame Animation**: Unlimited frames with onion skinning and adjustable opacity
+- **Playback Controls**: Play, pause, skip with adjustable FPS (1-30)
+- **Export Options**: High-quality GIF generation and download
 
 ### 🔗 **Blockchain Integration**
 - **Base Chain Native**: Built specifically for Base ecosystem
@@ -39,16 +34,13 @@ Pixelminter is a sophisticated pixel art creation platform that combines traditi
 - **Animated BasePaint Contributions**: Create animated sequences directly on the daily BasePaint canvas
 - **Daily Canvas Interaction**: Participate in the community-driven daily painting sessions
 - **NFT Minting**: Mint individual pixel art pieces as NFTs
-- **Wallet Connection**: Native OnchainKit wallet integration with Coinbase Wallet, WalletConnect, and injected wallets
-- **Smart Contracts**: Custom ERC721 and ERC1155 implementations
+- **Advanced Wallet Integration**: OnchainKit-powered wallet with identity management and multi-wallet support
 
 ### 🛠 **Advanced Features**
 - **Undo/Redo System**: Complete history management with keyboard shortcuts
-- **Canvas Zoom**: Smooth zoom controls for detailed work
-- **Image Upload**: Import and work with reference images
+- **Canvas Controls**: Smooth zoom and image upload for reference work
+- **Cross-Platform**: Responsive design with touch support for mobile creation
 - **State Persistence**: Automatic saving and cache management
-- **Responsive Design**: Works on desktop and mobile devices
-- **Touch Support**: Full touch interface for mobile creation
 
 ## 🏗 Technical Architecture
 
@@ -65,33 +57,12 @@ Pixelminter is a sophisticated pixel art creation platform that combines traditi
 - **Viem 2.21.1** for low-level Ethereum interactions and contract calls
 - **Base Chain** as the primary blockchain network
 
-### **OnchainKit Wallet Features**
-- **ConnectWallet Component**: Native wallet connection with modal and dropdown variants
-- **Identity Management**: Avatar, name resolution, and ENS/Basename support
-- **Transaction Components**: Built-in transaction status and lifecycle management
-- **Multi-Wallet Support**: Coinbase Wallet, WalletConnect, and injected wallet compatibility
-- **Responsive Design**: Mobile-optimized wallet interface with touch support
-- **Custom Styling**: Tailored UI with pixel art theme integration
-
 ### **Animation & Graphics**
 - **GIF.js** for client-side GIF generation
 - **Canvas API** for high-performance pixel rendering
 - **Custom rendering engine** optimized for pixel art
 
-### **Smart Contracts**
-```solidity
-// BasePaint Integration
-contract BasePaint is ERC1155
-- Daily collaborative painting sessions
-- Pixel-by-pixel contribution tracking
-- Revenue sharing for contributors
 
-// Pixelminter NFT
-contract PixelminterNFT is ERC721
-- Individual art piece minting
-- Metadata management
-- Ownership verification
-```
 
 ## 🚀 Getting Started
 
@@ -181,23 +152,7 @@ npm start
 - **Onion Skin Opacity**: 0-100%
 - **Auto-save**: Enabled by default
 
-## 🎨 Art Tools Reference
 
-### **Brush Tool**
-- Variable size (1-5px)
-- Color picker integration
-- Pressure sensitivity (on supported devices)
-
-### **Layer System**
-- **Add/Remove**: Unlimited layer creation
-- **Opacity Control**: 0-100% transparency
-- **Visibility Toggle**: Show/hide individual layers
-- **Reordering**: Drag and drop layer arrangement
-
-### **Animation Tools**
-- **Frame Management**: Add, delete, duplicate frames
-- **Onion Skinning**: Semi-transparent previous frame overlay
-- **Timeline Controls**: Play, pause, step through frames
 
 ## 🌐 Blockchain Integration
 
