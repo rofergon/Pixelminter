@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import SidePanel from './SidePanel';
 import ToolPanel from './ToolPanel';
@@ -24,7 +23,6 @@ interface PixelArtUIProps {
   onGridSizeChange: (newSize: number) => void;
   canUndo: boolean;
   canRedo: boolean;
-  syncPixelGridWithCurrentFrame: () => void;
   handleShiftFrame: (direction: 'left' | 'right' | 'up' | 'down') => void;
   addLayer: () => void;
   removeLayer: (id: string) => void;
@@ -59,7 +57,6 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
   onGridSizeChange,
   canUndo,
   canRedo,
-  syncPixelGridWithCurrentFrame,
   handleShiftFrame,
   addLayer,
   removeLayer,
@@ -70,7 +67,7 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
   reorderLayers,
   brushData,
   updateBrushData,
-  updateDay,
+  updateDay: _updateDay,
   toggleOnionSkinning,
   updateOnionSkinningOpacity,
   onionSkinningCanvas,
@@ -176,7 +173,6 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
             updateState={updateState}
             handleExtractPalette={handleExtractPalette}          
             onGridSizeChange={onGridSizeChange}
-            isExporting={false}
             addLayer={addLayer}
             removeLayer={removeLayer}
             updateLayerVisibility={updateLayerVisibility}

@@ -7,11 +7,11 @@ interface UseHandleInteractionProps {
   stateRef: MutableRefObject<State>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   containerRef: React.RefObject<HTMLDivElement>;
-  updatePixel: (x: number, y: number, color: string | null) => void;
+  updatePixel: (_x: number, _y: number, _color: string | null) => void;
   updateCanvasDisplay: () => void;
-  saveState: (changes: [string, string][]) => void;
-  updateState: (newState: Partial<State> | ((prevState: State) => Partial<State>)) => void;
-  markPixelAsModified: (layerId: string, key: string) => void;  
+  saveState: (_changes: [string, string][]) => void;
+  updateState: (_newState: Partial<State> | ((_prevState: State) => Partial<State>)) => void;
+  markPixelAsModified: (_layerId: string, _key: string) => void;  
 }
 
 export const useHandleInteraction = ({

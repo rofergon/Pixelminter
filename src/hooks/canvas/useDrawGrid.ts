@@ -1,4 +1,4 @@
-import { useCallback, useRef, MutableRefObject } from 'react';
+import { useCallback, MutableRefObject } from 'react';
 import { State } from '../../types/types';
 
 function useDrawGrid(

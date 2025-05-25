@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { State, Frame, Layer, HistoryEntry } from '../types/types';
 import { loadStateFromCache } from './useCacheState';
@@ -232,9 +231,7 @@ const usePixelArtStateManager = () => {
     setFps: (newFps: number) => updateState({ fps: newFps }),
   }), [updateState]);
 
-  const syncPixelGridWithCurrentFrame = () => {
-    // Implementa la lógica necesaria
-  };
+
 
   const canUndo = useMemo(() => state.frames[state.currentFrameIndex].historyIndex >= 0, [state.frames, state.currentFrameIndex]);
   const canRedo = useMemo(() => state.frames[state.currentFrameIndex].historyIndex < state.frames[state.currentFrameIndex].history.length - 1, [state.frames, state.currentFrameIndex]);
@@ -272,7 +269,6 @@ const usePixelArtStateManager = () => {
     ...fpsActions, // Añadimos las acciones de FPS
     canUndo,
     canRedo,
-    syncPixelGridWithCurrentFrame,
     updateDay,
     toggleOnionSkinning,
     updateOnionSkinningOpacity,

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import PixelArtUI from './PixelArtUI';
 import { useHandleInteraction } from '../hooks/canvas/useHandleInteraction';
@@ -24,7 +23,6 @@ const PixelArt: React.FC = () => {
     clearCanvas: clearCanvasFromHook,
     canUndo,
     canRedo,
-    syncPixelGridWithCurrentFrame,
     addLayer,
     removeLayer,
     updateLayerVisibility,
@@ -255,7 +253,6 @@ const PixelArt: React.FC = () => {
         updateLayerVisibility={updateLayerVisibility}
         updateLayerOpacity={updateLayerOpacity}
         setActiveLayerId={setActiveLayerId}
-        syncPixelGridWithCurrentFrame={syncPixelGridWithCurrentFrame}
         updateLayerName={updateLayerName}
         updateBrushData={updateBrushData}
         brushData={state.brushData}

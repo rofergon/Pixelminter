@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable no-unused-vars */
 import React, { useMemo, useState, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -9,14 +8,13 @@ import CustomPalette from '@/components/CustomPalette';
 import ConnectWalletButton from '@/components/ConnectWalletButton';
 import LayerManager from '@/components/LayerPanel';
 import { State, BrushData } from '@/types/types';
-import { Palette, Grid, Save, Droplet, Layers, Plus, Download, Eye, Upload, Trash2 } from 'lucide-react';
+import { Palette, Grid, Save, Droplet, Layers, Plus, Eye, Trash2 } from 'lucide-react';
 import { useSidePanelLogic } from '@/hooks/useSidePanelLogic';
 import { usePixelCountAndDroplets } from '@/hooks/tools/usePixelCount';
 import MintBPButton from '@/components/MintBPButton';
 import MintPixelminterButton from '@/components/MintPixelminterButton';
 import { encodePixelData } from '@/hooks/useEncodingUtils';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { decodeImage, applyDecodedImage, validateImageFile } from '@/hooks/useDecodingImage';
 import UploadPixelArt from '@/components/UploadPixelArt';
 import { clearCache } from '@/hooks/useCacheState';
 import PaletteButton from './PaletteButton';
@@ -26,7 +24,6 @@ interface SidePanelProps {
   updateState: (newState: Partial<State> | ((prevState: State) => Partial<State>)) => void;
   handleExtractPalette: () => void;
   onGridSizeChange: (newSize: number) => void;
-  isExporting: boolean;
   addLayer: () => void;
   removeLayer: (id: string) => void;
   updateLayerVisibility: (id: string, visible: boolean) => void;
@@ -46,7 +43,6 @@ const SidePanel: React.FC<SidePanelProps> = ({
   updateState,
   handleExtractPalette,
   onGridSizeChange,
-  isExporting,
   addLayer,
   removeLayer,
   updateLayerVisibility,
@@ -64,10 +60,10 @@ const SidePanel: React.FC<SidePanelProps> = ({
 
   const {
     isClient,
-    toggleBackgroundImage,
+    toggleBackgroundImage: _toggleBackgroundImage,
     handleAddCustomColor,
     handleClearCustomPalette,
-    handleEncodeData
+    handleEncodeData: _handleEncodeData
   } = useSidePanelLogic(state, updateState, handleExtractPalette, onGridSizeChange);
   const [isCustomPaletteOpen, setIsCustomPaletteOpen] = useState(false);
   const [isLayersOpen, setIsLayersOpen] = useState(false);
@@ -141,7 +137,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
 
               <Button
                 onClick={handleExtractPalette}
-                disabled={state.isPaletteLoading || isExporting}
+                disabled={state.isPaletteLoading}
                 className="h-8 w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-600"
               >
                 {state.isPaletteLoading ? (
