@@ -39,7 +39,7 @@ Pixelminter is a sophisticated pixel art creation platform that combines traditi
 - **Animated BasePaint Contributions**: Create animated sequences directly on the daily BasePaint canvas
 - **Daily Canvas Interaction**: Participate in the community-driven daily painting sessions
 - **NFT Minting**: Mint individual pixel art pieces as NFTs
-- **Wallet Connection**: Seamless integration with Coinbase Wallet and WalletConnect
+- **Wallet Connection**: Native OnchainKit wallet integration with Coinbase Wallet, WalletConnect, and injected wallets
 - **Smart Contracts**: Custom ERC721 and ERC1155 implementations
 
 ### 🛠 **Advanced Features**
@@ -60,10 +60,18 @@ Pixelminter is a sophisticated pixel art creation platform that combines traditi
 - **Lucide React** for consistent iconography
 
 ### **Blockchain Technologies**
-- **Wagmi 2.12.11** for Ethereum interactions
-- **RainbowKit 2.1.6** for wallet connection UI
-- **Coinbase OnchainKit 0.31.3** for transaction management
+- **Wagmi 2.12.11** for Ethereum interactions and wallet management
+- **Coinbase OnchainKit 0.38.13** for comprehensive wallet UI, transactions, identity, and Base chain integration
+- **Viem 2.21.1** for low-level Ethereum interactions and contract calls
 - **Base Chain** as the primary blockchain network
+
+### **OnchainKit Wallet Features**
+- **ConnectWallet Component**: Native wallet connection with modal and dropdown variants
+- **Identity Management**: Avatar, name resolution, and ENS/Basename support
+- **Transaction Components**: Built-in transaction status and lifecycle management
+- **Multi-Wallet Support**: Coinbase Wallet, WalletConnect, and injected wallet compatibility
+- **Responsive Design**: Mobile-optimized wallet interface with touch support
+- **Custom Styling**: Tailored UI with pixel art theme integration
 
 ### **Animation & Graphics**
 - **GIF.js** for client-side GIF generation
@@ -245,7 +253,11 @@ Pixelminter/
 - **`CanvasComponent.tsx`**: High-performance canvas rendering
 - **`AnimationControls.tsx`**: Animation playback and export
 - **`LayerPanel.tsx`**: Layer management interface
-- **`MintBPButton.tsx`**: BasePaint integration component
+- **`ConnectWalletButton.tsx`**: OnchainKit wallet integration with BasePaint brush detection
+- **`EnhancedWallet.tsx`**: Multiple wallet UI variants (modal, island, advanced)
+- **`OnchainProviders.tsx`**: Wagmi and OnchainKit provider configuration
+- **`MintBPButton.tsx`**: BasePaint integration with OnchainKit transactions
+- **`MintPixelminterButton.tsx`**: NFT minting with OnchainKit transaction components
 
 ### State Management
 The application uses a custom state manager (`usePixelArtStateManager`) that handles:
