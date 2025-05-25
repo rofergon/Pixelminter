@@ -75,18 +75,18 @@ const usePixelArtStateManager = () => {
 
   const [state, setState] = useState<State>(initialState);
 
-  const updateState = useCallback((newState: Partial<State> | ((prev: State) => Partial<State>)) => {
+  const updateState = useCallback((newState: Partial<State> | ((_prev: State) => Partial<State>)) => {
     setState(prev => {
       const updatedState = { ...prev, ...(typeof newState === 'function' ? newState(prev) : newState) };
       return updatedState;
     });
   }, []);
 
-  const updateFrames = useCallback((updater: (frames: Frame[]) => Frame[]) => {
+  const updateFrames = useCallback((updater: (_frames: Frame[]) => Frame[]) => {
     updateState(prev => ({ frames: updater(prev.frames) }));
   }, [updateState]);
 
-  const updateCurrentFrame = useCallback((updater: (frame: Frame) => Frame) => {
+  const updateCurrentFrame = useCallback((updater: (_frame: Frame) => Frame) => {
     updateFrames(frames => frames.map((frame, index) => index === state.currentFrameIndex ? updater(frame) : frame));
   }, [updateFrames, state.currentFrameIndex]);
 
@@ -277,12 +277,6 @@ const usePixelArtStateManager = () => {
 };
 
 // Funciones auxiliares
-const updatePixelMap = (pixels: Map<string, string>, x: number, y: number, color: string | null) => {
-  const newPixels = new Map(pixels);
-  const key = `${x},${y}`;
-  color ? newPixels.set(key, color) : newPixels.delete(key);
-  return newPixels;
-};
 
 const undoPixelChanges = (pixels: Map<string, string>, changes: [string, string][], history: HistoryEntry[], historyIndex: number) => {
   const newPixels = new Map(pixels);
