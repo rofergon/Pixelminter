@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   ConnectWallet,
+  ConnectWalletText,
   Wallet,
   WalletDropdown,
   WalletDropdownLink,
@@ -80,8 +81,8 @@ const ConnectWalletButton: React.FC<{ updateBrushData: (data: BrushData | null) 
                      disabled:opacity-50 disabled:cursor-not-allowed
                      backdrop-blur-sm flex-shrink-0
                      ${isConnected ? 'min-w-[140px] max-w-[180px]' : 'min-w-[100px]'}`}
-          text={isConnected ? undefined : "Connect Wallet"}
         >
+          {!isConnected && <ConnectWalletText className="text-white font-medium">Connect Wallet</ConnectWalletText>}
           <Avatar
             className="h-5 w-5 flex-shrink-0"
             defaultComponent={<DefaultAvatar />}

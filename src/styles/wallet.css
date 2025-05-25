@@ -219,7 +219,7 @@
 
 /* Text color fixes for modal content */
 .ockModal_Content * {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .ockModal_Content .ockText_foreground {
@@ -228,6 +228,70 @@
 
 .ockModal_Content .ockText_foreground_muted {
   color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Force white text for all OnchainKit components */
+[class*="ock"] * {
+  color: white !important;
+}
+
+/* Specific overrides for OnchainKit text elements */
+.ockConnectWallet_Text,
+.ockWallet_Text,
+.ockModal_Text,
+.ockButton_Text {
+  color: white !important;
+}
+
+/* Override any black text in wallet components */
+.ockConnectWallet *,
+.ockWalletDropdown *,
+.ockModal_Content *,
+.ockIdentity *,
+.ockWallet * {
+  color: white !important;
+}
+
+/* Specific text elements that might have black text */
+span[class*="ock"],
+p[class*="ock"],
+div[class*="ock"] {
+  color: white !important;
+}
+
+/* ConnectWallet button text override */
+.ockConnectWallet {
+  color: white !important;
+}
+
+.ockConnectWallet span,
+.ockConnectWallet p,
+.ockConnectWallet div {
+  color: white !important;
+}
+
+/* ConnectWalletText component override */
+.ockConnectWalletText {
+  color: white !important;
+}
+
+/* Button text in all states */
+button[class*="ock"] {
+  color: white !important;
+}
+
+button[class*="ock"] * {
+  color: white !important;
+}
+
+/* Wallet connection modal text */
+.ockModal_Container * {
+  color: white !important;
+}
+
+/* Ensure wallet dropdown text is white */
+.ockWalletDropdown * {
+  color: white !important;
 }
 
 /* Mejoras para el nombre del usuario en el botón conectado */
