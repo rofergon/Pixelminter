@@ -11,6 +11,9 @@
 /* Import OnchainKit Wallet custom styles */
 @import './wallet.css';
 
+/* Import Pixel Art Effects */
+@import './pixel-effects.css';
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -38,6 +41,20 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    
+    /* Pixel Art Theme Variables */
+    --pixel-bg-primary: #0f1419;
+    --pixel-bg-secondary: #1a1f2e;
+    --pixel-bg-tertiary: #252b3d;
+    --pixel-accent-primary: #4f46e5;
+    --pixel-accent-secondary: #6366f1;
+    --pixel-accent-tertiary: #0891b2;
+    --pixel-text-primary: #e2e8f0;
+    --pixel-text-secondary: #cbd5e1;
+    --pixel-text-muted: #64748b;
+    --pixel-border: #334155;
+    --pixel-hover: #475569;
+    
     --text-ock-inverse: theme(colors.gray.50);
     --text-ock-foreground: theme(colors.gray.950);
     --text-ock-foreground-muted: theme(colors.gray.600);
@@ -125,7 +142,6 @@
     --bg-ock-default-reverse: theme(colors.gray.50);
     --bg-ock-dropdown: theme(colors.gray.900);
     --bg-ock-dropdown-hover: theme(colors.gray.800);
-    
   }
 }
 
@@ -135,54 +151,155 @@
   }
   body {
     @apply bg-background text-foreground;
+    background: linear-gradient(135deg, var(--pixel-bg-primary) 0%, var(--pixel-bg-secondary) 100%);
+    min-height: 100vh;
   }
 }
 
-/* Palette color buttons */
+/* Enhanced Palette Buttons with Pixel Art Aesthetic */
 .palette-button {
-  /* @apply w-10 h-10 rounded-md transition-transform hover:scale-110; */
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 0.375rem;
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  border-radius: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border: 2px solid transparent;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .palette-button:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 0 2px var(--pixel-accent-primary);
 }
 
 .palette-button.selected {
-  /* @apply ring-2 ring-white; */
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-color: rgb(255 255 255);
+  border-color: var(--pixel-accent-primary);
+  box-shadow: 
+    0 4px 12px rgba(99, 102, 241, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 0 3px rgba(99, 102, 241, 0.3);
+  transform: scale(1.05);
 }
 
-.palette-button[data-color] {
-  background-color: attr(data-color);
-}
-
-/* Genera selectores específicos para cada color si son conocidos */
-.palette-button[data-color="#ff0000"] {
-  background-color: #ff0000;
-}
-
-/* O usa un selector más genérico */
-.palette-button::before {
+.palette-button::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-color: var(--button-color);
   border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
 }
 
-/* Side panel color buttons */
+/* Enhanced Tool Container */
+.tool-container {
+  background: linear-gradient(135deg, var(--pixel-bg-secondary) 0%, var(--pixel-bg-tertiary) 100%);
+  border: 1px solid var(--pixel-border);
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+/* Enhanced Side Panel Color Buttons */
 .color-button {
   width: 100%;
   height: 100%;
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
   background-color: var(--button-color);
+  position: relative;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.color-button:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.color-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
+}
+
+/* Pixel Art Specific Animations */
+@keyframes pixelGlow {
+  0%, 100% { 
+    box-shadow: 0 0 5px var(--pixel-accent-primary);
+  }
+  50% { 
+    box-shadow: 0 0 20px var(--pixel-accent-primary), 0 0 30px var(--pixel-accent-secondary);
+  }
+}
+
+.pixel-glow {
+  animation: pixelGlow 2s ease-in-out infinite;
+}
+
+/* Enhanced Scrollbars */
+.pixel-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.pixel-scrollbar::-webkit-scrollbar-track {
+  background: var(--pixel-bg-secondary);
+  border-radius: 4px;
+}
+
+.pixel-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--pixel-accent-primary), var(--pixel-accent-secondary));
+  border-radius: 4px;
+  border: 1px solid var(--pixel-border);
+}
+
+.pixel-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--pixel-accent-secondary), var(--pixel-accent-tertiary));
+}
+
+/* Glass Effect for Panels */
+.glass-panel {
+  background: rgba(26, 31, 46, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Neon Button Effects */
+.neon-button {
+  background: linear-gradient(135deg, var(--pixel-accent-primary), var(--pixel-accent-secondary));
+  border: none;
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 0 20px rgba(99, 102, 241, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.neon-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 0 30px rgba(99, 102, 241, 0.5),
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Pixel Grid Enhancement */
+.pixel-grid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
 }

@@ -103,101 +103,115 @@ const AnimationControls: React.FC<AnimationControlsProps> = React.memo(({
     updateCanvasDisplay();
   }, [updateState, updateCanvasDisplay]);
 
-  const buttonStyle = useMemo(() => "w-9 h-9 p-2 bg-[#1f2a37] text-[#6b7280] hover:bg-[#374151] hover:text-[#9ca3af] focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50", []);
+  const buttonStyle = useMemo(() => "w-8 h-8 p-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-slate-200 border border-slate-700 hover:border-slate-600 rounded-lg transition-all duration-200 hover:scale-105 shadow-sm", []);
 
   const isLargeScreen = useIsLargeScreen(1024);
 
   const renderControls = useMemo(() => (
     <div className="flex items-center justify-between gap-2 mb-2">
       <div className="flex items-center space-x-2">
-        <Button onClick={addFrame} className={`${buttonStyle} flex`}>
-          <Plus className="w-full h-full" />
+        <Button onClick={addFrame} className={`${buttonStyle} bg-slate-700 hover:bg-slate-600 text-slate-200 border-slate-600`}>
+          <Plus className="w-4 h-4" />
         </Button>
-        <Button onClick={() => setIsPlaying(!isPlaying)} className={buttonStyle}>
-          {isPlaying ? <Pause className="w-full h-full" /> : <Play className="w-full h-full" />}
+        <Button onClick={() => setIsPlaying(!isPlaying)} className={`${buttonStyle} ${isPlaying ? 'bg-red-700 hover:bg-red-600 text-red-200 border-red-600' : 'bg-green-700 hover:bg-green-600 text-green-200 border-green-600'}`}>
+          {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
         </Button>
         <Button
           onClick={() => changeFrame((state.currentFrameIndex - 1 + state.frames.length) % state.frames.length)}
           disabled={state.frames.length <= 1}
-          className={buttonStyle}
+          className={`${buttonStyle} disabled:opacity-50 disabled:cursor-not-allowed`}
           title="Previous Frame"
         >
-          <SkipBack className="w-full h-full" />
+          <SkipBack className="w-4 h-4" />
         </Button>
         <Button
           onClick={() => changeFrame((state.currentFrameIndex + 1) % state.frames.length)}
           disabled={state.frames.length <= 1}
-          className={buttonStyle}
+          className={`${buttonStyle} disabled:opacity-50 disabled:cursor-not-allowed`}
           title="Next Frame"
         >
-          <SkipForward className="w-full h-full" />
+          <SkipForward className="w-4 h-4" />
         </Button>
         {isLargeScreen && (
           <>
-            <div className="flex items-center space-x-2 ml-4">
+            <div className="flex items-center space-x-2 ml-4 bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700">
               <Slider
                 min={1} max={30} step={1} value={[fps]}
                 onValueChange={value => setFps(value[0])}
-                className="w-32"
+                className="w-24"
               />
-              <span className="text-sm font-medium">{fps} FPS</span>
-            </div>
-            <div className="flex items-center gap-2 font-roboto ml-4">
-              <span className="flex items-center gap-1 text-red-600 animate-pulse">
-                REC
-                <svg viewBox="0 0 2 2" className="h-3 w-3 fill-current">
-                  <circle cx={1} cy={1} r={1} />
-                </svg>
+              <span className="text-xs font-medium text-slate-300 font-mono bg-slate-700 px-1.5 py-0.5 rounded min-w-[50px] text-center">
+                {fps} FPS
               </span>
-              00:{seconds.toString().padStart(2, '0')}.{frame.toString().padStart(2, '0')}
+            </div>
+            <div className="flex items-center gap-1.5 font-mono ml-4 bg-slate-800/30 px-2 py-1 rounded-lg border border-slate-700/50">
+              <span className="flex items-center gap-1 text-red-400 text-xs">
+                REC
+                <div className="h-2 w-2 bg-red-500 rounded-full animate-pulse"></div>
+              </span>
+              <span className="text-red-300 font-mono text-xs">
+                00:{seconds.toString().padStart(2, '0')}.{frame.toString().padStart(2, '0')}
+              </span>
             </div>
           </>
         )}
       </div>
       <div className="flex items-center space-x-2">
         {!isLargeScreen && (
-          <div className="flex items-center gap-2 font-roboto text-xs mr-2">
-            <span className="flex items-center gap-1 text-red-600 animate-pulse">
+          <div className="flex items-center gap-1 font-mono text-xs mr-2 bg-slate-800/30 px-1.5 py-0.5 rounded border border-slate-700/50">
+            <span className="flex items-center gap-1 text-red-400 animate-pulse">
               REC
-              <svg viewBox="0 0 2 2" className="h-2 w-2 fill-current">
-                <circle cx={1} cy={1} r={1} />
-              </svg>
+              <div className="h-1.5 w-1.5 bg-red-500 rounded-full animate-pulse"></div>
             </span>
-            00:{seconds.toString().padStart(2, '0')}.{frame.toString().padStart(2, '0')}
+            <span className="text-red-300">
+              00:{seconds.toString().padStart(2, '0')}.{frame.toString().padStart(2, '0')}
+            </span>
           </div>
         )}
-        <Button onClick={handleDownloadGif} className={`${buttonStyle} flex`}>
-          <Download className="w-full h-full" />
+        <Button 
+          onClick={handleDownloadGif} 
+          className={`${buttonStyle} bg-blue-700 hover:bg-blue-600 text-blue-200 border-blue-600`}
+          disabled={isExporting}
+        >
+          {isExporting ? (
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-200"></div>
+          ) : (
+            <Download className="w-4 h-4" />
+          )}
         </Button>
-        <Switch
-          checked={showFrames}
-          onCheckedChange={setShowFrames}
-          className="data-[state=checked]:bg-blue-500"
-        />
-        <span className="text-sm hidden sm:inline">Show Frames</span>
+        <div className="flex items-center gap-1.5 bg-slate-800/50 px-2 py-1 rounded-lg border border-slate-700">
+          <Switch
+            checked={showFrames}
+            onCheckedChange={setShowFrames}
+            className="data-[state=checked]:bg-slate-600"
+          />
+          <span className="text-xs hidden sm:inline text-slate-300 font-medium">Frames</span>
+        </div>
       </div>
     </div>
-  ), [addFrame, buttonStyle, isPlaying, setIsPlaying, changeFrame, state.currentFrameIndex, state.frames.length, isLargeScreen, fps, setFps, seconds, frame, handleDownloadGif, showFrames, setShowFrames]);
+  ), [addFrame, buttonStyle, isPlaying, setIsPlaying, changeFrame, state.currentFrameIndex, state.frames.length, isLargeScreen, fps, setFps, seconds, frame, handleDownloadGif, showFrames, setShowFrames, isExporting]);
 
   const renderFrameThumbnails = useMemo(() => (
-    <div className="overflow-x-auto whitespace-nowrap mt-2 w-full">
-      {state.frames.map((frame, index) => (
-        <FrameThumbnail
-          key={index}
-          frame={frame}
-          index={index}
-          state={state}
-          updateState={updateState}
-          onDelete={() => deleteFrame(index)}
-          canDelete={state.frames.length > 1}
-          onFrameSelect={handleFrameSelect}
-        />
-      ))}
+    <div className="overflow-x-auto whitespace-nowrap mt-2 w-full pixel-scrollbar">
+      <div className="flex gap-1.5 pb-1">
+        {state.frames.map((frame, index) => (
+          <FrameThumbnail
+            key={index}
+            frame={frame}
+            index={index}
+            state={state}
+            updateState={updateState}
+            onDelete={() => deleteFrame(index)}
+            canDelete={state.frames.length > 1}
+            onFrameSelect={handleFrameSelect}
+          />
+        ))}
+      </div>
     </div>
   ), [state, updateState, deleteFrame, handleFrameSelect]);
 
   return (
-    <div className="p-2 bg-gray-800 text-gray-200">
+    <div className="p-3 bg-slate-800/60 text-slate-200 backdrop-blur-sm border-t border-slate-700">
       {renderControls}
       {showFrames && renderFrameThumbnails}
     </div>

@@ -106,26 +106,30 @@ const SidePanel: React.FC<SidePanelProps> = ({
   return (
     <div
       id='side-panel'
-      className={`flex-grow bg-gray-900 text-gray-200 transition-all duration-300 ${
-        isOpen ? 'w-full max-w-sm p-3 space-y-3' : 'w-12 p-1'
+      className={`flex-grow glass-panel pixel-scrollbar transition-all duration-300 ${
+        isOpen ? 'w-full max-w-md p-3 space-y-3' : 'w-12 p-1'
       }`}
     >
       {isOpen ? (
-        <div className="space-y-3 h-full overflow-y-auto">
-          <div className="tool-container rounded-md shadow-sm overflow-hidden bg-gray-800">
-            <div className="p-2">
-              <h3 className="text-xs font-semibold flex items-center mb-3">
-                <Palette className="mr-2" size={16} />
-                Basepaint
+        <div className="space-y-3 h-full overflow-y-auto pixel-scrollbar">
+          <div className="tool-container rounded-lg shadow-md overflow-hidden">
+            <div className="p-3">
+              <h3 className="text-sm font-medium flex items-center mb-3 text-slate-300">
+                <Palette className="mr-2 text-slate-400" size={16} />
+                <span className="text-slate-200">
+                  Basepaint
+                </span>
                 {isClient && state.palette.length > 0 && (
-                  `: ${state.theme}`
+                  <span className="ml-2 text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded-md">
+                    {state.theme}
+                  </span>
                 )}
               </h3>
 
-              <div className="flex items-center gap-5 mb-3">
-                <div className="h-8 w-16 bg-gray-700 px-3 py-1 rounded-md shadow-sm flex items-center justify-center flex-shrink-0">
-                  <Droplet className="text-yellow-300 fill-yellow-300" size={12} />
-                  <span className="text-yellow-300 font-semibold text-xs ml-1 font-variant-numeric tabular-nums">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-8 w-20 bg-slate-800 px-2 py-1 rounded-lg shadow-sm flex items-center justify-center flex-shrink-0 border border-slate-700">
+                  <Droplet className="text-amber-400 fill-amber-400" size={12} />
+                  <span className="text-amber-400 font-medium text-xs ml-1 font-mono">
                     {droplets}
                   </span>
                 </div>
@@ -138,13 +142,20 @@ const SidePanel: React.FC<SidePanelProps> = ({
               <Button
                 onClick={handleExtractPalette}
                 disabled={state.isPaletteLoading || isExporting}
-                className="h-8 w-full bg-blue-600 text-gray-200 hover:bg-blue-700 transition-colors duration-300"
+                className="h-8 w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-600"
               >
-                {state.isPaletteLoading ? 'Loading...' : 'Get Today\'s Palette'}
+                {state.isPaletteLoading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-slate-300 mr-2"></div>
+                    Loading...
+                  </div>
+                ) : (
+                  'Get Today\'s Palette'
+                )}
               </Button>
 
               {isClient && state.palette.length > 0 && (
-                <div className="mt-4">
+                <div className="mt-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
                   <ColorPalette
                     onColorSelect={(color: string) => updateState({ color })}
                     palette={state.palette}
@@ -153,8 +164,11 @@ const SidePanel: React.FC<SidePanelProps> = ({
                 </div>
               )}
 
-              <div className="mt-3">
-                <h4 className="text-xs font-semibold mb-1">Background Opacity</h4>
+              <div className="mt-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                <h4 className="text-xs font-medium mb-2 text-slate-300 flex items-center">
+                  <Eye className="mr-1 text-slate-400" size={14} />
+                  Background Opacity
+                </h4>
                 <Slider
                   id="backgroundOpacity"
                   min={0}
@@ -164,46 +178,52 @@ const SidePanel: React.FC<SidePanelProps> = ({
                   onValueChange={(value: number[]) => updateState({ backgroundOpacity: value[0] })}
                   className="w-full"
                 />
-                <p className="text-center text-xs mt-1">
+                <p className="text-center text-xs mt-1 text-slate-400 font-mono bg-slate-700 px-2 py-0.5 rounded-md inline-block">
                   {Math.round((state.backgroundOpacity || 0) * 100)}%
                 </p>
               </div>
 
-              <div className="mt-3 bg-gray-700 p-2 rounded-md shadow-sm">
-                <p className="text-xs font-semibold flex items-center text-gray-200">
-                  Pixels used: <span className="font-variant-numeric tabular-nums ml-1">{pixelCount}</span>
+              <div className="mt-3 bg-slate-800/30 p-2 rounded-lg shadow-sm border border-slate-700/50">
+                <p className="text-xs font-medium flex items-center text-slate-300">
+                  <Grid className="mr-1" size={14} />
+                  Pixels used: 
+                  <span className="font-mono ml-1 bg-slate-700 px-1.5 py-0.5 rounded text-slate-200">
+                    {pixelCount}
+                  </span>
                 </p>
               </div>
 
               <Button
                 onClick={handleEncode}
-                className="h-8 mt-2 w-full bg-blue-600 text-gray-200 hover:bg-blue-700 transition-colors duration-300"
+                className="h-8 mt-3 w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md border border-slate-600"
               >
-                <Save className="mr-1" size={12} aria-hidden="true" />
+                <Save className="mr-1" size={14} aria-hidden="true" />
                 Commit To Basepaint
               </Button>
 
               {encodedData && (
-                <MintBPButton
-                  state={state}
-                  encodedData={encodedData}
-                  resetEncodedState={resetEncodedState}
-                  onEncode={handleEncode}
-                />
+                <div className="mt-3 p-3 bg-slate-800/30 rounded-lg border border-slate-700/50">
+                  <MintBPButton
+                    state={state}
+                    encodedData={encodedData}
+                    resetEncodedState={resetEncodedState}
+                    onEncode={handleEncode}
+                  />
+                </div>
               )}
             </div>
           </div>
 
-          <div className="tool-container rounded-md shadow-sm overflow-hidden bg-gray-800">
+          <div className="tool-container rounded-lg shadow-md overflow-hidden">
             <button
               onClick={() => setIsCustomPaletteOpen(!isCustomPaletteOpen)}
-              className="w-full p-2 flex justify-between items-center text-left hover:bg-gray-700"
+              className="w-full p-2.5 flex justify-between items-center text-left hover:bg-slate-700/30 transition-all duration-200 rounded-t-lg"
             >
-              <h3 className="text-xs font-semibold flex items-center"><Plus className="mr-2" size={16} />Custom Palette</h3>
-              {isCustomPaletteOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              <h3 className="text-xs font-medium flex items-center text-slate-300"><Plus className="mr-1" size={14} />Custom Palette</h3>
+              {isCustomPaletteOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
             {isCustomPaletteOpen && (
-              <div className="px-2 pb-2">
+              <div className="px-2.5 pb-2.5">
                 <CustomPalette
                   customPalette={state.customPalette}
                   onAddColor={handleAddCustomColor}
@@ -215,16 +235,16 @@ const SidePanel: React.FC<SidePanelProps> = ({
             )}
           </div>
 
-          <div className="tool-container rounded-md shadow-sm overflow-hidden bg-gray-800">
+          <div className="tool-container rounded-lg shadow-md overflow-hidden">
             <button
               onClick={() => setIsLayersOpen(!isLayersOpen)}
-              className="w-full p-2 flex justify-between items-center text-left hover:bg-gray-700"
+              className="w-full p-2.5 flex justify-between items-center text-left hover:bg-slate-700/30 transition-all duration-200 rounded-t-lg"
             >
-              <h3 className="text-xs font-semibold flex items-center"><Layers className="mr-2" size={16} />Layers</h3>
-              {isLayersOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              <h3 className="text-xs font-medium flex items-center text-slate-300"><Layers className="mr-1" size={14} />Layers</h3>
+              {isLayersOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
             {isLayersOpen && (
-              <div className="p-2">
+              <div className="p-2.5">
                 <LayerManager
                   state={state}
                   addLayer={addLayer}
@@ -239,16 +259,16 @@ const SidePanel: React.FC<SidePanelProps> = ({
             )}
           </div>
 
-          <div className="tool-container rounded-md shadow-sm overflow-hidden bg-gray-800">
+          <div className="tool-container rounded-lg shadow-md overflow-hidden">
             <button
               onClick={() => setIsGridSizeOpen(!isGridSizeOpen)}
-              className="w-full p-2 flex justify-between items-center text-left hover:bg-gray-700"
+              className="w-full p-2.5 flex justify-between items-center text-left hover:bg-slate-700/30 transition-all duration-200 rounded-t-lg"
             >
-              <h3 className="text-xs font-semibold flex items-center"><Grid className="mr-2" size={16} />Grid Size</h3>
-              {isGridSizeOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              <h3 className="text-xs font-medium flex items-center text-slate-300"><Grid className="mr-1" size={14} />Grid Size</h3>
+              {isGridSizeOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
             {isGridSizeOpen && (
-              <div className="p-2">
+              <div className="p-2.5">
                 <Slider
                   min={8}
                   max={256}
@@ -257,25 +277,25 @@ const SidePanel: React.FC<SidePanelProps> = ({
                   onValueChange={(value) => onGridSizeChange(value[0])}
                   className="w-full"
                 />
-                <p className="text-center text-xs mt-1 font-medium">
-                  <span className="font-variant-numeric tabular-nums">{state.gridSize}</span>x<span className="font-variant-numeric tabular-nums">{state.gridSize}</span>
+                <p className="text-center text-xs mt-1 text-slate-400 font-mono bg-slate-700 px-2 py-0.5 rounded-md inline-block">
+                  <span className="font-mono">{state.gridSize}</span>x<span className="font-mono">{state.gridSize}</span>
                 </p>
               </div>
             )}
           </div>
 
-          <div className="tool-container rounded-md shadow-sm overflow-hidden bg-gray-800">
+          <div className="tool-container rounded-lg shadow-md overflow-hidden">
             <button
               onClick={() => setIsOnionSkinningOpen(!isOnionSkinningOpen)}
-              className="w-full p-2 flex justify-between items-center text-left hover:bg-gray-700"
+              className="w-full p-2.5 flex justify-between items-center text-left hover:bg-slate-700/30 transition-all duration-200 rounded-t-lg"
             >
-              <h3 className="text-xs font-semibold flex items-center">
-                <Eye className="mr-2" size={16} />Onion Skinning
+              <h3 className="text-xs font-medium flex items-center text-slate-300">
+                <Eye className="mr-1" size={14} />Onion Skinning
               </h3>
-              {isOnionSkinningOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              {isOnionSkinningOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
             {isOnionSkinningOpen && (
-              <div className="p-2 space-y-2">
+              <div className="p-2.5 space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-xs">Enable</span>
                   <Switch
@@ -284,7 +304,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
                   />
                 </div>
                 {state.onionSkinning && (
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     <p className="text-xs">Opacity</p>
                     <Slider
                       min={0}
@@ -313,13 +333,13 @@ const SidePanel: React.FC<SidePanelProps> = ({
             fps={state.fps}
           />
 
-          <div className="tool-container rounded-md shadow-sm overflow-hidden bg-gray-800">
+          <div className="tool-container rounded-lg shadow-md overflow-hidden">
             <button
               onClick={handleClearCache}
-              className="w-full p-2 flex items-center justify-between text-left hover:bg-red-700 text-red-500 hover:text-white transition-colors duration-300"
+              className="w-full p-2.5 flex items-center justify-between text-left hover:bg-red-700 text-red-500 hover:text-white transition-colors duration-200"
             >
-              <span className="text-xs font-semibold flex items-center">
-                <Trash2 className="mr-2" size={16} />
+              <span className="text-xs font-medium flex items-center">
+                <Trash2 className="mr-1" size={14} />
                 Clear Saved Data
               </span>
             </button>

@@ -178,47 +178,73 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   }, [state.onionSkinning, state.currentFrameIndex, state.frames, renderOnionSkin, state.canvasSize, onionSkinningCanvas, state.zoom]);
 
   return (
-    <div className="overflow-auto max-w-full max-h-full">
+    <div className="overflow-auto max-w-full max-h-full p-4">
       <div
         ref={containerRef}
-        className={`relative ${state.touchEnabled ? '' : 'touch-none'}`}
+        className={`relative ${state.touchEnabled ? '' : 'touch-none'} mx-auto rounded-2xl shadow-2xl border-2 border-slate-600 bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-sm overflow-hidden`}
         style={canvasStyle}
         onContextMenu={(e) => e.preventDefault()}
       >
+        {/* Background Image with Enhanced Styling */}
         {state.dailyImageUrl && state.showBackgroundImage && (
           <div
-            className="absolute inset-0 z-0 w-full h-full bg-cover bg-center"
+            className="absolute inset-0 z-0 w-full h-full bg-cover bg-center rounded-2xl"
             style={{ 
               backgroundImage: `url(${state.dailyImageUrl})`,
-              opacity: state.backgroundOpacity
+              opacity: state.backgroundOpacity,
+              filter: 'blur(0.5px) contrast(1.1)',
             }}
           />
         )}
 
+        {/* Canvas with Enhanced Shadow and Border */}
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 z-10 w-full h-full"
-          width={state.canvasSize}
-          height={state.canvasSize}
+          className="absolute inset-0 z-10 w-full h-full rounded-2xl shadow-inner pixel-perfect"
+          style={{
+            filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.3))',
+          }}
         />
+
+        {/* Grid Canvas with Subtle Styling */}
         <canvas
           ref={gridCanvasRef}
-          className="absolute inset-0 z-20 pointer-events-none"
-          style={{ opacity: state.showGrid ? 1 : 0 }}
-          width={state.canvasSize}
-          height={state.canvasSize}
+          className="absolute inset-0 z-20 w-full h-full pointer-events-none rounded-2xl pixel-perfect"
+          style={{
+            opacity: state.showGrid ? 0.3 : 0,
+            transition: 'opacity 0.3s ease',
+          }}
         />
-        {onionSkinningCanvas && (
-          <canvas
-            ref={onionSkinningCanvas}
-            className="absolute inset-0 z-5 pointer-events-none"
-            style={{
-              opacity: state.onionSkinning ? 1 : 0,
-              transition: 'opacity 0.3s ease-in-out',
-              width: `${state.canvasSize * state.zoom}px`,
-              height: `${state.canvasSize * state.zoom}px`
-            }}
-          />
+
+        {/* Onion Skinning Canvas with Enhanced Styling */}
+        <canvas
+          ref={onionSkinningCanvas}
+          className="absolute inset-0 z-15 w-full h-full pointer-events-none rounded-2xl pixel-perfect"
+          style={{
+            opacity: state.onionSkinning ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+            filter: 'hue-rotate(180deg) saturate(0.7)',
+          }}
+        />
+
+        {/* Corner Decorations */}
+        <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-indigo-400 rounded-tl-lg opacity-50"></div>
+        <div className="absolute top-2 right-2 w-4 h-4 border-r-2 border-t-2 border-indigo-400 rounded-tr-lg opacity-50"></div>
+        <div className="absolute bottom-2 left-2 w-4 h-4 border-l-2 border-b-2 border-indigo-400 rounded-bl-lg opacity-50"></div>
+        <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-indigo-400 rounded-br-lg opacity-50"></div>
+
+        {/* Zoom Indicator */}
+        {state.zoom !== 1 && (
+          <div className="absolute top-4 right-4 bg-gradient-to-br from-slate-800/90 to-slate-900/90 text-slate-200 px-3 py-1 rounded-lg text-sm font-mono border border-slate-600 backdrop-blur-sm">
+            {Math.round(state.zoom * 100)}%
+          </div>
+        )}
+
+        {/* Grid Size Indicator */}
+        {state.showGrid && (
+          <div className="absolute bottom-4 left-4 bg-gradient-to-br from-slate-800/90 to-slate-900/90 text-slate-200 px-3 py-1 rounded-lg text-sm font-mono border border-slate-600 backdrop-blur-sm">
+            {state.gridSize}×{state.gridSize}
+          </div>
         )}
       </div>
     </div>

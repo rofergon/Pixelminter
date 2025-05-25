@@ -1,0 +1,407 @@
+/* Pixel Art Effects and Animations */
+
+/* Pixel Perfect Rendering */
+.pixel-perfect {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Glitch Effect for Pixel Art */
+@keyframes glitch {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+.pixel-glitch {
+  animation: subtle-glitch 0.3s ease-in-out;
+}
+
+@keyframes subtle-glitch {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(-1px, 1px); }
+  50% { transform: translate(1px, -1px); }
+  75% { transform: translate(-1px, -1px); }
+}
+
+/* Retro CRT Effect */
+.crt-effect {
+  position: relative;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(0, 255, 0, 0.03) 50%
+  );
+  background-size: 100% 4px;
+}
+
+.crt-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 50%,
+    rgba(255, 255, 255, 0.01) 50%
+  );
+  background-size: 4px 100%;
+  pointer-events: none;
+}
+
+/* Pixel Art Button Hover Effects */
+.pixel-button {
+  position: relative;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+}
+
+.pixel-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Scanline Effect */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.scanline-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanline-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 255, 0.8),
+    transparent
+  );
+  animation: scanline 3s linear infinite;
+  pointer-events: none;
+}
+
+/* Pixel Art Loading Animation */
+@keyframes pixelLoad {
+  0%, 100% {
+    box-shadow: 
+      0 0 0 0 var(--pixel-accent-primary),
+      8px 0 0 0 transparent,
+      16px 0 0 0 transparent,
+      24px 0 0 0 transparent;
+  }
+  25% {
+    box-shadow: 
+      0 0 0 0 var(--pixel-accent-primary),
+      8px 0 0 0 var(--pixel-accent-primary),
+      16px 0 0 0 transparent,
+      24px 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 
+      0 0 0 0 var(--pixel-accent-primary),
+      8px 0 0 0 var(--pixel-accent-primary),
+      16px 0 0 0 var(--pixel-accent-primary),
+      24px 0 0 0 transparent;
+  }
+  75% {
+    box-shadow: 
+      0 0 0 0 var(--pixel-accent-primary),
+      8px 0 0 0 var(--pixel-accent-primary),
+      16px 0 0 0 var(--pixel-accent-primary),
+      24px 0 0 0 var(--pixel-accent-primary);
+  }
+}
+
+.pixel-loading {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(100, 116, 139, 0.3);
+  border-radius: 50%;
+  border-top-color: #64748b;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Retro Grid Pattern */
+.retro-grid {
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Neon Text Effect */
+.neon-text {
+  color: var(--pixel-accent-primary);
+  text-shadow: 
+    0 0 5px var(--pixel-accent-primary),
+    0 0 10px var(--pixel-accent-primary),
+    0 0 15px var(--pixel-accent-primary),
+    0 0 20px var(--pixel-accent-primary);
+  animation: neon-flicker 2s ease-in-out infinite alternate;
+}
+
+@keyframes neon-flicker {
+  0%, 100% {
+    text-shadow: 
+      0 0 5px var(--pixel-accent-primary),
+      0 0 10px var(--pixel-accent-primary),
+      0 0 15px var(--pixel-accent-primary),
+      0 0 20px var(--pixel-accent-primary);
+  }
+  50% {
+    text-shadow: 
+      0 0 2px var(--pixel-accent-primary),
+      0 0 5px var(--pixel-accent-primary),
+      0 0 8px var(--pixel-accent-primary),
+      0 0 12px var(--pixel-accent-primary);
+  }
+}
+
+/* Holographic Effect */
+.holographic {
+  background: linear-gradient(45deg, 
+    rgba(100, 116, 139, 0.1) 0%,
+    rgba(71, 85, 105, 0.1) 25%,
+    rgba(100, 116, 139, 0.1) 50%,
+    rgba(71, 85, 105, 0.1) 75%,
+    rgba(100, 116, 139, 0.1) 100%);
+  background-size: 200% 200%;
+  animation: holographic-shift 3s ease-in-out infinite;
+}
+
+@keyframes holographic-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Pixel Art Tooltip */
+.pixel-tooltip {
+  position: relative;
+}
+
+.pixel-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--pixel-bg-secondary);
+  color: var(--pixel-text-primary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid var(--pixel-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.pixel-tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* Retro Button Press Effect */
+.retro-button {
+  background: linear-gradient(145deg, #334155, #1e293b);
+  border: 1px solid #475569;
+}
+
+.retro-button:hover {
+  background: linear-gradient(145deg, #475569, #334155);
+  border-color: #64748b;
+}
+
+.retro-button:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Pixel Art Fade In Animation */
+@keyframes pixelFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pixel-fade-in {
+  animation: pixelFadeIn 0.5s ease-out forwards;
+}
+
+/* Matrix Rain Effect (Subtle) */
+@keyframes matrix-rain {
+  0% {
+    transform: translateY(-100%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+.matrix-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.matrix-bg::before {
+  content: '01010101010101010101';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  color: rgba(0, 255, 0, 0.1);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  animation: matrix-rain 10s linear infinite;
+  word-wrap: break-word;
+}
+
+/* Responsive Pixel Art Scaling */
+@media (max-width: 768px) {
+  .pixel-responsive {
+    image-rendering: auto;
+  }
+}
+
+/* High DPI Display Optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .pixel-perfect {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Glass Panel Effect - More Subtle */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(71, 85, 105, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Tool Container - Simplified */
+.tool-container {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+/* Neon Button - Toned Down */
+.neon-button {
+  background: linear-gradient(145deg, #475569, #334155);
+  border: 1px solid #64748b;
+  color: #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.neon-button:hover {
+  background: linear-gradient(145deg, #64748b, #475569);
+  box-shadow: 0 0 8px rgba(100, 116, 139, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Pixel Scrollbar - Simplified */
+.pixel-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.pixel-scrollbar::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 3px;
+}
+
+.pixel-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.6);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.pixel-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.8);
+}
+
+/* Pixel Glow - Reduced */
+.pixel-glow {
+  box-shadow: 0 0 4px rgba(100, 116, 139, 0.4);
+}
+
+/* Custom Tooltip - Simplified */
+.custom-tooltip {
+  position: relative;
+}
+
+.custom-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 41, 59, 0.9);
+  color: #e2e8f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+}
+
+.custom-tooltip:hover::after {
+  opacity: 1;
+} 

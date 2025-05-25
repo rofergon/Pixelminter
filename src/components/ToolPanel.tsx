@@ -40,24 +40,44 @@ const ToolPanel: React.FC<ToolPanelProps> = ({
   ) => (
     <Button
       onClick={onClick}
-      className={`w-[35px] h-[35px] p-[9px] relative ${feedback[title] ? 'scale-100' : ''} transition-all duration-200 ${
-        isActive ? 'bg-primary text-primary-foreground ring-2 ring-blue-500 ring-opacity-50' : 'bg-[#1f2a37] text-[#6b7280]'
-      }`}
+      className={`
+        w-[36px] h-[36px] p-2 relative group pixel-button retro-button
+        ${feedback[title] ? 'pixel-glitch' : ''} 
+        transition-all duration-200 ease-out
+        ${isActive 
+          ? 'bg-slate-600 text-slate-100 shadow-md border-slate-500' 
+          : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
+        }
+        border border-slate-700 hover:border-slate-600
+        rounded-lg
+        hover:scale-105 hover:shadow-sm
+        ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
+        backdrop-blur-sm
+      `}
       title={title}
       disabled={isClient ? isDisabled : undefined}
+      data-tooltip={title}
     >
-      {React.createElement(icon, { className: `h-full w-full ${isActive ? 'text-blue-550' : ''}` })}
+      {React.createElement(icon, { 
+        className: `h-4 w-4 transition-all duration-200 ${
+          isActive ? 'text-slate-100' : 'group-hover:text-slate-200'
+        }` 
+      })}
+      {isActive && (
+        <div className="absolute inset-0 rounded-lg bg-slate-500/20" />
+      )}
     </Button>
   );
 
   return (
-    <div className="w-12 bg-gray-900 flex flex-col items-center py-3 space-y-1.5 border-r border-gray-800">
-      <div className={`relative ${feedback['colorPicker'] ? 'scale-95' : ''} transition-all duration-200`}>
+    <div className="w-14 bg-slate-900 flex flex-col items-center py-3 space-y-1.5 border-r border-slate-700 shadow-lg">
+      {/* Color Picker with Enhanced Design */}
+      <div className={`relative group ${feedback['colorPicker'] ? 'scale-95' : ''} transition-all duration-200`}>
         <input
           type="color"
           value={state.color}
           onChange={(e) => updateState({ color: e.target.value })}
-          className="w-[35px] h-[35px] p-0 border-2 border-gray-600 bg-transparent rounded-full cursor-pointer transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          className="relative w-[36px] h-[36px] p-0 border-2 border-slate-700 bg-transparent rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 hover:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-500 shadow-sm"
           style={{
             appearance: 'none',
             WebkitAppearance: 'none',
@@ -65,13 +85,15 @@ const ToolPanel: React.FC<ToolPanelProps> = ({
           title="Choose Color"
         />
         <div
-          className="absolute inset-0 rounded-full pointer-events-none"
+          className="absolute inset-0 rounded-lg pointer-events-none border-2 border-slate-700 group-hover:border-slate-600 transition-colors duration-200"
           style={{
             backgroundColor: state.color,
-            boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.1)',
+            boxShadow: `inset 0 0 0 2px rgba(255, 255, 255, 0.1)`,
           }}
         />
       </div>
+
+      {/* Tool Buttons */}
       {renderToolButton(Paintbrush, "brush", () => updateState({ tool: 'brush' }), state.tool === 'brush')}
       {renderToolButton(Slash, "line", () => updateState({ tool: 'line' }), state.tool === 'line')}
       {renderToolButton(PaintBucket, "bucket", () => updateState({ tool: 'bucket' }), state.tool === 'bucket')}
@@ -79,25 +101,37 @@ const ToolPanel: React.FC<ToolPanelProps> = ({
       {renderToolButton(Move, "move", () => {
         updateState({ tool: 'move', touchEnabled: !state.touchEnabled });
       }, state.tool === 'move')}
+      
+      {/* Separator */}
+      <div className="w-6 h-px bg-slate-700 my-1" />
+      
       {renderToolButton(Grid, "toggleGrid", () => updateState({ showGrid: !state.showGrid }), state.showGrid)}
       {renderToolButton(RotateCcw, "undo", () => handleHistoryAction('undo'), false, isClient && !canUndo)}
       {renderToolButton(RotateCw, "redo", () => handleHistoryAction('redo'), false, isClient && !canRedo)}
       {renderToolButton(Trash2, "clearCanvas", clearCanvas)}
+      
+      {/* Separator */}
+      <div className="w-6 h-px bg-slate-700 my-1" />
+      
       {renderToolButton(ZoomOut, "zoomOut", () => handleZoom(false))}
       {renderToolButton(ZoomIn, "zoomIn", () => handleZoom(true))}
       {renderToolButton(Image, "toggleReferenceImage", () => updateState({ showReferenceImage: !state.showReferenceImage }), state.showReferenceImage)}
-      <div className="flex flex-col items-center gap-1">
+      
+      {/* Brush Size Controls with Enhanced Design */}
+      <div className="flex flex-col items-center gap-0.5 mt-1 p-1.5 bg-slate-800 rounded-lg border border-slate-700 shadow-sm">
         <Button
           onClick={() => updateState({ brushSize: Math.min(10, state.brushSize + 1) })}
-          className="w-[35px] h-[20px] p-0 text-xs"
+          className="w-[28px] h-[20px] p-0 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 border border-slate-600 rounded transition-all duration-150 hover:scale-105"
           title="Increase brush size"
         >
           +
         </Button>
-        <div className="text-white text-xs">{state.brushSize}px</div>
+        <div className="text-slate-300 text-xs font-mono bg-slate-700 px-1.5 py-0.5 rounded border border-slate-600 min-w-[28px] text-center">
+          {state.brushSize}
+        </div>
         <Button
           onClick={() => updateState({ brushSize: Math.max(1, state.brushSize - 1) })}
-          className="w-[35px] h-[20px] p-0 text-xs"
+          className="w-[28px] h-[20px] p-0 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 border border-slate-600 rounded transition-all duration-150 hover:scale-105"
           title="Decrease brush size"
         >
           -

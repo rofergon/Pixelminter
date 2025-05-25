@@ -121,7 +121,7 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
   }, [handleShiftFrame]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 text-gray-500">
+    <div className="flex flex-col h-screen bg-slate-900 text-slate-200">
       <div className="flex flex-1 overflow-hidden relative">
         <ToolPanel
           state={state}
@@ -134,7 +134,7 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
           canRedo={canRedo}
         />
 
-        <div className={`flex-1 flex flex-col bg-gray-900 overflow-hidden transition-all duration-300 relative`}>
+        <div className={`flex-1 flex flex-col bg-slate-800/30 overflow-hidden transition-all duration-300 relative backdrop-blur-sm`}>
           <CanvasComponent
             state={state}
             containerRef={containerRef}
@@ -152,21 +152,23 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
         </div>
 
         <div
-          className={`transition-all duration-300 bg-gray-800 relative ${
-            isSidePanelOpen ? 'w-72' : 'w-12'
+          className={`transition-all duration-300 relative ${
+            isSidePanelOpen ? 'w-80' : 'w-12'
           } overflow-hidden`}
         >
           <button
             onClick={toggleSidePanel}
-            className="p-1 bg-gray-700 text-gray-500 hover:bg-gray-600 focus:outline-none rounded-full absolute top-1/2 transform -translate-y-1/2"
+            className="p-1.5 bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-slate-200 focus:outline-none rounded-lg absolute top-1/2 transform -translate-y-1/2 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 border border-slate-600"
             style={{
-              width: '24px',
-              height: '24px',
-              left: '-12px',
+              width: '28px',
+              height: '28px',
+              left: '-14px',
               zIndex: 50
             }}
           >
-            {isSidePanelOpen ? '>' : '<'}
+            <span className="text-xs font-medium">
+              {isSidePanelOpen ? '›' : '‹'}
+            </span>
           </button>
 
           <SidePanel
@@ -191,7 +193,7 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
         </div>
       </div>
 
-      <div className="w-full bg-gray-800 border-t border-gray-700">
+      <div className="w-full bg-slate-800/60 border-t border-slate-700 shadow-lg backdrop-blur-sm">
         <AnimationControls
           state={state}
           fps={fps}
