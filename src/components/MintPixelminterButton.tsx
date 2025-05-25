@@ -6,7 +6,7 @@ import {
   TransactionStatusLabel,
   TransactionStatusAction,
 } from '@coinbase/onchainkit/transaction';
-import type { LifeCycleStatus } from '@coinbase/onchainkit/transaction';
+import type { LifecycleStatus } from '@coinbase/onchainkit/transaction';
 import { useAccount, useContractRead } from 'wagmi';
 import { pixelminterAbi } from '../abi/pixelminterAbi';
 import { State } from '../types/types';
@@ -44,7 +44,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
     }
   }, [mintFeeData]);
 
-  const handleOnStatus = useCallback((status: LifeCycleStatus) => {
+  const handleOnStatus = useCallback((status: LifecycleStatus) => {
     console.log('Estado de la transacción:', status);
     setTransactionStatus(status.statusName);
     if (status.statusName === 'success') {

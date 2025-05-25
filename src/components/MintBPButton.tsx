@@ -1,12 +1,12 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { 
-  Transaction, 
-  TransactionButton, 
-  TransactionStatus, 
-  TransactionStatusLabel,
+import {
+  Transaction,
+  TransactionButton,
+  TransactionStatus,
   TransactionStatusAction,
+  TransactionStatusLabel,
 } from '@coinbase/onchainkit/transaction';
-import type { LifeCycleStatus } from '@coinbase/onchainkit/transaction';
+import type { LifecycleStatus } from '@coinbase/onchainkit/transaction';
 import { useAccount } from 'wagmi';
 import { BasePaintAbi } from '../abi/BasePaintAbi';
 import { State } from '../types/types';
@@ -36,7 +36,7 @@ const MintBPButton: React.FC<MintBPButtonProps> = ({
     calculateDay().then(setCurrentDay).catch(console.error);
   }, []);
 
-  const handleOnStatus = useCallback((status: LifeCycleStatus) => {
+  const handleOnStatus = useCallback((status: LifecycleStatus) => {
     setTransactionStatus(status.statusName);
     if (status.statusName === 'success') {
       setTxHash(status.statusData.transactionReceipts[0].transactionHash);

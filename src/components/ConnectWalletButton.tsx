@@ -59,7 +59,6 @@ const ConnectWalletButton: React.FC<{ updateBrushData: (data: BrushData | null) 
       <Wallet>
         <ConnectWallet
           className="h-8 text-sm font-medium py-1 px-3 rounded-md transition-colors duration-200 bg-[var(--bg-ock-primary)] hover:bg-[var(--bg-ock-primary-hover)] active:bg-[var(--bg-ock-primary-active)] text-[var(--text-ock-inverse)] flex items-center"
-          withWalletAggregator
           text="Connect Wallet"
         >
           <Avatar
@@ -84,6 +83,7 @@ const ConnectWalletButton: React.FC<{ updateBrushData: (data: BrushData | null) 
               <Badge />
             </Avatar>
             <Name />
+            <Address />
             <EthBalance />
             {!isLoading && balance && (
               <div className="text-[var(--text-ock-foreground-muted)]">
@@ -103,8 +103,6 @@ const ConnectWalletButton: React.FC<{ updateBrushData: (data: BrushData | null) 
           </Identity>
 
           <WalletDropdownBasename />
-
-          
 
           <WalletDropdownDisconnect className="px-4 py-2" />
         </WalletDropdown>
