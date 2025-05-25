@@ -12,46 +12,61 @@ import useShiftFrame from '../hooks/layers/useShiftFrame';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useFlipCanvas } from '../hooks/useFlipCanvas';
 
+/**
+ * Main PixelArt component that serves as the container for the entire pixel art editor
+ * This component manages all the core functionality including:
+ * - State management through custom hooks
+ * - Canvas rendering and interaction
+ * - Layer management
+ * - Animation controls
+ * - Keyboard shortcuts
+ * - History (undo/redo) operations
+ */
 const PixelArt: React.FC = () => {
+  // Main state manager hook that handles all pixel art data and operations
   const {
-    state, 
-    updateState, 
-    saveState,
-    updatePixel, 
-    undo, 
-    redo, 
-    clearCanvas: clearCanvasFromHook,
-    canUndo,
-    canRedo,
-    addLayer,
-    removeLayer,
-    updateLayerVisibility,
-    updateLayerOpacity,
-    setActiveLayerId,
-    updateLayerName,
-    updateDay,
-    toggleOnionSkinning,
-    updateOnionSkinningOpacity,
-    reorderLayers,
+    state, // Current application state
+    updateState, // Function to update state
+    saveState, // Function to save state to history
+    updatePixel, // Function to update individual pixels
+    undo, // Undo operation
+    redo, // Redo operation
+    clearCanvas: clearCanvasFromHook, // Clear canvas operation
+    canUndo, // Whether undo is available
+    canRedo, // Whether redo is available
+    addLayer, // Add new layer
+    removeLayer, // Remove layer by ID
+    updateLayerVisibility, // Toggle layer visibility
+    updateLayerOpacity, // Update layer opacity
+    setActiveLayerId, // Set active layer
+    updateLayerName, // Update layer name
+    updateDay, // Update day counter
+    toggleOnionSkinning, // Toggle onion skinning for animation
+    updateOnionSkinningOpacity, // Update onion skin opacity
+    reorderLayers, // Reorder layers
   } = usePixelArtStateManager();
 
+  // Local state for visual feedback when user performs actions
   const [feedback, setFeedback] = useState<Feedback>({
     undo: false, redo: false, brush: false, eraser: false,
     toggleGrid: false, clearCanvas: false, zoomIn: false, zoomOut: false,
     move: false, bucket: false
   });
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const gridCanvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const stateRef = useRef(state);
-  const onionSkinningCanvasRef = useRef<HTMLCanvasElement>(null);
+  // React refs for DOM elements
+  const canvasRef = useRef<HTMLCanvasElement>(null); // Main drawing canvas
+  const gridCanvasRef = useRef<HTMLCanvasElement>(null); // Grid overlay canvas
+  const containerRef = useRef<HTMLDivElement>(null); // Container for canvas
+  const stateRef = useRef(state); // Ref to current state for event handlers
+  const onionSkinningCanvasRef = useRef<HTMLCanvasElement>(null); // Onion skinning canvas
 
+  // Keep state ref updated and save to cache whenever state changes
   useEffect(() => {
     stateRef.current = state;
     saveStateToCache(state);
   }, [state]);
 
+  // Wrapper function for setting feedback with type safety
   const setFeedbackWrapper: SetFeedbackFunction = useCallback((newFeedback) => {
     setFeedback(prev => {
       const updatedFeedback: Feedback = { ...prev };
@@ -64,6 +79,7 @@ const PixelArt: React.FC = () => {
     });
   }, []);
 
+  // Function to update the canvas display with current pixel data
   const updateCanvasDisplay = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -75,10 +91,12 @@ const PixelArt: React.FC = () => {
         const currentFrame = frames[currentFrameIndex] || { layers: [] };
         const cellSize = canvasSize / gridSize;
         
+        // Clear canvas and redraw all visible layers
         ctx.clearRect(0, 0, canvasSize, canvasSize);
         currentFrame.layers.forEach(layer => {
           if (layer.visible) {
             ctx.globalAlpha = layer.opacity;
+            // Handle both Map and Object pixel storage formats
             const pixelsMap = layer.pixels instanceof Map ? layer.pixels : new Map(Object.entries(layer.pixels));
             pixelsMap.forEach((color, key) => {
               const [x, y] = key.split(',').map(Number);
@@ -87,19 +105,23 @@ const PixelArt: React.FC = () => {
             });
           }
         });
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = 1; // Reset alpha
       }
     }
   }, []);
 
+  // Hook for canvas display utilities
   const { markPixelAsModified } = useCanvasDisplay({ canvasRef, stateRef });
 
+  // Hook for drawing the grid overlay
   const drawGrid = useDrawGrid(gridCanvasRef, stateRef);
 
+  // Wrapper for save state that includes frame index
   const saveStateWrapper = useCallback((changes: [string, string][]) => {
     saveState(state.currentFrameIndex, changes);
   }, [saveState, state.currentFrameIndex]);
 
+  // Hook for handling all canvas interactions (drawing, erasing, etc.)
   const handleInteraction = useHandleInteraction({
     stateRef,
     canvasRef,
@@ -111,6 +133,7 @@ const PixelArt: React.FC = () => {
     updateState
   });
 
+  // Hook for shifting frame content in different directions
   const { handleShiftFrame } = useShiftFrame({
     state,
     updateState,
@@ -118,26 +141,31 @@ const PixelArt: React.FC = () => {
     updateCanvasDisplay
   });
 
+  // Handler for undo/redo operations with feedback
   const handleHistoryAction = useCallback((action: 'undo' | 'redo') => {
     if ((action === 'undo' && canUndo) || (action === 'redo' && canRedo)) {
       action === 'undo' ? undo() : redo();
       setFeedbackWrapper({ [action]: true });
+      // Clear feedback after short delay
       setTimeout(() => setFeedbackWrapper({ [action]: false }), 100);
       updateCanvasDisplay();
     }
   }, [undo, redo, canUndo, canRedo, setFeedbackWrapper, updateCanvasDisplay]);
   
+  // Handler for grid size changes
   const handleGridSizeChange = useCallback((newSize: number) => {
     updateState({ gridSize: newSize });
     drawGrid();
     updateCanvasDisplay();
   }, [updateState, drawGrid, updateCanvasDisplay]);
 
+  // Callback for palette extraction functionality
   const handleExtractPaletteCallback = useCallback(() => 
     handleExtractPalette(updateState, handleGridSizeChange), 
     [updateState, handleGridSizeChange]
   );
 
+  // Function to update canvas scale based on container size
   const updateScale = useCallback(() => {
     if (containerRef.current) {
       const { clientWidth, clientHeight } = containerRef.current;
@@ -145,18 +173,21 @@ const PixelArt: React.FC = () => {
     }
   }, [updateState, state.canvasSize]);
 
+  // Handler for zoom operations with bounds checking
   const handleZoom = useCallback((zoomIn: boolean) => {
     updateState(prev => ({ zoom: Math.max(0.3, Math.min(3, prev.zoom + (zoomIn ? 0.15 : -0.125))) }));
     drawGrid();
     updateCanvasDisplay();
   }, [updateState, drawGrid, updateCanvasDisplay]);
 
+  // Handler for clearing the entire canvas
   const handleClearCanvas = useCallback(() => {
     clearCanvasFromHook();
     updateCanvasDisplay();
     drawGrid();
   }, [clearCanvasFromHook, updateCanvasDisplay, drawGrid]);
 
+  // Setup canvas effects (initialization, event listeners, etc.)
   useSetupCanvasEffect(
     canvasRef,
     gridCanvasRef,
@@ -167,24 +198,31 @@ const PixelArt: React.FC = () => {
     () => {}
   );
 
+  // Update canvas display when frames or current frame changes
   useEffect(() => {
     updateCanvasDisplay();
   }, [state.frames, state.currentFrameIndex, updateCanvasDisplay]);
 
+  // Handle window resize events
   useWindowResizeEffect(updateScale);
 
+  // Setup canvas event listeners for pointer/touch interactions
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
       const events = ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'touchstart', 'touchmove', 'touchend'];
+      // Use passive events for move tool to improve performance
       const options = { passive: state.tool === 'move' };
       
+      // Add all interaction event listeners
       events.forEach(event => {
         canvas.addEventListener(event, handleInteraction as any, options);
       });
       
+      // Prevent context menu on canvas
       canvas.addEventListener('contextmenu', (e) => e.preventDefault());
       
+      // Cleanup event listeners
       return () => {
         events.forEach(event => {
           canvas.removeEventListener(event, handleInteraction as any);
@@ -194,23 +232,27 @@ const PixelArt: React.FC = () => {
     }
   }, [handleInteraction, state.tool]);
 
+  // Function to update brush data
   const updateBrushData = useCallback((data: BrushData | null) => {
     updateState({ brushData: data });
   }, [updateState]);
 
-
+  // Update day counter on component mount
   useEffect(() => {
     updateDay();
   }, [updateDay]);
 
+  // Setup keyboard shortcuts
   useKeyboardShortcuts({ handleHistoryAction });
 
+  // Hook for canvas flipping functionality
   const { handleFlip } = useFlipCanvas(
     updatePixel,
     (changes) => saveState(state.currentFrameIndex, changes),
     state.gridSize
   );
 
+  // Keyboard shortcut handler for flip operation (Ctrl/Cmd + F)
   const handleKeyboardShortcut = useCallback((e: KeyboardEvent) => {
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
     const modifier = isMac ? e.metaKey : e.ctrlKey;
@@ -223,6 +265,7 @@ const PixelArt: React.FC = () => {
     }
   }, [handleFlip, state.frames, state.currentFrameIndex, updateCanvasDisplay]);
 
+  // Setup keyboard shortcut event listener
   useEffect(() => {
     window.addEventListener('keydown', handleKeyboardShortcut, true);
     return () => window.removeEventListener('keydown', handleKeyboardShortcut, true);
@@ -230,6 +273,7 @@ const PixelArt: React.FC = () => {
 
   return (
     <div>
+      {/* Main UI component with all props passed down */}
       <PixelArtUI
         state={state}
         containerRef={containerRef}
@@ -260,11 +304,12 @@ const PixelArt: React.FC = () => {
         toggleOnionSkinning={toggleOnionSkinning}
         updateOnionSkinningOpacity={updateOnionSkinningOpacity}
         onionSkinningCanvas={onionSkinningCanvasRef}
-        day={state.day ?? 1} // Usa 1 como valor por defecto si state.day es null
+        day={state.day ?? 1} // Use 1 as default value if state.day is null
         reorderLayers={reorderLayers}
       />
     </div>
   );
 };
 
+// Export memoized component to prevent unnecessary re-renders
 export default React.memo(PixelArt);

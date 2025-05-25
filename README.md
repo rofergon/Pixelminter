@@ -222,18 +222,7 @@ The application uses a custom state manager (`usePixelArtStateManager`) that han
 - History for undo/redo
 - Blockchain integration data
 
-## 🧪 Testing
 
-```bash
-# Run tests
-npm test
-
-# Run with coverage
-npm run test:coverage
-
-# Run linting
-npm run lint
-```
 
 ## 🚢 Deployment
 
