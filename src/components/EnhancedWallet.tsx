@@ -2,10 +2,6 @@ import React from 'react';
 import {
   ConnectWallet,
   Wallet,
-  WalletDropdown,
-  WalletDropdownLink,
-  WalletDropdownBasename,
-  WalletDropdownDisconnect,
   WalletIsland,
   WalletAdvancedDefault,
 } from '@coinbase/onchainkit/wallet';
