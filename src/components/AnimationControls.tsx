@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Plus, Play, Pause, SkipForward, SkipBack, Download } from 'lucide-react';
 import { Button } from "../components/ui/button";
 import { Slider } from "../components/ui/slider";
@@ -9,7 +9,26 @@ import { State, Frame } from '../types/types';
 import { useExportGif } from '../hooks/animation/useExportGif';
 import { useAnimationControl } from '../hooks/animation/useAnimationControl';
 import { useAnimationStatus } from '../hooks/animation/useAnimationStatus';
-import { useMediaQuery } from 'react-responsive';
+
+// Hook personalizado para detectar pantallas grandes
+const useIsLargeScreen = (minWidth: number = 1024) => {
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= minWidth);
+    };
+
+    // Verificar al cargar
+    checkScreenSize();
+
+    // Escuchar cambios de tamaño
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, [minWidth]);
+
+  return isLargeScreen;
+};
 
 interface AnimationControlsProps {
   state: State;
@@ -86,7 +105,7 @@ const AnimationControls: React.FC<AnimationControlsProps> = React.memo(({
 
   const buttonStyle = useMemo(() => "w-9 h-9 p-2 bg-[#1f2a37] text-[#6b7280] hover:bg-[#374151] hover:text-[#9ca3af] focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50", []);
 
-  const isLargeScreen = useMediaQuery({ minWidth: 1024 });
+  const isLargeScreen = useIsLargeScreen(1024);
 
   const renderControls = useMemo(() => (
     <div className="flex items-center justify-between gap-2 mb-2">
@@ -158,7 +177,7 @@ const AnimationControls: React.FC<AnimationControlsProps> = React.memo(({
         <span className="text-sm hidden sm:inline">Show Frames</span>
       </div>
     </div>
-  ), [isPlaying, setIsPlaying, changeFrame, state.frames.length, state.currentFrameIndex, fps, setFps, isLargeScreen, seconds, frame, handleDownloadGif, showFrames, setShowFrames]);
+  ), [addFrame, buttonStyle, isPlaying, setIsPlaying, changeFrame, state.currentFrameIndex, state.frames.length, isLargeScreen, fps, setFps, seconds, frame, handleDownloadGif, showFrames, setShowFrames]);
 
   const renderFrameThumbnails = useMemo(() => (
     <div className="overflow-x-auto whitespace-nowrap mt-2 w-full">
@@ -175,7 +194,7 @@ const AnimationControls: React.FC<AnimationControlsProps> = React.memo(({
         />
       ))}
     </div>
-  ), [state.frames, state, updateState, deleteFrame, handleFrameSelect]);
+  ), [state, updateState, deleteFrame, handleFrameSelect]);
 
   return (
     <div className="p-2 bg-gray-800 text-gray-200">
