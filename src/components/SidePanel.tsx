@@ -21,20 +21,20 @@ import PaletteButton from './PaletteButton';
 
 interface SidePanelProps {
   state: State;
-  updateState: (newState: Partial<State> | ((prevState: State) => Partial<State>)) => void;
+  updateState: (_newState: Partial<State> | ((_prevState: State) => Partial<State>)) => void;
   handleExtractPalette: () => void;
-  onGridSizeChange: (newSize: number) => void;
+  onGridSizeChange: (_newSize: number) => void;
   addLayer: () => void;
-  removeLayer: (id: string) => void;
-  updateLayerVisibility: (id: string, visible: boolean) => void;
-  updateLayerOpacity: (id: string, opacity: number) => void;
-  setActiveLayerId: (id: string) => void;
-  updateLayerName: (id: string, name: string) => void;
-  reorderLayers: (sourceIndex: number, targetIndex: number) => void;
+  removeLayer: (_id: string) => void;
+  updateLayerVisibility: (_id: string, _visible: boolean) => void;
+  updateLayerOpacity: (_id: string, _opacity: number) => void;
+  setActiveLayerId: (_id: string) => void;
+  updateLayerName: (_id: string, _name: string) => void;
+  reorderLayers: (_sourceIndex: number, _targetIndex: number) => void;
   brushData: BrushData | null;
-  updateBrushData: (data: BrushData | null) => void;
+  updateBrushData: (_data: BrushData | null) => void;
   toggleOnionSkinning: () => void;
-  updateOnionSkinningOpacity: (opacity: number) => void;
+  updateOnionSkinningOpacity: (_opacity: number) => void;
   isOpen: boolean;
 }
 
@@ -69,7 +69,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
   const [isLayersOpen, setIsLayersOpen] = useState(false);
   const [isGridSizeOpen, setIsGridSizeOpen] = useState(false);
   const [isOnionSkinningOpen, setIsOnionSkinningOpen] = useState(false);
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [_isUploadOpen, _setIsUploadOpen] = useState(false);
 
   const initialDroplets = useMemo(() => brushData?.pixelsPerDay || state.pixelsPerDay || 0, [brushData, state.pixelsPerDay]);
 
