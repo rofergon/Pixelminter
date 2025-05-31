@@ -79,42 +79,17 @@ const PixelArt: React.FC = () => {
     });
   }, []);
 
-  // Function to update the canvas display with current pixel data
-  const updateCanvasDisplay = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        // Disable image smoothing to preserve exact pixel colors
-        ctx.imageSmoothingEnabled = false;
-        const { frames, currentFrameIndex, gridSize, canvasSize } = stateRef.current;
-        const currentFrame = frames[currentFrameIndex] || { layers: [] };
-        const cellSize = canvasSize / gridSize;
-        
-        // Clear canvas and redraw all visible layers
-        ctx.clearRect(0, 0, canvasSize, canvasSize);
-        currentFrame.layers.forEach(layer => {
-          if (layer.visible) {
-            ctx.globalAlpha = layer.opacity;
-            // Handle both Map and Object pixel storage formats
-            const pixelsMap = layer.pixels instanceof Map ? layer.pixels : new Map(Object.entries(layer.pixels));
-            pixelsMap.forEach((color, key) => {
-              const [x, y] = key.split(',').map(Number);
-              ctx.fillStyle = typeof color === 'string' ? color : '#000000';
-              ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-            });
-          }
-        });
-        ctx.globalAlpha = 1; // Reset alpha
-      }
-    }
-  }, []);
-
   // Hook for canvas display utilities
-  const { markPixelAsModified } = useCanvasDisplay({ canvasRef, stateRef });
+  const { updateCanvasDisplay, markPixelAsModified } = useCanvasDisplay({ canvasRef, stateRef });
 
   // Hook for drawing the grid overlay
   const drawGrid = useDrawGrid(gridCanvasRef, stateRef);
+
+  // Effect to handle background image changes
+  useEffect(() => {
+    // Force canvas update when background-related state changes
+    updateCanvasDisplay();
+  }, [state.dailyImageUrl, state.showBackgroundImage, state.backgroundOpacity, updateCanvasDisplay]);
 
   // Wrapper for save state that includes frame index
   const saveStateWrapper = useCallback((changes: [string, string][]) => {
