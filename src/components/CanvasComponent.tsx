@@ -192,17 +192,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         style={canvasStyle}
         onContextMenu={(e) => e.preventDefault()}
       >
-        {/* Background Image with Enhanced Styling */}
-        {state.dailyImageUrl && state.showBackgroundImage && (
-          <div
-            className="absolute inset-0 z-0 w-full h-full bg-cover bg-center rounded-2xl"
-            style={{ 
-              backgroundImage: `url(${state.dailyImageUrl})`,
-              opacity: state.backgroundOpacity,
-            }}
-          />
-        )}
-
         {/* Canvas with Enhanced Shadow and Border */}
         <canvas
           ref={canvasRef}
