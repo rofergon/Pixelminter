@@ -15,6 +15,82 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
   const requestIdRef = useRef<number | null>(null);
   const offScreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const offCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const backgroundImageRef = useRef<HTMLImageElement | null>(null);
+  const backgroundCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const backgroundCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const lastBackgroundUrlRef = useRef<string>('');
+  const isBackgroundLoadingRef = useRef<boolean>(false);
+
+  // Function to load background image
+  const loadBackgroundImage = useCallback((url: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('Failed to load background image'));
+      // Use the proxy to avoid CORS issues
+      const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(url)}`;
+      img.src = proxyUrl;
+    });
+  }, []);
+
+  // Function to render background to a separate canvas (only when needed)
+  const renderBackground = useCallback(async () => {
+    const { canvasSize, dailyImageUrl, showBackgroundImage, backgroundOpacity } = stateRef.current;
+
+    // Initialize background canvas if needed
+    if (!backgroundCanvasRef.current) {
+      backgroundCanvasRef.current = document.createElement('canvas');
+      backgroundCanvasRef.current.width = canvasSize;
+      backgroundCanvasRef.current.height = canvasSize;
+      backgroundCtxRef.current = backgroundCanvasRef.current.getContext('2d');
+      if (backgroundCtxRef.current) {
+        backgroundCtxRef.current.imageSmoothingEnabled = false;
+      }
+    }
+
+    const backgroundCanvas = backgroundCanvasRef.current;
+    const backgroundCtx = backgroundCtxRef.current;
+    if (!backgroundCtx) return;
+
+    // Update canvas size if needed
+    if (backgroundCanvas.width !== canvasSize || backgroundCanvas.height !== canvasSize) {
+      backgroundCanvas.width = canvasSize;
+      backgroundCanvas.height = canvasSize;
+    }
+
+    // Clear background canvas
+    backgroundCtx.clearRect(0, 0, canvasSize, canvasSize);
+
+    // Only load and render background if enabled and URL exists
+    if (showBackgroundImage && dailyImageUrl) {
+      try {
+        // Prevent multiple simultaneous loads
+        if (isBackgroundLoadingRef.current) return;
+        
+        // Only reload image if URL changed
+        if (!backgroundImageRef.current || lastBackgroundUrlRef.current !== dailyImageUrl) {
+          isBackgroundLoadingRef.current = true;
+          backgroundImageRef.current = await loadBackgroundImage(dailyImageUrl);
+          lastBackgroundUrlRef.current = dailyImageUrl;
+          isBackgroundLoadingRef.current = false;
+        }
+
+        if (backgroundImageRef.current) {
+          backgroundCtx.globalAlpha = backgroundOpacity;
+          backgroundCtx.drawImage(
+            backgroundImageRef.current,
+            0, 0, backgroundImageRef.current.width, backgroundImageRef.current.height,
+            0, 0, canvasSize, canvasSize
+          );
+          backgroundCtx.globalAlpha = 1;
+        }
+      } catch (error) {
+        console.error('Error loading background image:', error);
+        isBackgroundLoadingRef.current = false;
+      }
+    }
+  }, [stateRef, loadBackgroundImage]);
 
   const updateCanvasDisplay = useCallback(() => {
     const canvas = canvasRef.current;
@@ -31,6 +107,9 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
     if (!currentFrame) return;
 
     const cellSize = canvasSize / gridSize;
+
+    // Render background asynchronously without blocking
+    renderBackground();
 
     // Initialize off-screen canvas if it doesn't exist
     if (!offScreenCanvasRef.current) {
@@ -55,6 +134,11 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
 
     // Clear the off-screen canvas
     offCtx.clearRect(0, 0, canvasSize, canvasSize);
+
+    // Draw background from background canvas if available
+    if (backgroundCanvasRef.current) {
+      offCtx.drawImage(backgroundCanvasRef.current, 0, 0);
+    }
 
     // Draw the layers
     currentFrame.layers.forEach((layer: Layer) => {
@@ -82,7 +166,7 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
       canvas.offsetHeight; // Trigger reflow
       canvas.style.display = 'block';
     }
-  }, [canvasRef, stateRef]);
+  }, [canvasRef, stateRef, renderBackground]);
 
   const markPixelAsModified = useCallback(() => {
     if (requestIdRef.current === null) {
