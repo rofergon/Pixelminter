@@ -18,7 +18,7 @@ function useDrawGrid(
     const { canvasSize, zoom, gridSize } = stateRef.current;
     const scaledSize = canvasSize * zoom;
 
-    // Ajustar el tamaño del canvas
+    // Ajustar el tamaño del canvas para que coincida exactamente con el canvas principal
     canvas.width = scaledSize;
     canvas.height = scaledSize;
     canvas.style.width = `${scaledSize}px`;
@@ -31,12 +31,14 @@ function useDrawGrid(
     ctx.strokeStyle = 'rgba(100, 100, 100, 0.6)';
     ctx.lineWidth = 0.5;
 
+    // Calcular el tamaño de celda exacto que coincida con el renderizado de píxeles
     const cellSize = scaledSize / gridSize;
 
-    // Dibujar la cuadrícula
+    // Dibujar la cuadrícula con líneas perfectamente alineadas
     ctx.beginPath();
     for (let i = 0; i <= gridSize; i++) {
-      const pos = i * cellSize;
+      // Usar Math.floor para asegurar líneas nítidas en píxeles enteros
+      const pos = Math.floor(i * cellSize) + 0.5; // +0.5 para líneas nítidas
 
       // Líneas verticales
       ctx.moveTo(pos, 0);
