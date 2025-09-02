@@ -90,9 +90,6 @@ export const loadStateFromCache = (): State | undefined => {
     return {
       ...parsedState,
       isPaletteLoading: false,
-      // Asegurar que las nuevas propiedades existan con valores por defecto
-      backgroundRefreshInterval: parsedState.backgroundRefreshInterval ?? 20,
-      lastBackgroundRefresh: parsedState.lastBackgroundRefresh ?? 0,
       frames: parsedState.frames.map((frame: Frame) => ({
         ...frame,
         layers: frame.layers.map((layer: Layer) => ({
