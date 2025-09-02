@@ -20,7 +20,7 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
   const backgroundCtxRef = useRef<CanvasRenderingContext2D | null>(null);
   const lastBackgroundUrlRef = useRef<string>('');
   const isBackgroundLoadingRef = useRef<boolean>(false);
-  const backgroundRefreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const backgroundRefreshIntervalRef = useRef<number | null>(null);
   const lastBackgroundRefreshRef = useRef<number>(0);
 
   // Function to load background image with cache-busting
@@ -208,7 +208,7 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
     
     // Set up new interval if background image is enabled and URL exists
     if (showBackgroundImage && dailyImageUrl) {
-      backgroundRefreshIntervalRef.current = setInterval(() => {
+      backgroundRefreshIntervalRef.current = window.setInterval(() => {
         // Force background re-render which will check for refresh
         renderBackground();
       }, backgroundRefreshInterval * 1000);
