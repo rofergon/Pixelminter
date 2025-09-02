@@ -66,6 +66,8 @@ export interface State {
   referenceImageSize: { width: number; height: number }; // Añade esta línea
   fps: number; // Añadimos esta línea
   brushSize: number; // Añade esta línea
+  backgroundRefreshInterval: number; // Intervalo en segundos para actualizar imagen de fondo
+  lastBackgroundRefresh: number; // Timestamp de la última actualización de imagen de fondo
 }
 
 export const initialState: State = {
@@ -110,6 +112,8 @@ export const initialState: State = {
   referenceImageSize: { width: 0, height: 0 }, // Añadimos esta línea
   fps: 30, // Valor inicial para FPS
   brushSize: 1, // Añade esta línea
+  backgroundRefreshInterval: 20, // Actualizar imagen de fondo cada 20 segundos
+  lastBackgroundRefresh: 0, // Timestamp inicial
 };
 
 export interface Feedback {
