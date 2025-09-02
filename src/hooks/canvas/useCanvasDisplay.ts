@@ -20,16 +20,27 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
   const backgroundCtxRef = useRef<CanvasRenderingContext2D | null>(null);
   const lastBackgroundUrlRef = useRef<string>('');
   const isBackgroundLoadingRef = useRef<boolean>(false);
+  const backgroundRefreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const lastBackgroundRefreshRef = useRef<number>(0);
 
-  // Function to load background image
-  const loadBackgroundImage = useCallback((url: string): Promise<HTMLImageElement> => {
+  // Function to load background image with cache-busting
+  const loadBackgroundImage = useCallback((url: string, forceRefresh: boolean = false): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => resolve(img);
       img.onerror = () => reject(new Error('Failed to load background image'));
+      
+      // Add cache-busting timestamp when forcing refresh
+      let finalUrl = url;
+      if (forceRefresh) {
+        const timestamp = Date.now();
+        const separator = url.includes('?') ? '&' : '?';
+        finalUrl = `${url}${separator}_t=${timestamp}`;
+      }
+      
       // Use the proxy to avoid CORS issues
-      const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(url)}`;
+      const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(finalUrl)}`;
       img.src = proxyUrl;
     });
   }, []);
@@ -68,11 +79,20 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
         // Prevent multiple simultaneous loads
         if (isBackgroundLoadingRef.current) return;
         
-        // Only reload image if URL changed
-        if (!backgroundImageRef.current || lastBackgroundUrlRef.current !== dailyImageUrl) {
+        // Check if we need to reload the image
+        const currentTime = Date.now();
+        const { backgroundRefreshInterval } = stateRef.current;
+        const timeSinceLastRefresh = currentTime - lastBackgroundRefreshRef.current;
+        const shouldRefreshByTime = timeSinceLastRefresh > (backgroundRefreshInterval * 1000);
+        const urlChanged = lastBackgroundUrlRef.current !== dailyImageUrl;
+        
+        // Reload image if URL changed or refresh interval has passed
+        if (!backgroundImageRef.current || urlChanged || shouldRefreshByTime) {
           isBackgroundLoadingRef.current = true;
-          backgroundImageRef.current = await loadBackgroundImage(dailyImageUrl);
+          const forceRefresh = shouldRefreshByTime && !urlChanged;
+          backgroundImageRef.current = await loadBackgroundImage(dailyImageUrl, forceRefresh);
           lastBackgroundUrlRef.current = dailyImageUrl;
+          lastBackgroundRefreshRef.current = currentTime;
           isBackgroundLoadingRef.current = false;
         }
 
@@ -177,10 +197,37 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
     }
   }, [updateCanvasDisplay]);
 
+  // Setup automatic background refresh interval
+  useEffect(() => {
+    const { backgroundRefreshInterval, dailyImageUrl, showBackgroundImage } = stateRef.current;
+    
+    // Clear existing interval
+    if (backgroundRefreshIntervalRef.current) {
+      clearInterval(backgroundRefreshIntervalRef.current);
+    }
+    
+    // Set up new interval if background image is enabled and URL exists
+    if (showBackgroundImage && dailyImageUrl) {
+      backgroundRefreshIntervalRef.current = setInterval(() => {
+        // Force background re-render which will check for refresh
+        renderBackground();
+      }, backgroundRefreshInterval * 1000);
+    }
+    
+    return () => {
+      if (backgroundRefreshIntervalRef.current) {
+        clearInterval(backgroundRefreshIntervalRef.current);
+      }
+    };
+  }, [stateRef.current.dailyImageUrl, stateRef.current.showBackgroundImage, stateRef.current.backgroundRefreshInterval, renderBackground]);
+  
   useEffect(() => {
     return () => {
       if (requestIdRef.current !== null) {
         cancelAnimationFrame(requestIdRef.current);
+      }
+      if (backgroundRefreshIntervalRef.current) {
+        clearInterval(backgroundRefreshIntervalRef.current);
       }
     };
   }, []);
