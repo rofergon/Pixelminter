@@ -42,20 +42,6 @@ Pixelminter is a sophisticated pixel art creation platform that combines traditi
 - **Cross-Platform**: Responsive design with touch support for mobile creation
 - **State Persistence**: Automatic saving and cache management
 
-## 🏗 Technical Architecture
-
-### **Frontend Stack**
-- **React 18.3.1** with TypeScript for type-safe development
-- **Next.js 15.0.2** for server-side rendering and optimization
-- **Tailwind CSS** for responsive, utility-first styling
-- **Radix UI** components for accessible user interface
-- **Lucide React** for consistent iconography
-
-### **Blockchain Technologies**
-- **Wagmi 2.12.11** for Ethereum interactions and wallet management
-- **Coinbase OnchainKit 0.38.13** for comprehensive wallet UI, transactions, identity, and Base chain integration
-- **Viem 2.21.1** for low-level Ethereum interactions and contract calls
-- **Base Chain** as the primary blockchain network
 
 ### **Animation & Graphics**
 - **GIF.js** for client-side GIF generation
@@ -106,13 +92,6 @@ npm start
 
 ## 📱 Usage Guide
 
-### **Creating Your First Pixel Art**
-
-1. **Select a Tool**: Choose from brush, eraser, bucket fill, line, or move tool
-2. **Pick Colors**: Use the color picker or select from predefined palettes
-3. **Start Drawing**: Click and drag on the canvas to create your masterpiece
-4. **Use Layers**: Add multiple layers for complex compositions
-5. **Animate**: Add frames to create animated sequences
 
 ### **Working with Animations**
 
@@ -168,16 +147,8 @@ Pixelminter integrates with BasePaint, a collaborative art protocol where:
 ### Smart Contract Addresses (Base Mainnet)
 ```
 BasePaint Contract: 0xBa5e05cb26b78eDa3A2f8e3b3814726305dcAc83
-BasePaint Brush: [Contract Address]
-Pixelminter NFT: [Contract Address]
-```
 
-### Minting Process
-1. Create your pixel art in Pixelminter
-2. Encode the artwork data
-3. Connect your wallet
-4. Execute the minting transaction
-5. Receive your NFT in your wallet
+
 
 ## 🛠 Development
 
@@ -268,10 +239,10 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ## 🔗 Links
 
-- **Website**: [pixelminter.com](https://pixelminter.com)
+- **Website**: [pixelminter.com](https://pixelminter.xyz)
 - **Base Explorer**: [basescan.org](https://basescan.org)
 - **BasePaint**: [basepaint.xyz](https://basepaint.xyz)
-- **Documentation**: [docs.pixelminter.com](https://docs.pixelminter.com) 
+
 
 ## 🙏 Acknowledgments
 
@@ -282,9 +253,9 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ## 📞 Support
 
-- **Twitter**: [@pixelminter](https://twitter.com/pixelminter)
+- **Twitter**: [@pixelminter](https://x.com/sebas_auditore)
 - **Email**: sebas.2023@gmail.com
-- **GitHub Issues**: [Report bugs or request features](https://github.com/rofergon/Pixelminter/issues)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/rofergon/Pixelminter/)
 
 ---
 
