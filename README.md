@@ -239,7 +239,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ## 🔗 Links
 
-- **Website**: [pixelminter.com](https://pixelminter.xyz)
+- **Website**: [pixelminter.xyx](https://pixelminter.xyz)
 - **Base Explorer**: [basescan.org](https://basescan.org)
 - **BasePaint**: [basepaint.xyz](https://basepaint.xyz)
 
