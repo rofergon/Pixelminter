@@ -35,6 +35,8 @@ const usePixelArtStateManager = () => {
         referenceImageSize: cachedState.referenceImageSize || { width: 340, height: 460 },
         fps: cachedState.fps || 30, // Añadimos esta línea
         brushSize: 1, // Valor inicial para el tamaño del pincel
+        backgroundRefreshInterval: cachedState.backgroundRefreshInterval || 20, // Intervalo de actualización de imagen de fondo
+        lastBackgroundRefresh: cachedState.lastBackgroundRefresh || 0, // Timestamp de última actualización
       };
     }
 
@@ -70,6 +72,8 @@ const usePixelArtStateManager = () => {
       referenceImageSize: { width: 340, height: 460 },
       fps: 30, // Valor inicial para FPS
       brushSize: 1, // Valor inicial para el tamaño del pincel
+      backgroundRefreshInterval: 20, // Actualizar imagen de fondo cada 20 segundos
+      lastBackgroundRefresh: 0, // Timestamp inicial
     };
   }, [cachedState, canvasSize]);
 
