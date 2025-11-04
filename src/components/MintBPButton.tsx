@@ -11,6 +11,7 @@ import { useAccount } from 'wagmi';
 import { BasePaintAbi } from '../abi/BasePaintAbi';
 import { State } from '../types/types';
 import { calculateDay } from '../hooks/useDateUtils';
+import { useEndOfDayDisable } from '../hooks/useEndOfDayDisable';
 
 interface MintBPButtonProps {
   state: State;
@@ -31,6 +32,7 @@ const MintBPButton: React.FC<MintBPButtonProps> = ({
   const [transactionStatus, setTransactionStatus] = useState<string>('');
   const [isTransactionComplete, setIsTransactionComplete] = useState(false);
   const [key, setKey] = useState<number>(0);
+  const isEndOfDay = useEndOfDayDisable();
 
   useEffect(() => {
     calculateDay().then(setCurrentDay).catch(console.error);
@@ -72,23 +74,42 @@ const MintBPButton: React.FC<MintBPButtonProps> = ({
       {!encodedData ? (
         <button
           onClick={onEncode}
-          className="bg-purple-600 text-white py-2 px-4 rounded"
+          disabled={isEndOfDay}
+          className={`py-2 px-4 rounded ${
+            isEndOfDay 
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+              : 'bg-purple-600 text-white hover:bg-purple-700'
+          }`}
+          title={isEndOfDay ? 'Minting disabled during the last 15 minutes of the day' : ''}
         >
           Encode BP
         </button>
       ) : !isTransactionComplete ? (
-        <Transaction
-          key={key}
-          chainId={8453}
-          contracts={contracts}
-          onStatus={handleOnStatus}
-        >
-          <TransactionButton text="Mint BP" />
-          <TransactionStatus>
-            <TransactionStatusLabel />
-            {transactionStatus !== 'success' && <TransactionStatusAction />}
-          </TransactionStatus>
-        </Transaction>
+        <>
+          {isEndOfDay ? (
+            <div className="flex flex-col items-center gap-2 p-4 bg-yellow-100 border border-yellow-400 rounded">
+              <p className="text-sm text-yellow-800 font-semibold">
+                ⚠️ Minting disabled
+              </p>
+              <p className="text-xs text-yellow-700 text-center">
+                Commits to BasePaint are disabled during the last 15 minutes of the day (11:25 AM - 11:40 AM Colombia time)
+              </p>
+            </div>
+          ) : (
+            <Transaction
+              key={key}
+              chainId={8453}
+              contracts={contracts}
+              onStatus={handleOnStatus}
+            >
+              <TransactionButton text="Mint BP" />
+              <TransactionStatus>
+                <TransactionStatusLabel />
+                {transactionStatus !== 'success' && <TransactionStatusAction />}
+              </TransactionStatus>
+            </Transaction>
+          )}
+        </>
       ) : (
         <div className="flex flex-col items-center gap-2">
           <p className="text-sm text-gray-600">
