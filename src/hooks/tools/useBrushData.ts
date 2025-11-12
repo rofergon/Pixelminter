@@ -3,16 +3,16 @@ import { useAccount } from 'wagmi';
 import { getContract } from 'viem';
 import { BasePaintBrushAbi } from '../../abi/BasePaintBrushAbi';
 import { BrushData } from '../../types/types';
-import { baseClient, alternativeClient } from '../../hooks/useDateUtils';
+import { baseClient, alternativeClient, tertiaryClient } from '../../hooks/useDateUtils';
 
 const contractAddress = '0xD68fe5b53e7E1AbeB5A4d0A6660667791f39263a';
 
-// Cache for brush data to reduce requests with optimized RPC
+// Cache for brush data with improved TTL
 const brushTokenCache = {
   balanceOf: { address: null as string | null, value: null as bigint | null, timestamp: 0 },
   totalSupply: { value: null as bigint | null, timestamp: 0 },
   userTokens: { address: null as string | null, tokens: [] as number[], timestamp: 0 },
-  CACHE_TTL: 300000 // 5 minutes - optimal for reliable RPC
+  CACHE_TTL: 300000 // 5 minutes
 };
 
 // Helper for retries
@@ -53,12 +53,12 @@ export const useBrushData = () => {
     try {
       setIsLoading(true);
       
-      // Fetch balance with fewer retries since we're using reliable RPC
+      // Fetch balance with fewer retries and better error handling
       let balanceResult: bigint | undefined;
       let totalSupplyResult: bigint | undefined;
 
-      // Reduced retries to 2 since we have reliable RPC
-      for (let i = 0; i < 2; i++) {
+      // Only 1 retry since we have multiple RPCs in fallback with internal retries
+      for (let i = 0; i < 1; i++) {
         try {
           const contract = getContract({
             address: contractAddress,
@@ -66,14 +66,11 @@ export const useBrushData = () => {
             client: baseClient,
           });
 
-          // Shorter delay since RPC is more reliable
-          if (i > 0) await delay(500);
-
           // Get balance
           balanceResult = await contract.read.balanceOf([address]);
           
-          // Shorter delay between requests
-          await delay(200);
+          // Increased delay between requests to respect rate limits
+          await delay(400);
 
           // Get total supply
           totalSupplyResult = await contract.read.totalSupply();
@@ -89,7 +86,7 @@ export const useBrushData = () => {
           break; // Exit retry loop if successful
         } catch (err) {
           console.error(`Attempt ${i+1} failed:`, err);
-          if (i === 1) throw err; // Re-throw on final attempt
+          if (i === 0) throw err; // Re-throw on final attempt
         }
       }
 
@@ -122,7 +119,7 @@ export const useBrushData = () => {
         return;
       }
 
-      // Contracts for parallel search
+      // Contracts for parallel search using three different CORS-enabled clients
       const contractMain = getContract({
         address: contractAddress,
         abi: BasePaintBrushAbi,
@@ -135,31 +132,40 @@ export const useBrushData = () => {
         client: alternativeClient,
       });
 
+      const contractTertiary = getContract({
+        address: contractAddress,
+        abi: BasePaintBrushAbi,
+        client: tertiaryClient,
+      });
+
       const tokenIds: number[] = [];
       const balanceNum = Number(balance);
       const totalSupplyNum = Number(totalSupply);
 
-      // Use a larger batch size since RPC is more reliable
-      const batchSize = 200;
+      // Reduced batch size to avoid rate limits (conservative approach)
+      const batchSize = 150;
       for (let i = 1; i <= totalSupplyNum && tokenIds.length < balanceNum; i += batchSize) {
         const batch = Array.from(
           { length: Math.min(batchSize, totalSupplyNum - i + 1) }, 
           (_, index) => i + index
         );
         
-        // Process in larger chunks with reduced delay
-        for (let j = 0; j < batch.length; j += 20) {
-          const chunk = batch.slice(j, j + 20);
+        // Process in smaller chunks with moderate delays to avoid 429
+        for (let j = 0; j < batch.length; j += 15) {
+          const chunk = batch.slice(j, j + 15);
           
-          // Parallel search: even numbers with main client, odd numbers with alternative client
+          // Distribute load across three clients
           const ownerPromises = chunk.map(tokenId => {
-            const contract = tokenId % 2 === 0 ? contractMain : contractAlt;
+            // Rotate through 3 CORS-enabled clients
+            const contract = tokenId % 3 === 0 ? contractMain : 
+                            tokenId % 3 === 1 ? contractAlt : 
+                            contractTertiary;
             return contract.read.ownerOf([BigInt(tokenId)])
               .catch(() => null);
           });
 
-          // Reduced delay between chunks
-          if (j > 0) await delay(200);
+          // Increased delay between chunks to respect rate limits
+          if (j > 0) await delay(300);
 
           const owners = await Promise.all(ownerPromises);
 
@@ -168,9 +174,10 @@ export const useBrushData = () => {
               const tokenId = chunk[index];
               if (owner.toLowerCase() === address.toLowerCase()) {
                 // Log to show which client found the brush
-                const clientUsed = tokenId % 2 === 0 ? 'Main (BlastAPI)' : 'Alternative (PublicNode)';
-                const clientUrl = tokenId % 2 === 0 ? 'base-mainnet.public.blastapi.io' : 'base-rpc.publicnode.com';
-                console.log(`🎨 Brush found! Token ID: ${tokenId} | Client: ${clientUsed} | URL: ${clientUrl}`);
+                const clientUsed = tokenId % 3 === 0 ? 'Main (Fallback Pool)' : 
+                                  tokenId % 3 === 1 ? 'Alternative (Tenderly)' : 
+                                  'Tertiary (Omniatech)';
+                console.log(`🎨 Brush found! Token ID: ${tokenId} | Client: ${clientUsed}`);
                 
                 tokenIds.push(tokenId);
               }
@@ -179,6 +186,11 @@ export const useBrushData = () => {
 
           // If we found enough tokens, stop querying
           if (tokenIds.length >= balanceNum) break;
+        }
+        
+        // Add delay between batches to avoid overwhelming the RPCs
+        if (i + batchSize <= totalSupplyNum && tokenIds.length < balanceNum) {
+          await delay(500);
         }
       }
 
