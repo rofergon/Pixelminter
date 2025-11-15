@@ -1,28 +1,37 @@
+'use client'
+
 import React, { ReactNode } from 'react';
-import { WagmiProvider, createConfig, http } from 'wagmi';
+import { WagmiProvider, type Config } from 'wagmi';
 import { base } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { coinbaseWallet, walletConnect, injected } from 'wagmi/connectors';
-import { OnchainKitProvider } from '@coinbase/onchainkit';
+import { createAppKit } from '@reown/appkit/react';
+import { wagmiAdapter, projectId, metadata } from '../wagmi';
 
-const config = createConfig({
-  chains: [base],
-  connectors: [
-    coinbaseWallet({
-      appName: 'PixelMinter',
-    }),
-    injected(),
-    walletConnect({
-      projectId: '5e5860a7d1e851164f12d83211023640',
-    }),
-  ],
-  ssr: true,
-  transports: {
-    [base.id]: http(),
+// Set up queryClient
+const queryClient = new QueryClient();
+
+if (!projectId) {
+  throw new Error('Project ID is not defined');
+}
+
+// Create modal with Reown AppKit
+const modal = createAppKit({
+  adapters: [wagmiAdapter],
+  projectId,
+  networks: [base],
+  defaultNetwork: base,
+  metadata: metadata,
+  features: {
+    analytics: true,
+    email: false,
+    socials: false,
+  },
+  themeMode: 'dark',
+  themeVariables: {
+    '--w3m-accent': '#0052ff',
+    '--w3m-border-radius-master': '2px',
   },
 });
-
-const queryClient = new QueryClient();
 
 interface OnchainProvidersProps {
   children: ReactNode;
@@ -30,32 +39,9 @@ interface OnchainProvidersProps {
 
 const OnchainProviders: React.FC<OnchainProvidersProps> = ({ children }) => {
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={wagmiAdapter.wagmiConfig as Config}>
       <QueryClientProvider client={queryClient}>
-        <OnchainKitProvider
-          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-          chain={base}
-          config={{
-            appearance: {
-              name: 'PixelMinter',
-              logo: '/logo192.png', // Logo local de PixelMinter
-              mode: 'auto', // 'light' | 'dark' | 'auto'
-              theme: 'default',
-            },
-            wallet: {
-              display: 'modal',
-              termsUrl: 'https://your-website.com/terms', // Reemplaza con tu URL de términos
-              privacyUrl: 'https://your-website.com/privacy', // Reemplaza con tu URL de privacidad
-              supportedWallets: {
-                rabby: true,
-                trust: true,
-                frame: true,
-              },
-            },
-          }}
-        >
-          {children}
-        </OnchainKitProvider>
+        {children}
       </QueryClientProvider>
     </WagmiProvider>
   );

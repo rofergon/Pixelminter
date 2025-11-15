@@ -21,25 +21,11 @@ export const handleExtractPalette = async (
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data: PaletteData = await response.json();
     
-    // Validate image URL before setting it
-    let validImageUrl = '';
-    if (data.imageUrl && data.imageUrl.trim() !== '') {
-      try {
-        // Try to construct URL to validate format
-        new URL(data.imageUrl);
-        validImageUrl = data.imageUrl;
-      } catch (urlError) {
-        console.error('Invalid image URL received from API:', data.imageUrl);
-      }
-    } else {
-      console.warn('No image URL received from theme API');
-    }
-    
     updateState({ 
       palette: data.palette, 
       theme: data.theme, 
       isPaletteLoading: false,
-      dailyImageUrl: validImageUrl,
+      dailyImageUrl: data.imageUrl,
     });
 
     if (typeof onGridSizeChange === 'function') {
@@ -52,7 +38,6 @@ export const handleExtractPalette = async (
     console.error('Error fetching color palette and image:', error);
     updateState({ 
       isPaletteLoading: false, 
-      dailyImageUrl: '', // Clear image URL on error
       error: error instanceof Error ? error.message : 'An unknown error occurred' 
     });
   }

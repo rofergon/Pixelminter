@@ -26,48 +26,22 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
   // Function to load background image with cache-busting
   const loadBackgroundImage = useCallback((url: string, forceRefresh: boolean = false): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
-      // Validate URL before attempting to load
-      if (!url || url.trim() === '') {
-        reject(new Error('Empty or invalid background image URL'));
-        return;
-      }
-
       const img = new Image();
       img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('Failed to load background image'));
       
-      // Set a timeout to prevent hanging
-      const timeout = setTimeout(() => {
-        img.src = ''; // Cancel the load
-        reject(new Error('Background image load timeout'));
-      }, 10000); // 10 second timeout
-      
-      img.onload = () => {
-        clearTimeout(timeout);
-        resolve(img);
-      };
-      
-      img.onerror = (error) => {
-        clearTimeout(timeout);
-        console.error('Image load error for URL:', url, error);
-        reject(new Error('Failed to load background image'));
-      };
-      
-      try {
-        // Add cache-busting timestamp when forcing refresh
-        let finalUrl = url;
-        if (forceRefresh) {
-          const timestamp = Date.now();
-          const separator = url.includes('?') ? '&' : '?';
-          finalUrl = `${url}${separator}_t=${timestamp}`;
-        }
-        
-        // Use the proxy to avoid CORS issues
-        const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(finalUrl)}`;
-        img.src = proxyUrl;
-      } catch (error) {
-        clearTimeout(timeout);
-        reject(error);
+      // Add cache-busting timestamp when forcing refresh
+      let finalUrl = url;
+      if (forceRefresh) {
+        const timestamp = Date.now();
+        const separator = url.includes('?') ? '&' : '?';
+        finalUrl = `${url}${separator}_t=${timestamp}`;
       }
+      
+      // Use the proxy to avoid CORS issues
+      const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(finalUrl)}`;
+      img.src = proxyUrl;
     });
   }, []);
 
@@ -102,12 +76,6 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
     // Only load and render background if enabled and URL exists
     if (showBackgroundImage && dailyImageUrl) {
       try {
-        // Validate URL
-        if (!dailyImageUrl || dailyImageUrl.trim() === '') {
-          console.warn('Background image URL is empty or invalid');
-          return;
-        }
-
         // Prevent multiple simultaneous loads
         if (isBackgroundLoadingRef.current) return;
         
@@ -122,19 +90,10 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
         if (!backgroundImageRef.current || urlChanged || shouldRefreshByTime) {
           isBackgroundLoadingRef.current = true;
           const forceRefresh = shouldRefreshByTime && !urlChanged;
-          
-          try {
-            backgroundImageRef.current = await loadBackgroundImage(dailyImageUrl, forceRefresh);
-            lastBackgroundUrlRef.current = dailyImageUrl;
-            lastBackgroundRefreshRef.current = currentTime;
-          } catch (loadError) {
-            console.error('Failed to load background image:', loadError);
-            // Clear the background image reference on error
-            backgroundImageRef.current = null;
-            lastBackgroundUrlRef.current = '';
-          } finally {
-            isBackgroundLoadingRef.current = false;
-          }
+          backgroundImageRef.current = await loadBackgroundImage(dailyImageUrl, forceRefresh);
+          lastBackgroundUrlRef.current = dailyImageUrl;
+          lastBackgroundRefreshRef.current = currentTime;
+          isBackgroundLoadingRef.current = false;
         }
 
         if (backgroundImageRef.current) {
@@ -147,10 +106,8 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
           backgroundCtx.globalAlpha = 1;
         }
       } catch (error) {
-        console.error('Error rendering background image:', error);
+        console.error('Error loading background image:', error);
         isBackgroundLoadingRef.current = false;
-        // Clear background image on error to prevent repeated failures
-        backgroundImageRef.current = null;
       }
     }
   }, [stateRef, loadBackgroundImage]);

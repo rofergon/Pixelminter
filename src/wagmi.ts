@@ -1,14 +1,33 @@
-import { http, createConfig, fallback } from 'wagmi'
+import { cookieStorage, createStorage, http, fallback } from 'wagmi'
 import { base } from 'wagmi/chains'
-import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 
-export const config = createConfig({
-  chains: [base],
-  connectors: [
-    injected(),
-    coinbaseWallet({ appName: 'Pixelminter' }),
-    walletConnect({ projectId: '5e5860a7d1e851164f12d83211023640' }),
-  ],
+// Project ID de Reown (anteriormente WalletConnect)
+// Get your free Project ID at https://dashboard.reown.com
+export const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID
+
+if (!projectId) {
+  throw new Error('NEXT_PUBLIC_REOWN_PROJECT_ID is not defined. Get one at https://dashboard.reown.com')
+}
+
+export const networks = [base]
+
+// Metadata para Reown AppKit
+export const metadata = {
+  name: 'PixelMinter',
+  description: 'Create and mint pixel art on Base',
+  url: 'https://pixelminter.xyz',
+  icons: ['/logo192.png']
+}
+
+// Set up the Wagmi Adapter (Config)
+export const wagmiAdapter = new WagmiAdapter({
+  storage: createStorage({
+    storage: cookieStorage
+  }),
+  ssr: true,
+  projectId,
+  networks,
   transports: {
     [base.id]: fallback([
       http('https://mainnet.base.org'),
@@ -19,3 +38,5 @@ export const config = createConfig({
     ]),
   },
 })
+
+export const config = wagmiAdapter.wagmiConfig

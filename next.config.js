@@ -1,6 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
+    // Configuración de webpack para Reown AppKit
+    webpack: (config) => {
+      config.externals.push('pino-pretty', 'lokijs', 'encoding');
+      // Ignorar módulos de React Native que no son necesarios en web
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        '@react-native-async-storage/async-storage': false,
+      };
+      return config;
+    },
     // Aquí puedes añadir otras configuraciones específicas de tu proyecto
     images: {
       domains: ['basepaint.xyz', 'pixelminter.xyz', 'localhost'], // Añade 'localhost' o el dominio de tu aplicación

@@ -50,11 +50,9 @@ const WalletDemo: React.FC<WalletDemoProps> = ({ updateBrushData }) => {
       case 'enhanced':
         return <EnhancedWallet variant="default" />;
       case 'modal':
-        return <EnhancedWallet variant="modal" />;
       case 'island':
-        return <EnhancedWallet variant="island" />;
       case 'advanced':
-        return <EnhancedWallet variant="advanced" />;
+        return <EnhancedWallet variant={currentVariant} />;
       default:
         return <EnhancedWallet variant="default" />;
     }
@@ -65,11 +63,11 @@ const WalletDemo: React.FC<WalletDemoProps> = ({ updateBrushData }) => {
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 p-6 rounded-lg border border-blue-800">
         <h1 className="text-2xl font-bold text-blue-100 mb-2">
-          🚀 Wallet Mejorado - OnchainKit
+          🚀 Wallet con Reown AppKit (WalletConnect)
         </h1>
         <p className="text-blue-300">
-          Explora las diferentes variantes del wallet mejorado con OnchainKit. 
-          Cada variante ofrece diferentes características y experiencias de usuario.
+          Explora la conexión de wallet usando Reown AppKit (anteriormente WalletConnect). 
+          Ahora con soporte universal para múltiples wallets y mejor experiencia de usuario.
         </p>
       </div>
 
@@ -128,25 +126,27 @@ const WalletDemo: React.FC<WalletDemoProps> = ({ updateBrushData }) => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h3 className="font-semibold text-green-400 mb-2">✅ Mejoras Implementadas</h3>
+            <h3 className="font-semibold text-green-400 mb-2">✅ Mejoras con Reown AppKit</h3>
             <ul className="space-y-1 text-gray-300 text-sm">
-              <li>• Conexión con múltiples wallets (Coinbase, MetaMask, Phantom, etc.)</li>
-              <li>• Animaciones y transiciones suaves</li>
-              <li>• Diseño responsive para móvil y desktop</li>
-              <li>• Soporte para tema oscuro/claro</li>
+              <li>• Conexión universal con 300+ wallets</li>
+              <li>• WalletConnect v2 integrado nativamente</li>
+              <li>• Soporte para MetaMask, Coinbase Wallet, Trust, Phantom, etc.</li>
+              <li>• Modal intuitivo con mejor UX</li>
+              <li>• Diseño responsive optimizado</li>
               <li>• Estados de carga y error mejorados</li>
-              <li>• Efectos visuales modernos (glassmorphism)</li>
+              <li>• Tema oscuro personalizable</li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold text-blue-400 mb-2">🔧 Configuración Avanzada</h3>
             <ul className="space-y-1 text-gray-300 text-sm">
-              <li>• URLs de términos y privacidad configurables</li>
-              <li>• Logo personalizable de la aplicación</li>
-              <li>• Soporte para wallets adicionales (Rabby, Trust, Frame)</li>
-              <li>• Modal inteligente con creación de smart wallet</li>
-              <li>• Información detallada del usuario (Balance, NFTs)</li>
+              <li>• Project ID de Reown Dashboard</li>
+              <li>• Metadata personalizable (nombre, logo, descripción)</li>
+              <li>• Soporte para múltiples redes</li>
+              <li>• Analytics integrado</li>
+              <li>• Temas y variables CSS personalizables</li>
+              <li>• SSR compatible con Next.js</li>
             </ul>
           </div>
         </div>
@@ -159,16 +159,19 @@ const WalletDemo: React.FC<WalletDemoProps> = ({ updateBrushData }) => {
         </h2>
         <div className="space-y-3 text-yellow-100 text-sm">
           <p>
-            <strong>1. Configuración requerida:</strong> Actualiza las URLs en `OnchainProviders.tsx` con tus enlaces reales de términos y privacidad.
+            <strong>1. Project ID:</strong> Obtén tu Project ID desde <a href="https://dashboard.reown.com" target="_blank" rel="noopener noreferrer" className="underline">Reown Dashboard</a> (gratis).
           </p>
           <p>
-            <strong>2. Logo personalizado:</strong> Reemplaza la URL del logo en la configuración con la URL de tu logo.
+            <strong>2. Configuración:</strong> El Project ID y metadata están en <code className="bg-yellow-900/40 px-1 rounded">src/wagmi.ts</code>.
           </p>
           <p>
-            <strong>3. Uso recomendado:</strong> Utiliza `EnhancedWallet` con variant=&quot;default&quot; para la mayoría de casos, o &quot;island&quot; para experiencias premium.
+            <strong>3. Uso simple:</strong> Usa el componente <code className="bg-yellow-900/40 px-1 rounded">&lt;appkit-button /&gt;</code> en cualquier parte de tu app.
           </p>
           <p>
-            <strong>4. Estilos personalizados:</strong> Los estilos CSS están en `src/styles/wallet.css` y se pueden personalizar según tu brand.
+            <strong>4. Personalización:</strong> Modifica temas y colores en <code className="bg-yellow-900/40 px-1 rounded">OnchainProviders.tsx</code> con themeVariables.
+          </p>
+          <p>
+            <strong>5. Next.js:</strong> La configuración de webpack en <code className="bg-yellow-900/40 px-1 rounded">next.config.js</code> es necesaria para SSR.
           </p>
         </div>
       </div>
