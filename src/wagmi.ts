@@ -4,11 +4,13 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 
 // Project ID de Reown (anteriormente WalletConnect)
 // Get your free Project ID at https://dashboard.reown.com
-export const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID
+const projectIdEnv = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID
 
-if (!projectId) {
+if (!projectIdEnv) {
   throw new Error('NEXT_PUBLIC_REOWN_PROJECT_ID is not defined. Get one at https://dashboard.reown.com')
 }
+
+export const projectId: string = projectIdEnv
 
 export const networks = [base]
 
