@@ -44,7 +44,8 @@
     "build": "next build",
     "lint": "next lint",
     "server": "node server.js",
-    "dev": "next dev"
+    "dev": "next dev",
+    "vercel-build": "npm install --legacy-peer-deps && next build"
   },
   "browserslist": {
     "production": [
