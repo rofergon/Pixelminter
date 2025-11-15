@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useEndOfDayDisable } from '../useEndOfDayDisable';
 

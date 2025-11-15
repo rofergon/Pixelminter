@@ -80,7 +80,7 @@ const PixelArt: React.FC = () => {
   }, []);
 
   // Hook for canvas display utilities
-  const { updateCanvasDisplay, markPixelAsModified } = useCanvasDisplay({ canvasRef, stateRef });
+  const { updateCanvasDisplay, markPixelAsModified } = useCanvasDisplay({ canvasRef, stateRef, state });
 
   // Hook for drawing the grid overlay
   const drawGrid = useDrawGrid(gridCanvasRef, stateRef);

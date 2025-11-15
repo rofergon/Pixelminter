@@ -4,6 +4,7 @@ import { State, Layer } from '../../types/types';
 interface CanvasRefs {
   canvasRef: RefObject<HTMLCanvasElement>;
   stateRef: MutableRefObject<State>;
+  state: State;
 }
 
 interface CanvasDisplayFunctions {
@@ -11,7 +12,7 @@ interface CanvasDisplayFunctions {
   markPixelAsModified: () => void;
 }
 
-const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFunctions => {
+const useCanvasDisplay = ({ canvasRef, stateRef, state }: CanvasRefs): CanvasDisplayFunctions => {
   const requestIdRef = useRef<number | null>(null);
   const offScreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const offCtxRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -197,10 +198,10 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
     }
   }, [updateCanvasDisplay]);
 
+  const { backgroundRefreshInterval, dailyImageUrl, showBackgroundImage } = state;
+
   // Setup automatic background refresh interval
   useEffect(() => {
-    const { backgroundRefreshInterval, dailyImageUrl, showBackgroundImage } = stateRef.current;
-    
     // Clear existing interval
     if (backgroundRefreshIntervalRef.current) {
       clearInterval(backgroundRefreshIntervalRef.current);
@@ -219,7 +220,7 @@ const useCanvasDisplay = ({ canvasRef, stateRef }: CanvasRefs): CanvasDisplayFun
         clearInterval(backgroundRefreshIntervalRef.current);
       }
     };
-  }, [stateRef.current.dailyImageUrl, stateRef.current.showBackgroundImage, stateRef.current.backgroundRefreshInterval, renderBackground]);
+  }, [backgroundRefreshInterval, dailyImageUrl, showBackgroundImage, renderBackground]);
   
   useEffect(() => {
     return () => {

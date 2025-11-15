@@ -15,7 +15,7 @@ if (!projectId) {
 }
 
 // Create modal with Reown AppKit
-const modal = createAppKit({
+createAppKit({
   adapters: [wagmiAdapter],
   projectId,
   networks: [base],
