@@ -14,24 +14,42 @@ if (!projectId) {
   throw new Error('Project ID is not defined');
 }
 
-// Create modal with Reown AppKit
-createAppKit({
-  adapters: [wagmiAdapter],
-  projectId,
-  networks: [base],
-  defaultNetwork: base,
-  metadata: metadata,
-  features: {
-    analytics: true,
-    email: false,
-    socials: false,
-  },
-  themeMode: 'dark',
-  themeVariables: {
-    '--w3m-accent': '#0052ff',
-    '--w3m-border-radius-master': '2px',
-  },
-});
+const initializeAppKit = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const clientWindow = window as typeof window & {
+    __appKitModalInitialized__?: boolean;
+  };
+
+  if (clientWindow.__appKitModalInitialized__) {
+    // Prevent redefining web components during HMR / multiple imports.
+    return;
+  }
+
+  createAppKit({
+    adapters: [wagmiAdapter],
+    projectId,
+    networks: [base],
+    defaultNetwork: base,
+    metadata,
+    features: {
+      analytics: true,
+      email: false,
+      socials: false,
+    },
+    themeMode: 'dark',
+    themeVariables: {
+      '--w3m-accent': '#0052ff',
+      '--w3m-border-radius-master': '2px',
+    },
+  });
+
+  clientWindow.__appKitModalInitialized__ = true;
+};
+
+initializeAppKit();
 
 interface OnchainProvidersProps {
   children: ReactNode;
