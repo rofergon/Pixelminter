@@ -35,7 +35,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
   const { data: mintFeeData } = useContractRead({
     address: '0x70790c3c3d8879b4d838235bc889c162ecf50ad2',
     abi: pixelminterAbi,
-    functionName: 'getMintFeeWei',
+    functionName: 'getMintFee',
   });
 
   useEffect(() => {

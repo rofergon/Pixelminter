@@ -1,0 +1,8 @@
+{
+  "name": "Pixelminter",
+  "description": "A pixel art creation platform on Base. Each NFT represents unique pixel art created with daily themes. Artists can mint their creations as NFTs with animated GIFs and detailed metadata.",
+  "image": "ipfs://QmYourCollectionImageCID",
+  "external_link": "https://pixelminter.xyz",
+  "seller_fee_basis_points": 250,
+  "fee_recipient": "0xYourWalletAddress"
+}

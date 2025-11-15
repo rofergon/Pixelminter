@@ -25,8 +25,8 @@
     "@types/react-dom": "^18.3.0",
     "@types/react-resizable": "^3.0.8",
     "@types/uuid": "^10.0.0",
-    "autoprefixer": "^10.4.20",
     "@wagmi/core": "^2.14.1",
+    "autoprefixer": "^10.4.20",
     "axios": "^1.6.2",
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.0",
@@ -75,13 +75,18 @@
   "devDependencies": {
     "@babel/plugin-transform-class-properties": "^7.25.4",
     "@babel/plugin-transform-private-property-in-object": "^7.24.7",
+    "@nomicfoundation/hardhat-ethers": "^4.0.3",
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
     "@types/aria-query": "^5.0.4",
     "@types/dom-screen-wake-lock": "^1.0.3",
     "@types/gif.js": "^0.2.5",
     "@types/istanbul-lib-coverage": "^2.0.6",
     "@types/istanbul-reports": "^3.0.4",
     "@types/prop-types": "^15.7.12",
+    "dotenv": "^17.2.3",
     "eslint-plugin-react": "^7.35.0",
+    "ethers": "^6.15.0",
+    "hardhat": "^3.0.14",
     "webpack-dev-server": "^4.15.1"
   }
 }

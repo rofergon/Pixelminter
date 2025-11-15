@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 
 /**
  * @title PixelminterNFT
@@ -16,10 +15,10 @@ import "@openzeppelin/contracts/utils/Counters.sol";
  * - Color palette used
  */
 contract PixelminterNFT is ERC721URIStorage, Ownable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+    uint256 private _nextTokenId;
 
     uint256 private mintFee; // Mint fee in wei
+    string private _contractURI; // Contract-level metadata for OpenSea
 
     event FeeUpdated(uint256 newFee);
     event NFTMinted(
@@ -29,8 +28,10 @@ contract PixelminterNFT is ERC721URIStorage, Ownable {
         uint256 totalMinted
     );
 
-    constructor(uint256 initialFee) ERC721("Pixelminter", "PXMT") Ownable(msg.sender) {
+    constructor(uint256 initialFee, string memory contractURI_) ERC721("Pixelminter", "PXMT") Ownable(msg.sender) {
         mintFee = initialFee;
+        _nextTokenId = 1; // Start token IDs from 1
+        _contractURI = contractURI_;
     }
 
     /**
@@ -59,13 +60,13 @@ contract PixelminterNFT is ERC721URIStorage, Ownable {
         require(recipient != address(0), "Invalid recipient address");
         require(bytes(tokenURI).length > 0, "Token URI cannot be empty");
 
-        _tokenIds.increment();
-        uint256 newTokenId = _tokenIds.current();
+        uint256 newTokenId = _nextTokenId;
+        _nextTokenId++;
         
         _safeMint(recipient, newTokenId);
         _setTokenURI(newTokenId, tokenURI);
 
-        emit NFTMinted(recipient, newTokenId, tokenURI, newTokenId);
+        emit NFTMinted(recipient, newTokenId, tokenURI, _nextTokenId - 1);
 
         return newTokenId;
     }
@@ -92,7 +93,7 @@ contract PixelminterNFT is ERC721URIStorage, Ownable {
      * @return Total supply of tokens
      */
     function totalSupply() public view returns (uint256) {
-        return _tokenIds.current();
+        return _nextTokenId - 1;
     }
 
     /**
@@ -102,5 +103,34 @@ contract PixelminterNFT is ERC721URIStorage, Ownable {
         uint256 balance = address(this).balance;
         require(balance > 0, "No balance to withdraw");
         payable(owner()).transfer(balance);
+    }
+
+    /**
+     * @dev Returns the contract-level metadata URI (OpenSea standard)
+     * @return URI pointing to the collection metadata JSON
+     */
+    function contractURI() public view returns (string memory) {
+        return _contractURI;
+    }
+
+    /**
+     * @dev Updates the contract URI (only owner)
+     * @param newContractURI New contract-level metadata URI
+     */
+    function setContractURI(string memory newContractURI) public onlyOwner {
+        _contractURI = newContractURI;
+    }
+
+    /**
+     * @dev Override supportsInterface to include ERC721URIStorage
+     */
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }

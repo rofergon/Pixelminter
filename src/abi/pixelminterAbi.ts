@@ -21,7 +21,7 @@ export const pixelminterAbi = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "initialFeeEth",
+				"name": "initialFee",
 				"type": "uint256"
 			}
 		],
@@ -228,7 +228,7 @@ export const pixelminterAbi = [
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "newFeeEth",
+				"name": "newFee",
 				"type": "uint256"
 			}
 		],
@@ -239,13 +239,31 @@ export const pixelminterAbi = [
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "tokenURI",
+				"type": "string"
+			},
+			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "_tokenId",
+				"name": "totalMinted",
 				"type": "uint256"
 			}
 		],
-		"name": "MetadataUpdate",
+		"name": "NFTMinted",
 		"type": "event"
 	},
 	{
@@ -371,11 +389,11 @@ export const pixelminterAbi = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "newFeeEth",
+				"name": "newFee",
 				"type": "uint256"
 			}
 		],
-		"name": "setFeeEth",
+		"name": "setMintFee",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -488,7 +506,7 @@ export const pixelminterAbi = [
 	},
 	{
 		"inputs": [],
-		"name": "getMintFeeWei",
+		"name": "getMintFee",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -525,7 +543,7 @@ export const pixelminterAbi = [
 	},
 	{
 		"inputs": [],
-		"name": "mintFeeWei",
+		"name": "totalSupply",
 		"outputs": [
 			{
 				"internalType": "uint256",
