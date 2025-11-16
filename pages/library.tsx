@@ -36,7 +36,6 @@ const LibraryPage = () => {
     abi: pixelminterAbi,
     functionName: 'getMintFee',
     chainId: PIXELMINTER_CHAIN_ID,
-    watch: true,
   });
 
   const mintFee = mintFeeData ? formatEther(mintFeeData as bigint) : null;
@@ -46,18 +45,18 @@ const LibraryPage = () => {
   return (
     <>
       <Head>
-        <title>Pixelminter | Biblioteca NFT</title>
+        <title>Pixelminter | NFT Library</title>
       </Head>
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
         <div className="max-w-6xl mx-auto px-4 py-12 space-y-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div className="space-y-4 max-w-2xl">
               <p className="text-sm uppercase tracking-[0.35em] text-emerald-300">Pixelminter</p>
-              <h1 className="text-4xl font-semibold">Tu biblioteca de animaciones NFT</h1>
+              <h1 className="text-4xl font-semibold">Your BasePaint animation library</h1>
               <p className="text-slate-400">
-                Explora los gifts que minteaste directamente contra el contrato{' '}
-                <span className="font-mono text-slate-200">{shortenAddress(PIXELMINTER_CONTRACT_ADDRESS)}</span> y
-                verifica que cada token apunte a los assets alojados en Lighthouse.
+                Explore the GIFs you minted directly to the contract{' '}
+                <span className="font-mono text-slate-200">{shortenAddress(PIXELMINTER_CONTRACT_ADDRESS)}</span> and
+                verify that each token points to assets hosted on Lighthouse.
               </p>
               <div className="flex flex-wrap gap-3 pt-2">
                 <Button
@@ -67,7 +66,7 @@ const LibraryPage = () => {
                 >
                   <Link href="/">
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Volver al canvas
+                    Back to canvas
                   </Link>
                 </Button>
                 <Button
@@ -76,7 +75,7 @@ const LibraryPage = () => {
                   className="bg-indigo-600 hover:bg-indigo-500 text-white"
                 >
                   <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                  Actualizar galería
+                  Refresh gallery
                 </Button>
               </div>
             </div>
@@ -94,20 +93,20 @@ const LibraryPage = () => {
               <div className="flex items-center gap-3">
                 <ShieldCheck className="text-emerald-400" />
                 <div>
-                  <p className="text-xs uppercase text-slate-500">Contrato verificado</p>
+                  <p className="text-xs uppercase text-slate-500">Verified contract</p>
                   <p className="text-sm font-semibold text-slate-200">PixelminterNFT</p>
                 </div>
               </div>
               <p className="mt-3 text-xs font-mono break-all text-slate-400">{PIXELMINTER_CONTRACT_ADDRESS}</p>
               <div className="mt-4 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
-                <span>Mint fee actual: {mintFee ? `${mintFee} ETH` : '—'}</span>
+                <span>Current mint fee: {mintFee ? `${mintFee} ETH` : '—'}</span>
                 <a
                   href={PIXELMINTER_ETHERSCAN_URL}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 text-emerald-300 hover:text-emerald-200"
                 >
-                  Ver en Basescan
+                  View on Basescan
                   <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
@@ -116,28 +115,28 @@ const LibraryPage = () => {
               <div className="flex items-center gap-3">
                 <Images className="text-indigo-400" />
                 <div>
-                  <p className="text-xs uppercase text-slate-500">Supply total</p>
+                  <p className="text-xs uppercase text-slate-500">Total supply</p>
                   <p className="text-2xl font-bold">
                     {hasLoadedSupply ? totalSupply : '—'}
                   </p>
                 </div>
               </div>
               <p className="mt-3 text-sm text-slate-400">
-                Cifra extraída usando <code className="font-mono text-slate-200">totalSupply()</code> para verificar
-                cuántos tokens se han acuñado en el contrato.
+                Number retrieved using <code className="font-mono text-slate-200">totalSupply()</code> to verify
+                how many tokens have been minted on the contract.
               </p>
             </div>
             <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 shadow-pixel">
               <div className="flex items-center gap-3">
                 <Sparkles className="text-amber-300" />
                 <div>
-                  <p className="text-xs uppercase text-slate-500">Tus piezas</p>
+                  <p className="text-xs uppercase text-slate-500">Your pieces</p>
                   <p className="text-2xl font-bold">{tokens.length}</p>
                 </div>
               </div>
               <p className="mt-3 text-sm text-slate-400">
-                El listado se arma llamando {`ownerOf()`} + {`tokenURI()`} para cada token y validando que el dueño sea tu
-                wallet actual.
+                The list is built by calling {`ownerOf()`} + {`tokenURI()`} for each token and validating that the owner is your
+                current wallet.
               </p>
             </div>
           </div>
@@ -145,17 +144,17 @@ const LibraryPage = () => {
           <section className="bg-slate-950/60 border border-slate-900 rounded-3xl p-6 shadow-neon space-y-6">
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-2xl font-semibold">Biblioteca en Lighthouse</h2>
+                <h2 className="text-2xl font-semibold">Gallery</h2>
                 <p className="text-sm text-slate-400">
-                  Cada preview usa el <code className="font-mono text-slate-200">animation_url</code> o{' '}
-                  <code className="font-mono text-slate-200">image</code> apuntando al gateway oficial de Lighthouse.
+                  Each preview uses the <code className="font-mono text-slate-200">animation_url</code> or{' '}
+                  <code className="font-mono text-slate-200">image</code> pointing to the official Lighthouse gateway.
                 </p>
               </div>
             </div>
 
             {!address && (
               <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-slate-400">
-                Conecta tu wallet para ver los NFTs que has minteado.
+                Connect your wallet to see the NFTs you have minted.
               </div>
             )}
 
@@ -180,8 +179,8 @@ const LibraryPage = () => {
 
                 {!isLoading && tokens.length === 0 && (
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-slate-400">
-                    Aún no has minteado animaciones en este contrato. Vuelve al canvas y mintea tu primera pieza para
-                    verla aquí.
+                    You haven't minted any animations on this contract yet. Go back to the canvas and mint your first piece to
+                    see it here.
                   </div>
                 )}
 
@@ -220,7 +219,7 @@ const LibraryPage = () => {
                           </div>
                           <div className="p-4 space-y-4 flex-1 flex flex-col">
                             <p className="text-sm text-slate-400">
-                              {token.metadata?.description ?? 'Esta animación fue minteada desde Pixelminter.'}
+                              {token.metadata?.description ?? 'This animation was minted from Pixelminter.'}
                             </p>
                             {traits.length > 0 && (
                               <div className="flex flex-wrap gap-2">
@@ -243,19 +242,10 @@ const LibraryPage = () => {
                                   rel="noreferrer"
                                   className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-300 hover:text-emerald-200"
                                 >
-                                  Ver animación
+                                  View animation
                                   <ExternalLink className="h-3 w-3" />
                                 </a>
                               )}
-                              <a
-                                href={metadataUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-300 hover:text-indigo-200"
-                              >
-                                Metadata JSON
-                                <ExternalLink className="h-3 w-3" />
-                              </a>
                             </div>
                           </div>
                         </div>
