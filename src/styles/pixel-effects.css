@@ -140,6 +140,36 @@
   }
 }
 
+/* Mint Button Animations */
+@keyframes scanline {
+  0% { 
+    transform: translateY(-100%); 
+  }
+  100% { 
+    transform: translateY(2000%); 
+  }
+}
+
+@keyframes pixelGridMove {
+  0% { 
+    background-position: 0 0; 
+  }
+  100% { 
+    background-position: 8px 8px; 
+  }
+}
+
+@keyframes pixelBlink {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 0.4; 
+    transform: scale(0.8); 
+  }
+}
+
 .pixel-loading {
   display: inline-block;
   width: 16px;
