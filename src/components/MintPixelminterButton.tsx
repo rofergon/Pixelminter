@@ -218,17 +218,27 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
   };
 
   const handleMint = useCallback(() => {
-    if (!ipfsHash || !address || !mintFeeData) {
-      setError('Faltan datos para mintear');
+    if (!ipfsHash || !address) {
+      const missingFields: string[] = [];
+      if (!ipfsHash) missingFields.push('token metadata (ipfsHash)');
+      if (!address) missingFields.push('wallet address');
+
+      setError(
+        `Missing data to mint: ${missingFields.join(
+          ', '
+        )}. Please wait for the upload to finish and try again.`
+      );
       setIsPreparingMint(false);
       return;
     }
+
+    const resolvedMintFee = (mintFeeData ?? BigInt(0)) as bigint;
 
     console.log('=== Iniciando minteo con Wagmi ===');
     console.log('Contract:', PIXELMINTER_CONTRACT_ADDRESS);
     console.log('Recipient:', address);
     console.log('Token URI:', ipfsHash);
-    console.log('Mint Fee:', mintFeeData.toString(), 'wei');
+    console.log('Mint Fee:', resolvedMintFee.toString(), 'wei');
 
     try {
       writeContract({
@@ -236,7 +246,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
         abi: pixelminterAbi,
         functionName: 'mintNFT',
         args: [address as `0x${string}`, ipfsHash],
-        value: mintFeeData as bigint,
+        value: resolvedMintFee,
       });
     } catch (err) {
       console.error('Error al llamar writeContract:', err);

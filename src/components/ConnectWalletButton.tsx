@@ -14,8 +14,10 @@ const ConnectWalletButton: React.FC<{ updateBrushData: (data: BrushData | null) 
 
   return (
     <div className="flex items-center justify-end flex-shrink-0 w-full">
-      {/* Reown AppKit Web Component */}
-      <appkit-button balance="hide" />
+      {/* Reown AppKit Web Component con estilos mejorados */}
+      <div className="wallet-button-container">
+        <appkit-button balance="hide" />
+      </div>
     </div>
   );
 };

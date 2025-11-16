@@ -334,17 +334,17 @@ const SidePanel: React.FC<SidePanelProps> = ({
             <div className="p-3 space-y-2">
               <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
                 <BookOpen className="text-indigo-300" size={16} />
-                Biblioteca NFT
+                NFT Library
               </h3>
               <p className="text-xs text-slate-400">
-                Consulta los GIFs que has minteado en Pixelminter y abre sus metadatos alojados en Lighthouse.
+                View the GIFs you have minted on Pixelminter.
               </p>
               <Button
                 asChild
                 className="w-full h-8 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold"
               >
                 <Link href="/library">
-                  Abrir biblioteca
+                  Open Library
                 </Link>
               </Button>
             </div>
