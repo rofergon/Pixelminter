@@ -32,14 +32,29 @@ async function main() {
   
   console.log("✅ PixelminterNFT deployed to:", contractAddress);
   
+  // Wait for confirmations before reading contract state
+  console.log("\n⏳ Waiting for transaction confirmations...");
+  const deployTx = pixelminterNFT.deploymentTransaction();
+  if (deployTx) {
+    const receipt = await deployTx.wait(3); // Wait for 3 confirmations
+    console.log("   Transaction hash:", receipt.hash);
+    console.log("   Block number:", receipt.blockNumber);
+    console.log("   Gas used:", receipt.gasUsed.toString());
+  }
+  
   // Verify contract information
   console.log("\n📊 Contract Information:");
-  console.log("   Name:", await pixelminterNFT.name());
-  console.log("   Symbol:", await pixelminterNFT.symbol());
-  console.log("   Owner:", await pixelminterNFT.owner());
-  console.log("   Mint Fee:", hre.ethers.formatEther(await pixelminterNFT.getMintFee()), "ETH");
-  console.log("   Contract URI:", await pixelminterNFT.contractURI());
-  console.log("   Total Supply:", (await pixelminterNFT.totalSupply()).toString());
+  try {
+    console.log("   Name:", await pixelminterNFT.name());
+    console.log("   Symbol:", await pixelminterNFT.symbol());
+    console.log("   Owner:", await pixelminterNFT.owner());
+    console.log("   Mint Fee:", hre.ethers.formatEther(await pixelminterNFT.getMintFee()), "ETH");
+    console.log("   Contract URI:", await pixelminterNFT.contractURI());
+    console.log("   Total Supply:", (await pixelminterNFT.totalSupply()).toString());
+  } catch (error) {
+    console.log("   ⚠️  Could not read contract state immediately (this is normal)");
+    console.log("   The contract is deployed, verification will confirm it's working");
+  }
   
   // Save deployment info
   console.log("\n📄 Deployment Summary:");
