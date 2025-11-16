@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { pixelminterAbi } from '../abi/pixelminterAbi';
 import { State } from '../types/types';
@@ -20,7 +20,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
   const { exportGif, isExporting } = useExportGif(state, fps);
   const { uploadToLighthouse, uploading } = useLighthouseUpload();
 
-  // Leer el fee de minteo del contrato en Base Sepolia
+  // Leer el fee de minteo del contrato en Base Mainnet
   const { data: mintFeeData } = useReadContract({
     address: PIXELMINTER_CONTRACT_ADDRESS,
     abi: pixelminterAbi,
@@ -79,14 +79,6 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
       }, 5000);
     }
   }, [isConfirmed, hash]);
-
-  // Auto-mintear cuando se complete la subida a IPFS
-  useEffect(() => {
-    if (ipfsHash && !hash && !isWritePending && !isConfirming && !isConfirmed) {
-      console.log('🚀 Auto-iniciando minteo...');
-      handleMint();
-    }
-  }, [ipfsHash]); // Solo se ejecuta cuando ipfsHash cambia
 
   const prepareAndMint = async () => {
     if (isExporting || uploading || isPreparingMint) return;
@@ -225,7 +217,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
     }
   };
 
-  const handleMint = () => {
+  const handleMint = useCallback(() => {
     if (!ipfsHash || !address || !mintFeeData) {
       setError('Faltan datos para mintear');
       setIsPreparingMint(false);
@@ -252,7 +244,15 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
       setIsPreparingMint(false);
       setIpfsHash(null);
     }
-  };
+  }, [address, ipfsHash, mintFeeData, writeContract]);
+
+  // Auto-mintear cuando se complete la subida a IPFS
+  useEffect(() => {
+    if (ipfsHash && !hash && !isWritePending && !isConfirming && !isConfirmed) {
+      console.log('🚀 Auto-iniciando minteo...');
+      handleMint();
+    }
+  }, [handleMint, hash, ipfsHash, isConfirming, isConfirmed, isWritePending]);
 
   if (!address) return null;
 
@@ -311,7 +311,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
           
           {hash && (
             <a
-              href={`https://sepolia.basescan.org/tx/${hash}`}
+              href={`https://basescan.org/tx/${hash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-blue-500 hover:text-blue-700 text-center underline"
@@ -327,7 +327,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
           </p>
           {hash && (
             <a
-              href={`https://sepolia.basescan.org/tx/${hash}`}
+              href={`https://basescan.org/tx/${hash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-green-600 hover:text-green-800 underline"
