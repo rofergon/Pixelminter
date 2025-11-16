@@ -97,7 +97,9 @@ const LibraryPage = () => {
               </div>
               <p className="mt-3 text-xs font-mono break-all text-slate-400">{PIXELMINTER_CONTRACT_ADDRESS}</p>
               <div className="mt-4 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
-                <span>Current mint fee: {mintFee ? `${mintFee} ETH` : '—'}</span>
+                <span className={mintFee === '0' || mintFee === '0.0' || !mintFee ? 'text-emerald-300 font-semibold' : ''}>
+                  {mintFee && mintFee !== '0' && mintFee !== '0.0' ? `Current mint fee: ${mintFee} ETH` : 'Minting is FREE! 🎉'}
+                </span>
                 <a
                   href={PIXELMINTER_ETHERSCAN_URL}
                   target="_blank"
@@ -120,8 +122,7 @@ const LibraryPage = () => {
                 </div>
               </div>
               <p className="mt-3 text-sm text-slate-400">
-                Number retrieved using <code className="font-mono text-slate-200">totalSupply()</code> to verify
-                how many tokens have been minted on the contract.
+                Start collecting your own animated WIPs and build your unique pixel art gallery.
               </p>
             </div>
             <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 shadow-pixel">
