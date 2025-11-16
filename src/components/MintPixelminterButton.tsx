@@ -283,7 +283,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
             }}
             className="mt-2 text-xs underline hover:no-underline"
           >
-            Intentar de nuevo
+            Try again
           </button>
         </div>
       )}
@@ -294,28 +294,28 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
           className="w-full action-button bg-gray-800 hover:bg-gray-700 text-gray-300 py-2 px-4 rounded transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isProcessing}
         >
-          {isExporting ? '🎨 Exportando GIF...' : 
-           uploading ? '☁️ Subiendo a IPFS...' : 
-           isPreparingMint ? '⚙️ Preparando...' :
+          {isExporting ? '🎨 Exporting GIF...' : 
+           uploading ? '☁️ Uploading to IPFS...' : 
+           isPreparingMint ? '⚙️ Preparing...' :
            'Mint NFT'}
         </button>
       ) : showMintButton ? (
         <div className="w-full flex flex-col gap-2">
           <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
-            <p className="font-semibold">✅ Subida completada</p>
-            <p className="text-xs mt-1">Abriendo wallet para firmar...</p>
+            <p className="font-semibold">✅ Upload ready</p>
+            <p className="text-xs mt-1">Opening your wallet to sign...</p>
           </div>
         </div>
       ) : (isWritePending || isConfirming) && !isConfirmed ? (
         <div className="w-full flex flex-col gap-2">
           <div className="p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800">
             <p className="font-semibold">
-              {isWritePending ? '👛 Confirma en tu wallet...' : '⏳ Esperando confirmación...'}
+              {isWritePending ? '👛 Confirm in your wallet...' : '⏳ Waiting for confirmation...'}
             </p>
             <p className="text-xs mt-1">
               {isWritePending 
-                ? 'Revisa tu extensión de wallet' 
-                : 'La transacción está siendo procesada'}
+                ? 'Check your wallet extension' 
+                : 'Transaction is being processed'}
             </p>
           </div>
           
@@ -326,14 +326,14 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
               rel="noopener noreferrer"
               className="text-xs text-blue-500 hover:text-blue-700 text-center underline"
             >
-              Ver transacción en BaseScan →
+              View transaction on BaseScan →
             </a>
           )}
         </div>
       ) : isConfirmed ? (
         <div className="w-full flex flex-col items-center gap-2 p-4 bg-green-100 border border-green-400 rounded">
           <p className="text-sm text-green-700 font-semibold">
-            ✅ ¡NFT Minteado Exitosamente!
+            ✅ NFT minted successfully!
           </p>
           {hash && (
             <a
@@ -342,11 +342,11 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
               rel="noopener noreferrer"
               className="text-xs text-green-600 hover:text-green-800 underline"
             >
-              Ver en BaseScan →
+              View on BaseScan →
             </a>
           )}
           <p className="text-xs text-gray-600 mt-2">
-            Puedes mintear otro en 5 segundos...
+            You can mint another one in ~5 seconds...
           </p>
         </div>
       ) : null}
