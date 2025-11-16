@@ -11,7 +11,7 @@ import {
   PIXELMINTER_CONTRACT_ADDRESS,
   PIXELMINTER_ETHERSCAN_URL,
 } from '@/constants/pixelminter';
-import { resolveIpfsUri, usePixelminterGallery } from '@/hooks/usePixelminterGallery';
+import { usePixelminterGallery } from '@/hooks/usePixelminterGallery';
 
 const shortenAddress = (value?: string | null) => {
   if (!value) return '—';
