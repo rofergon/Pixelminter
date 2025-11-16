@@ -519,6 +519,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
 
                 <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950/50 shadow-inner">
                   <div className="aspect-video bg-slate-900/60 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={mintSuccessData.gifUrl}
                       alt={mintSuccessData.name}

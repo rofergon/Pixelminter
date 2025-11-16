@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ExternalLink, Images, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
 import { useAccount, useContractRead } from 'wagmi';
 import { formatEther } from 'viem';
@@ -12,6 +12,7 @@ import {
   PIXELMINTER_ETHERSCAN_URL,
 } from '@/constants/pixelminter';
 import { usePixelminterGallery } from '@/hooks/usePixelminterGallery';
+import type { PixelminterGalleryScope } from '@/hooks/usePixelminterGallery';
 
 const shortenAddress = (value?: string | null) => {
   if (!value) return '—';
@@ -22,6 +23,29 @@ const featuredTraits = ['Theme', 'FPS', 'Frame Count', 'Total Pixels', 'Creation
 
 const LibraryPage = () => {
   const { address } = useAccount();
+  const scopeHasBeenSetManually = useRef(false);
+  const [galleryScope, setGalleryScope] = useState<PixelminterGalleryScope>(address ? 'personal' : 'global');
+  const isPersonalGallery = galleryScope === 'personal';
+
+  useEffect(() => {
+    if (!address && galleryScope === 'personal') {
+      scopeHasBeenSetManually.current = false;
+      setGalleryScope('global');
+    }
+  }, [address, galleryScope]);
+
+  useEffect(() => {
+    if (address && !scopeHasBeenSetManually.current) {
+      setGalleryScope('personal');
+    }
+  }, [address]);
+
+  const handleGalleryScopeChange = (scope: PixelminterGalleryScope) => {
+    if (scope === 'personal' && !address) return;
+    scopeHasBeenSetManually.current = true;
+    setGalleryScope(scope);
+  };
+
   const {
     tokens,
     totalSupply,
@@ -29,7 +53,10 @@ const LibraryPage = () => {
     isLoading,
     error,
     refresh,
-  } = usePixelminterGallery(address);
+  } = usePixelminterGallery({
+    owner: address,
+    scope: galleryScope,
+  });
 
   const { data: mintFeeData } = useContractRead({
     address: PIXELMINTER_CONTRACT_ADDRESS,
@@ -39,6 +66,11 @@ const LibraryPage = () => {
   });
 
   const mintFee = mintFeeData ? formatEther(mintFeeData as bigint) : null;
+  const canShowGallery = isPersonalGallery ? Boolean(address) : true;
+  const galleryStatTitle = isPersonalGallery ? 'Your pieces' : 'Community pieces';
+  const galleryStatDescription = isPersonalGallery
+    ? 'The list is built by calling ownerOf() + tokenURI() for each token and validating that the owner is your current wallet.'
+    : 'Browse every animation minted from Pixelminter to see what the rest of the BasePaint community is producing.';
 
   return (
     <>
@@ -129,19 +161,16 @@ const LibraryPage = () => {
               <div className="flex items-center gap-3">
                 <Sparkles className="text-amber-300" />
                 <div>
-                  <p className="text-xs uppercase text-slate-500">Your pieces</p>
+                  <p className="text-xs uppercase text-slate-500">{galleryStatTitle}</p>
                   <p className="text-2xl font-bold">{tokens.length}</p>
                 </div>
               </div>
-              <p className="mt-3 text-sm text-slate-400">
-                The list is built by calling {`ownerOf()`} + {`tokenURI()`} for each token and validating that the owner is your
-                current wallet.
-              </p>
+              <p className="mt-3 text-sm text-slate-400">{galleryStatDescription}</p>
             </div>
           </div>
 
           <section className="bg-slate-950/60 border border-slate-900 rounded-3xl p-6 shadow-neon space-y-6">
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <h2 className="text-2xl font-semibold">Gallery</h2>
                 <p className="text-sm text-slate-400">
@@ -149,21 +178,53 @@ const LibraryPage = () => {
                   <code className="font-mono text-slate-200">image</code> pointing to the official Lighthouse gateway.
                 </p>
               </div>
+              <div className="flex flex-col gap-2 text-sm text-slate-400">
+                <span className="text-xs uppercase tracking-[0.35em] text-slate-500 text-right md:text-left">
+                  View
+                </span>
+                <div className="inline-flex rounded-full border border-slate-800 bg-slate-900/70 p-1">
+                  <button
+                    type="button"
+                    onClick={() => handleGalleryScopeChange('personal')}
+                    disabled={!address}
+                    aria-pressed={isPersonalGallery}
+                    className={`px-4 py-2 text-xs font-semibold rounded-full transition ${
+                      isPersonalGallery
+                        ? 'bg-indigo-600 text-white shadow-neon'
+                        : 'text-slate-400 hover:text-slate-100'
+                    } ${!address ? 'cursor-not-allowed opacity-40' : ''}`}
+                  >
+                    Personal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleGalleryScopeChange('global')}
+                    aria-pressed={!isPersonalGallery}
+                    className={`px-4 py-2 text-xs font-semibold rounded-full transition ${
+                      !isPersonalGallery
+                        ? 'bg-indigo-600 text-white shadow-neon'
+                        : 'text-slate-400 hover:text-slate-100'
+                    }`}
+                  >
+                    Community
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {!address && (
+            {!canShowGallery && (
               <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-slate-400">
                 Connect your wallet to see the NFTs you have minted.
               </div>
             )}
 
-            {address && error && (
+            {error && (
               <div className="rounded-2xl border border-red-900/80 bg-red-950/60 p-4 text-red-200 text-sm">
                 {error}
               </div>
             )}
 
-            {address && !error && (
+            {canShowGallery && !error && (
               <>
                 {isLoading && (
                   <div className="grid gap-5 sm:grid-cols-2">
@@ -178,8 +239,9 @@ const LibraryPage = () => {
 
                 {!isLoading && tokens.length === 0 && (
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-slate-400">
-                    You haven&apos;t minted any animations on this contract yet. Go back to the canvas and mint your first piece to
-                    see it here.
+                    {isPersonalGallery
+                      ? 'You haven’t minted any animations on this contract yet. Go back to the canvas and mint your first piece to see it here.'
+                      : 'No animations have been minted on this contract yet. Check back soon to discover the latest pieces.'}
                   </div>
                 )}
 
@@ -201,6 +263,11 @@ const LibraryPage = () => {
                             <h3 className="text-xl font-semibold mt-1">
                               {token.metadata?.name ?? `Pixelminter #${token.tokenId}`}
                             </h3>
+                            {!isPersonalGallery && token.owner && (
+                              <p className="text-xs text-slate-500 mt-2">
+                                Owned by <span className="font-mono text-slate-200">{shortenAddress(token.owner)}</span>
+                              </p>
+                            )}
                           </div>
                           <div className="aspect-square bg-slate-950 flex items-center justify-center border-b border-slate-900">
                             {token.animationUrl ? (

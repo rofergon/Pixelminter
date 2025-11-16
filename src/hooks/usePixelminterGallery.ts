@@ -28,6 +28,14 @@ export interface PixelminterToken {
   metadata?: PixelminterMetadata;
   animationUrl?: string;
   imageUrl?: string;
+  owner?: string;
+}
+
+export type PixelminterGalleryScope = 'personal' | 'global';
+
+export interface UsePixelminterGalleryOptions {
+  owner?: `0x${string}` | string | null;
+  scope?: PixelminterGalleryScope;
 }
 
 export const resolveIpfsUri = (uri?: string | null) => {
@@ -63,15 +71,17 @@ const fetchTokenMetadata = async (tokenURI: string) => {
   }
 };
 
-export const usePixelminterGallery = (owner?: `0x${string}` | string | null) => {
+export const usePixelminterGallery = (options: UsePixelminterGalleryOptions = {}) => {
+  const { owner, scope = 'personal' } = options;
   const publicClient = usePublicClient({ chainId: PIXELMINTER_CHAIN_ID });
   const [tokens, setTokens] = useState<PixelminterToken[]>([]);
   const [isLoadingTokens, setIsLoadingTokens] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshIndex, setRefreshIndex] = useState(0);
 
+  const shouldFilterByOwner = scope === 'personal';
   const normalizedOwner =
-    typeof owner === 'string' && owner.length > 0 ? owner.toLowerCase() : undefined;
+    shouldFilterByOwner && typeof owner === 'string' && owner.length > 0 ? owner.toLowerCase() : undefined;
 
   const {
     data: totalSupplyData,
@@ -91,7 +101,14 @@ export const usePixelminterGallery = (owner?: `0x${string}` | string | null) => 
   const totalSupply = hasLoadedSupply ? Number(totalSupplyData) : 0;
 
   useEffect(() => {
-    if (!normalizedOwner || !publicClient) {
+    if (!publicClient) {
+      setTokens([]);
+      setIsLoadingTokens(false);
+      setError(null);
+      return;
+    }
+
+    if (shouldFilterByOwner && !normalizedOwner) {
       setTokens([]);
       setIsLoadingTokens(false);
       setError(null);
@@ -131,25 +148,32 @@ export const usePixelminterGallery = (owner?: `0x${string}` | string | null) => 
 
         if (!isMounted) return;
 
-        const ownedTokenIds: bigint[] = [];
+        const ownerPerToken = new Map<bigint, string>();
+        const relevantTokenIds: bigint[] = [];
+
         ownerResults.forEach((result, index) => {
-          if (
-            result?.status === 'success' &&
-            typeof result.result === 'string' &&
-            result.result.toLowerCase() === normalizedOwner
-          ) {
-            ownedTokenIds.push(tokenIds[index]);
+          if (result?.status === 'success' && typeof result.result === 'string') {
+            const ownerAddress = result.result;
+            const tokenId = tokenIds[index];
+            ownerPerToken.set(tokenId, ownerAddress);
+
+            if (
+              !shouldFilterByOwner ||
+              (normalizedOwner && ownerAddress.toLowerCase() === normalizedOwner)
+            ) {
+              relevantTokenIds.push(tokenId);
+            }
           }
         });
 
         if (!isMounted) return;
 
-        if (!ownedTokenIds.length) {
+        if (!relevantTokenIds.length) {
           setTokens([]);
           return;
         }
 
-        const tokenUriContracts = ownedTokenIds.map((tokenId) => ({
+        const tokenUriContracts = relevantTokenIds.map((tokenId) => ({
           address: PIXELMINTER_CONTRACT_ADDRESS,
           abi: pixelminterAbi,
           functionName: 'tokenURI',
@@ -164,7 +188,7 @@ export const usePixelminterGallery = (owner?: `0x${string}` | string | null) => 
         if (!isMounted) return;
 
         const mintedTokens = await Promise.all(
-          ownedTokenIds.map(async (tokenId, index) => {
+          relevantTokenIds.map(async (tokenId, index) => {
             const uriResult = tokenUriResults[index];
             const tokenURI =
               uriResult?.status === 'success' && typeof uriResult.result === 'string'
@@ -188,6 +212,7 @@ export const usePixelminterGallery = (owner?: `0x${string}` | string | null) => 
               metadata,
               animationUrl: resolveIpfsUri(primaryMedia),
               imageUrl: resolveIpfsUri(metadata?.image || primaryMedia),
+              owner: ownerPerToken.get(tokenId),
             };
           })
         );
@@ -211,7 +236,7 @@ export const usePixelminterGallery = (owner?: `0x${string}` | string | null) => 
     return () => {
       isMounted = false;
     };
-  }, [normalizedOwner, publicClient, hasLoadedSupply, totalSupply, refreshIndex]);
+  }, [normalizedOwner, publicClient, hasLoadedSupply, totalSupply, refreshIndex, shouldFilterByOwner, scope]);
 
   const refresh = useCallback(() => setRefreshIndex((prev) => prev + 1), []);
 
