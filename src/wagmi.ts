@@ -1,5 +1,5 @@
 import { cookieStorage, createStorage, http, fallback } from 'wagmi'
-import { base } from 'wagmi/chains'
+import { base, mainnet } from 'wagmi/chains'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 
 // Project ID de Reown (anteriormente WalletConnect)
@@ -12,7 +12,8 @@ if (!projectIdEnv) {
 
 export const projectId: string = projectIdEnv
 
-export const networks = [base]
+// Include mainnet for ENS resolution, Base for main operations
+export const networks = [base, mainnet]
 
 // Metadata para Reown AppKit
 export const metadata = {
@@ -35,6 +36,11 @@ export const wagmiAdapter = new WagmiAdapter({
       http('https://mainnet.base.org'),
       http('https://base-rpc.publicnode.com'),
       http('https://base.blockpi.network/v1/rpc/public'),
+    ]),
+    [mainnet.id]: fallback([
+      http('https://eth.llamarpc.com'),
+      http('https://ethereum.publicnode.com'),
+      http('https://rpc.ankr.com/eth'),
     ]),
   },
 })
