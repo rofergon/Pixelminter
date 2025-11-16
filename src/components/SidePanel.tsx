@@ -103,12 +103,12 @@ const SidePanel: React.FC<SidePanelProps> = ({
   return (
     <div
       id='side-panel'
-      className={`flex-grow glass-panel pixel-scrollbar transition-all duration-300 bg-slate-800 ${
-        isOpen ? 'w-full max-w-md p-3 space-y-3' : 'w-12 p-1'
+      className={`glass-panel pixel-scrollbar transition-all duration-300 bg-slate-800 h-full flex flex-col ${
+        isOpen ? 'w-full max-w-md' : 'w-12 p-1'
       }`}
     >
       {isOpen ? (
-        <div className="space-y-3 h-full overflow-y-auto pixel-scrollbar">
+        <div className="space-y-3 overflow-y-auto overflow-x-hidden pixel-scrollbar p-3 flex-1">
           <div className="tool-container rounded-lg shadow-md overflow-hidden">
             <div className="p-3">
               <h3 className="text-sm font-medium flex items-center mb-3 text-slate-300">

@@ -84,12 +84,12 @@ const LayerManager: React.FC<LayerManagerProps> = ({
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      className={`flex items-center bg-gray-700 p-2 rounded ${
-                        snapshot.isDragging ? 'opacity-50' : ''
+                      className={`flex items-center bg-gray-700 p-2 rounded transition-all ${
+                        snapshot.isDragging ? 'opacity-50 shadow-lg scale-105' : 'hover:bg-gray-600'
                       }`}
                     >
-                      <div {...provided.dragHandleProps} className="mr-2 cursor-move">
-                        <GripVertical size={14} />
+                      <div {...provided.dragHandleProps} className="mr-2 cursor-move text-slate-400 hover:text-slate-200 transition-colors">
+                        <GripVertical size={16} />
                       </div>
                       
                       <div className="flex-grow">
