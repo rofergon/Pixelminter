@@ -122,7 +122,7 @@ export const usePixelminterGallery = (owner?: `0x${string}` | string | null) => 
           abi: pixelminterAbi,
           functionName: 'ownerOf',
           args: [tokenId],
-        })) as const;
+        }));
 
         const ownerResults = await publicClient.multicall({
           contracts: ownerContracts,
@@ -154,7 +154,7 @@ export const usePixelminterGallery = (owner?: `0x${string}` | string | null) => 
           abi: pixelminterAbi,
           functionName: 'tokenURI',
           args: [tokenId],
-        })) as const;
+        }));
 
         const tokenUriResults = await publicClient.multicall({
           contracts: tokenUriContracts,
