@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useEnsName } from 'wagmi';
 import { pixelminterAbi } from '../abi/pixelminterAbi';
 import { State } from '../types/types';
 import { useExportGif } from '../hooks/animation/useExportGif';
@@ -25,6 +25,9 @@ interface MintSummary {
 
 const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fps = 30 }) => {
   const { address } = useAccount();
+  const { data: ensName } = useEnsName({
+    address,
+  });
   const [ipfsHash, setIpfsHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPreparingMint, setIsPreparingMint] = useState(false);
@@ -138,6 +141,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
         const framesCount = state.frames.length;
         const fpsValue = state.fps ?? fps;
         const creationDate = new Date().toISOString().split('T')[0];
+        const authorIdentity = ensName ?? address ?? "Unknown";
         const attributes = [
           {
             trait_type: "FPS",
@@ -155,16 +159,11 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
           },
           {
             trait_type: "Author",
-            value: address || "Unknown",
+            value: authorIdentity,
           },
           {
             trait_type: "Palette",
             value: paletteColors.length ? paletteColors.join(',') : "N/A",
-          },
-          {
-            trait_type: "Grid Size",
-            value: state.gridSize,
-            display_type: "number",
           },
           {
             trait_type: "Frame Count",
@@ -175,24 +174,12 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
             trait_type: "Creation Date",
             value: creationDate,
           },
-          {
-            trait_type: "Animation Type",
-            value: framesCount > 1 ? "Loop" : "Single Frame",
-          },
         ];
 
         if (state.day !== null && state.day !== undefined) {
           attributes.push({
             trait_type: "Day",
             value: state.day,
-            display_type: "number",
-          });
-        }
-
-        if (typeof state.pixelsPerDay === 'number') {
-          attributes.push({
-            trait_type: "Pixels Per Day",
-            value: state.pixelsPerDay,
             display_type: "number",
           });
         }
