@@ -1,8 +1,8 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { 
-  Transaction, 
-  TransactionButton, 
-  TransactionStatus, 
+import {
+  Transaction,
+  TransactionButton,
+  TransactionStatus,
   TransactionStatusLabel,
   TransactionStatusAction,
 } from '@coinbase/onchainkit/transaction';
@@ -18,6 +18,9 @@ interface MintPixelminterButtonProps {
   fps?: number;
 }
 
+const CONTRACT_ADDRESS = '0x162ee7D340439C181394E1A7B4fdD922B20115D5' as const;
+const SEPOLIA_CHAIN_ID = 11155111;
+
 const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fps = 30 }) => {
   const { address } = useAccount();
   const [txHash, setTxHash] = useState<string | null>(null);
@@ -31,11 +34,12 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
   const { exportGif, isExporting } = useExportGif(state, fps);
   const { uploadToLighthouse, uploading } = useLighthouseUpload();
 
-  // Leer el fee de minteo del contrato
+  // Leer el fee de minteo del contrato en Sepolia
   const { data: mintFeeData } = useContractRead({
-    address: '0x70790c3c3d8879b4d838235bc889c162ecf50ad2',
+    address: CONTRACT_ADDRESS,
     abi: pixelminterAbi,
     functionName: 'getMintFee',
+    chainId: SEPOLIA_CHAIN_ID,
   });
 
   useEffect(() => {
@@ -74,37 +78,105 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
       const gifBlob = await exportGif();
       console.log("GIF Exported:", gifBlob);
 
-      const gifUploadResponse = await uploadToLighthouse(gifBlob);
+      const gifUploadResponse = await uploadToLighthouse(gifBlob, 'pixelminter-animation.gif');
       console.log("Respuesta de Lighthouse para GIF:", gifUploadResponse);
 
       if (gifUploadResponse && gifUploadResponse.data && gifUploadResponse.data.Hash) {
         const gifCID = gifUploadResponse.data.Hash;
         console.log("GIF CID obtained:", gifCID);
-        setIpfsHash(gifCID);
+
+        const paletteColors = state.customPalette.length > 0 ? state.customPalette : state.palette;
+        const totalPixels = state.frames.reduce((frameAcc, frame) => {
+          const framePixels = frame.layers.reduce((layerAcc, layer) => layerAcc + layer.pixels.size, 0);
+          return frameAcc + framePixels;
+        }, 0);
+        const framesCount = state.frames.length;
+        const fpsValue = state.fps ?? fps;
+        const creationDate = new Date().toISOString().split('T')[0];
+        const attributes = [
+          {
+            trait_type: "FPS",
+            value: fpsValue,
+            display_type: "number",
+          },
+          {
+            trait_type: "Total Pixels",
+            value: totalPixels,
+            display_type: "number",
+          },
+          {
+            trait_type: "Theme",
+            value: state.theme || "Untitled",
+          },
+          {
+            trait_type: "Author",
+            value: address || "Unknown",
+          },
+          {
+            trait_type: "Palette",
+            value: paletteColors.length ? paletteColors.join(',') : "N/A",
+          },
+          {
+            trait_type: "Grid Size",
+            value: state.gridSize,
+            display_type: "number",
+          },
+          {
+            trait_type: "Frame Count",
+            value: framesCount,
+            display_type: "number",
+          },
+          {
+            trait_type: "Creation Date",
+            value: creationDate,
+          },
+          {
+            trait_type: "Animation Type",
+            value: framesCount > 1 ? "Loop" : "Single Frame",
+          },
+        ];
+
+        if (state.day !== null && state.day !== undefined) {
+          attributes.push({
+            trait_type: "Day",
+            value: state.day,
+            display_type: "number",
+          });
+        }
+
+        if (typeof state.pixelsPerDay === 'number') {
+          attributes.push({
+            trait_type: "Pixels Per Day",
+            value: state.pixelsPerDay,
+            display_type: "number",
+          });
+        }
 
         // Crear metadatos JSON
         const metadata = {
-          name: "PixelminterWIP",
-          description: "Animation Wip BasePaint",
+          name: state.theme ? `Pixelminter – ${state.theme}` : `Pixelminter #${Date.now()}`,
+          description: state.theme
+            ? `Animated pixel art inspired by "${state.theme}".`
+            : "Animated pixel art created on Pixelminter.",
           image: `ipfs://${gifCID}`,
-          attributes: [
-            {
-              trait_type: "Type",
-              value: "Gif"
-            }
-          ]
+          animation_url: `ipfs://${gifCID}`,
+          external_url: "https://pixelminter.xyz",
+          attributes,
         };
 
         const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
         console.log("Metadatos JSON creados:", metadata);
 
-        const metadataUploadResponse = await uploadToLighthouse(metadataBlob);
+        const metadataUploadResponse = await uploadToLighthouse(
+          metadataBlob,
+          'pixelminter-metadata.json'
+        );
         console.log("Respuesta de Lighthouse para Metadatos:", metadataUploadResponse);
 
         if (metadataUploadResponse && metadataUploadResponse.data && metadataUploadResponse.data.Hash) {
           const metadataCID = metadataUploadResponse.data.Hash;
           console.log("CID de los Metadatos obtenido:", metadataCID);
-          setIpfsHash(metadataCID);
+          setIpfsHash(`ipfs://${metadataCID}`);
         } else {
           throw new Error('No se pudo obtener el CID de los metadatos de Lighthouse');
         }
@@ -119,7 +191,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
 
   const contracts = ipfsHash ? [
     {
-      address: '0x70790c3c3d8879b4d838235bc889c162ecf50ad2' as `0x${string}`,
+      address: CONTRACT_ADDRESS as `0x${string}`,
       abi: pixelminterAbi,
       functionName: 'mintNFT',
       args: [
@@ -146,7 +218,7 @@ const MintPixelminterButton: React.FC<MintPixelminterButtonProps> = ({ state, fp
       ) : !isTransactionComplete ? (
         <Transaction
           key={key}
-          chainId={8453}
+          chainId={SEPOLIA_CHAIN_ID}
           contracts={contracts}
           onStatus={handleOnStatus}
         >

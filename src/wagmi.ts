@@ -1,5 +1,5 @@
 import { cookieStorage, createStorage, http, fallback } from 'wagmi'
-import { base } from 'wagmi/chains'
+import { sepolia } from 'wagmi/chains'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 
 // Project ID de Reown (anteriormente WalletConnect)
@@ -12,12 +12,12 @@ if (!projectIdEnv) {
 
 export const projectId: string = projectIdEnv
 
-export const networks = [base]
+export const networks = [sepolia]
 
 // Metadata para Reown AppKit
 export const metadata = {
   name: 'PixelMinter',
-  description: 'Create and mint pixel art on Base',
+  description: 'Create and mint pixel art on Sepolia',
   url: 'https://pixelminter.xyz',
   icons: ['/logo192.png']
 }
@@ -31,12 +31,10 @@ export const wagmiAdapter = new WagmiAdapter({
   projectId,
   networks,
   transports: {
-    [base.id]: fallback([
-      http('https://mainnet.base.org'),
-      http('https://base-rpc.publicnode.com'),
-      http('https://base.llamarpc.com'),
-      http('https://gateway.tenderly.co/public/base'),
-      http('https://base.drpc.org'),
+    [sepolia.id]: fallback([
+      http('https://rpc.sepolia.org'),
+      http('https://ethereum-sepolia.blockpi.network/v1/rpc/public'),
+      http('https://ethereum-sepolia-rpc.publicnode.com'),
     ]),
   },
 })
