@@ -39,7 +39,7 @@ export default async function handler(
     return res.status(500).json({ error: 'Lighthouse API key not configured' });
   }
 
-  const { data, fileName, mimeType } = req.body as { data?: string; fileName?: string; mimeType?: string };
+  const { data, fileName } = req.body as { data?: string; fileName?: string; mimeType?: string };
   if (!data) {
     console.error('Missing file data in request');
     return res.status(400).json({ error: 'Missing file data' });

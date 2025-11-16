@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from 'react';
 import { WagmiProvider, type Config } from 'wagmi';
-import { base } from 'wagmi/chains';
+import { baseSepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createAppKit } from '@reown/appkit/react';
 import { wagmiAdapter, projectId, metadata } from '../wagmi';
@@ -31,8 +31,8 @@ const initializeAppKit = () => {
   createAppKit({
     adapters: [wagmiAdapter],
     projectId,
-    networks: [base],
-    defaultNetwork: base,
+    networks: [baseSepolia],
+    defaultNetwork: baseSepolia,
     metadata,
     features: {
       analytics: true,

@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useMemo, useState, useCallback } from 'react';
+import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
@@ -8,7 +9,7 @@ import CustomPalette from '@/components/CustomPalette';
 import ConnectWalletButton from '@/components/ConnectWalletButton';
 import LayerManager from '@/components/LayerPanel';
 import { State, BrushData } from '@/types/types';
-import { Palette, Grid, Save, Droplet, Layers, Plus, Eye, Trash2 } from 'lucide-react';
+import { Palette, Grid, Save, Droplet, Layers, Plus, Eye, Trash2, BookOpen } from 'lucide-react';
 import { useSidePanelLogic } from '@/hooks/useSidePanelLogic';
 import { usePixelCountAndDroplets } from '@/hooks/tools/usePixelCount';
 import MintBPButton from '@/components/MintBPButton';
@@ -328,6 +329,26 @@ const SidePanel: React.FC<SidePanelProps> = ({
             state={state} 
             fps={state.fps}
           />
+
+          <div className="tool-container rounded-lg shadow-md overflow-hidden border border-slate-700/60">
+            <div className="p-3 space-y-2">
+              <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                <BookOpen className="text-indigo-300" size={16} />
+                Biblioteca NFT
+              </h3>
+              <p className="text-xs text-slate-400">
+                Consulta los GIFs que has minteado en Pixelminter y abre sus metadatos alojados en Lighthouse.
+              </p>
+              <Button
+                asChild
+                className="w-full h-8 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold"
+              >
+                <Link href="/library">
+                  Abrir biblioteca
+                </Link>
+              </Button>
+            </div>
+          </div>
 
           <div className="tool-container rounded-lg shadow-md overflow-hidden">
             <button
