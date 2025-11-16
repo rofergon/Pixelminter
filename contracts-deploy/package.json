@@ -1,0 +1,33 @@
+{
+  "name": "pixelminter-contracts",
+  "version": "1.0.0",
+  "description": "Smart contract deployment setup for Pixelminter NFT",
+  "main": "index.js",
+  "scripts": {
+    "check": "hardhat run scripts/check-config.js --network baseSepolia",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:base-sepolia": "hardhat run scripts/deploy.js --network baseSepolia",
+    "deploy:base-mainnet": "hardhat run scripts/deploy.js --network baseMainnet",
+    "verify:base-sepolia": "hardhat verify --network baseSepolia",
+    "node": "hardhat node"
+  },
+  "keywords": [
+    "hardhat",
+    "ethereum",
+    "smart-contracts",
+    "base",
+    "nft"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.0",
+    "hardhat": "^2.22.0",
+    "dotenv": "^16.4.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2"
+  }
+}

@@ -34,9 +34,7 @@ export const wagmiAdapter = new WagmiAdapter({
     [base.id]: fallback([
       http('https://mainnet.base.org'),
       http('https://base-rpc.publicnode.com'),
-      http('https://base.llamarpc.com'),
-      http('https://gateway.tenderly.co/public/base'),
-      http('https://base.drpc.org'),
+      http('https://base.blockpi.network/v1/rpc/public'),
     ]),
   },
 })

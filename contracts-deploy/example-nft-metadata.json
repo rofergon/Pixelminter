@@ -1,0 +1,54 @@
+{
+  "name": "Pixelminter #42",
+  "description": "Animated pixel art created on Pixelminter - November 15, 2025. Theme: Cyberpunk Neon Dreams. A vibrant 8-frame animation featuring glowing neon colors on a dark cityscape background.",
+  "image": "ipfs://QmXoY8KpRvN5zMjH2wF7qLx9vT3nB4wC8mP2dE6fR7sW1a",
+  "animation_url": "ipfs://QmZpA9LqSwT6yNkI3xG8rMz2wD5oC9nQ4sR7uE8fV9tX2b",
+  "external_url": "https://pixelminter.xyz/nft/42",
+  "attributes": [
+    {
+      "trait_type": "FPS",
+      "value": 24,
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Total Pixels",
+      "value": 342,
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Cyberpunk Neon Dreams"
+    },
+    {
+      "trait_type": "Author",
+      "value": "pixelmaster.eth"
+    },
+    {
+      "trait_type": "Palette",
+      "value": "#FF006E,#8338EC,#3A86FF,#06FFA5,#FFBE0B"
+    },
+    {
+      "trait_type": "Grid Size",
+      "value": 16,
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Frame Count",
+      "value": 8,
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Day",
+      "value": 42,
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Creation Date",
+      "value": "2025-11-15"
+    },
+    {
+      "trait_type": "Animation Type",
+      "value": "Loop"
+    }
+  ]
+}

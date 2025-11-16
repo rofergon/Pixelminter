@@ -47,73 +47,7 @@ const useCanvasDisplay = ({ canvasRef, stateRef, state }: CanvasRefs): CanvasDis
   }, []);
 
   // Function to render background to a separate canvas (only when needed)
-  const renderBackground = useCallback(async () => {
-    const { canvasSize, dailyImageUrl, showBackgroundImage, backgroundOpacity } = stateRef.current;
-
-    // Initialize background canvas if needed
-    if (!backgroundCanvasRef.current) {
-      backgroundCanvasRef.current = document.createElement('canvas');
-      backgroundCanvasRef.current.width = canvasSize;
-      backgroundCanvasRef.current.height = canvasSize;
-      backgroundCtxRef.current = backgroundCanvasRef.current.getContext('2d');
-      if (backgroundCtxRef.current) {
-        backgroundCtxRef.current.imageSmoothingEnabled = false;
-      }
-    }
-
-    const backgroundCanvas = backgroundCanvasRef.current;
-    const backgroundCtx = backgroundCtxRef.current;
-    if (!backgroundCtx) return;
-
-    // Update canvas size if needed
-    if (backgroundCanvas.width !== canvasSize || backgroundCanvas.height !== canvasSize) {
-      backgroundCanvas.width = canvasSize;
-      backgroundCanvas.height = canvasSize;
-    }
-
-    // Clear background canvas
-    backgroundCtx.clearRect(0, 0, canvasSize, canvasSize);
-
-    // Only load and render background if enabled and URL exists
-    if (showBackgroundImage && dailyImageUrl) {
-      try {
-        // Prevent multiple simultaneous loads
-        if (isBackgroundLoadingRef.current) return;
-        
-        // Check if we need to reload the image
-        const currentTime = Date.now();
-        const { backgroundRefreshInterval } = stateRef.current;
-        const timeSinceLastRefresh = currentTime - lastBackgroundRefreshRef.current;
-        const shouldRefreshByTime = timeSinceLastRefresh > (backgroundRefreshInterval * 1000);
-        const urlChanged = lastBackgroundUrlRef.current !== dailyImageUrl;
-        
-        // Reload image if URL changed or refresh interval has passed
-        if (!backgroundImageRef.current || urlChanged || shouldRefreshByTime) {
-          isBackgroundLoadingRef.current = true;
-          const forceRefresh = shouldRefreshByTime && !urlChanged;
-          backgroundImageRef.current = await loadBackgroundImage(dailyImageUrl, forceRefresh);
-          lastBackgroundUrlRef.current = dailyImageUrl;
-          lastBackgroundRefreshRef.current = currentTime;
-          isBackgroundLoadingRef.current = false;
-        }
-
-        if (backgroundImageRef.current) {
-          backgroundCtx.globalAlpha = backgroundOpacity;
-          backgroundCtx.drawImage(
-            backgroundImageRef.current,
-            0, 0, backgroundImageRef.current.width, backgroundImageRef.current.height,
-            0, 0, canvasSize, canvasSize
-          );
-          backgroundCtx.globalAlpha = 1;
-        }
-      } catch (error) {
-        console.error('Error loading background image:', error);
-        isBackgroundLoadingRef.current = false;
-      }
-    }
-  }, [stateRef, loadBackgroundImage]);
-
-  const updateCanvasDisplay = useCallback(() => {
+  const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -128,9 +62,6 @@ const useCanvasDisplay = ({ canvasRef, stateRef, state }: CanvasRefs): CanvasDis
     if (!currentFrame) return;
 
     const cellSize = canvasSize / gridSize;
-
-    // Render background asynchronously without blocking
-    renderBackground();
 
     // Initialize off-screen canvas if it doesn't exist
     if (!offScreenCanvasRef.current) {
@@ -187,7 +118,112 @@ const useCanvasDisplay = ({ canvasRef, stateRef, state }: CanvasRefs): CanvasDis
       canvas.offsetHeight; // Trigger reflow
       canvas.style.display = 'block';
     }
-  }, [canvasRef, stateRef, renderBackground]);
+  }, [canvasRef, stateRef]);
+
+  const renderBackground = useCallback(async () => {
+    const {
+      canvasSize,
+      dailyImageUrl,
+      showBackgroundImage,
+      backgroundOpacity,
+      backgroundRefreshInterval,
+    } = stateRef.current;
+
+    // Initialize background canvas if needed
+    if (!backgroundCanvasRef.current) {
+      backgroundCanvasRef.current = document.createElement('canvas');
+      backgroundCanvasRef.current.width = canvasSize;
+      backgroundCanvasRef.current.height = canvasSize;
+      backgroundCtxRef.current = backgroundCanvasRef.current.getContext('2d');
+      if (backgroundCtxRef.current) {
+        backgroundCtxRef.current.imageSmoothingEnabled = false;
+      }
+    }
+
+    const backgroundCanvas = backgroundCanvasRef.current;
+    const backgroundCtx = backgroundCtxRef.current;
+    if (!backgroundCtx) return;
+
+    // Update canvas size if needed
+    if (backgroundCanvas.width !== canvasSize || backgroundCanvas.height !== canvasSize) {
+      backgroundCanvas.width = canvasSize;
+      backgroundCanvas.height = canvasSize;
+    }
+
+    // If background display is disabled or URL missing, clear and exit
+    if (!showBackgroundImage || !dailyImageUrl) {
+      backgroundCtx.clearRect(0, 0, canvasSize, canvasSize);
+      backgroundImageRef.current = null;
+      lastBackgroundUrlRef.current = '';
+      return;
+    }
+
+    // Check if we need to reload the image
+    const currentTime = Date.now();
+    const timeSinceLastRefresh = currentTime - lastBackgroundRefreshRef.current;
+    const shouldRefreshByTime = timeSinceLastRefresh > backgroundRefreshInterval * 1000;
+    const urlChanged = lastBackgroundUrlRef.current !== dailyImageUrl;
+    const needsReload = !backgroundImageRef.current || urlChanged || shouldRefreshByTime;
+
+    if (needsReload) {
+      if (isBackgroundLoadingRef.current) return;
+
+      isBackgroundLoadingRef.current = true;
+      try {
+        const forceRefresh = shouldRefreshByTime && !urlChanged;
+        const loadedImage = await loadBackgroundImage(dailyImageUrl, forceRefresh);
+
+        backgroundImageRef.current = loadedImage;
+        lastBackgroundUrlRef.current = dailyImageUrl;
+        lastBackgroundRefreshRef.current = currentTime;
+
+        backgroundCtx.clearRect(0, 0, canvasSize, canvasSize);
+        backgroundCtx.globalAlpha = backgroundOpacity;
+        backgroundCtx.drawImage(
+          loadedImage,
+          0,
+          0,
+          loadedImage.width,
+          loadedImage.height,
+          0,
+          0,
+          canvasSize,
+          canvasSize
+        );
+        backgroundCtx.globalAlpha = 1;
+
+        drawCanvas();
+      } catch (error) {
+        console.error('Error loading background image:', error);
+      } finally {
+        isBackgroundLoadingRef.current = false;
+      }
+      return;
+    }
+
+    // Re-render existing image if opacity or sizing changed
+    if (backgroundImageRef.current) {
+      backgroundCtx.clearRect(0, 0, canvasSize, canvasSize);
+      backgroundCtx.globalAlpha = backgroundOpacity;
+      backgroundCtx.drawImage(
+        backgroundImageRef.current,
+        0,
+        0,
+        backgroundImageRef.current.width,
+        backgroundImageRef.current.height,
+        0,
+        0,
+        canvasSize,
+        canvasSize
+      );
+      backgroundCtx.globalAlpha = 1;
+    }
+  }, [stateRef, loadBackgroundImage, drawCanvas]);
+
+  const updateCanvasDisplay = useCallback(() => {
+    renderBackground();
+    drawCanvas();
+  }, [renderBackground, drawCanvas]);
 
   const markPixelAsModified = useCallback(() => {
     if (requestIdRef.current === null) {

@@ -1,0 +1,10 @@
+{
+  "network": "baseMainnet",
+  "chainId": 8453,
+  "contractAddress": "0x9cc70242d30f1cfbA12F16d22fA4C4de8A2f4347",
+  "deployer": "0x6FE1e006AD733717539bac3f7E73470fC5B34Bad",
+  "initialMintFee": "0",
+  "contractURI": "ipfs://QmPixelminterCollection",
+  "timestamp": "2025-11-16T04:48:45.554Z",
+  "transactionHash": "0xbe95936653f3f766e40a84e450937b55572ed242c12bef8fc36a987358d90ae7"
+}

@@ -1,0 +1,22 @@
+# Hardhat files
+node_modules
+cache
+artifacts
+typechain-types
+
+# Environment variables
+.env
+
+# Build files
+dist
+build
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
