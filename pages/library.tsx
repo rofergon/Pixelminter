@@ -18,7 +18,7 @@ const shortenAddress = (value?: string | null) => {
   return `${value.slice(0, 6)}…${value.slice(-4)}`;
 };
 
-const featuredTraits = ['Theme', 'FPS', 'Frame Count', 'Creation Date', 'Author'];
+const featuredTraits = ['Theme', 'FPS', 'Frame Count', 'Total Pixels', 'Creation Date', 'Author'];
 
 const LibraryPage = () => {
   const { address } = useAccount();
@@ -39,8 +39,6 @@ const LibraryPage = () => {
   });
 
   const mintFee = mintFeeData ? formatEther(mintFeeData as bigint) : null;
-
-  const metadataLink = (tokenUri: string) => resolveIpfsUri(tokenUri);
 
   return (
     <>
@@ -179,7 +177,7 @@ const LibraryPage = () => {
 
                 {!isLoading && tokens.length === 0 && (
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-slate-400">
-                    You haven't minted any animations on this contract yet. Go back to the canvas and mint your first piece to
+                    You haven&apos;t minted any animations on this contract yet. Go back to the canvas and mint your first piece to
                     see it here.
                   </div>
                 )}
@@ -191,7 +189,6 @@ const LibraryPage = () => {
                         token.metadata?.attributes?.filter((attr) =>
                           attr.trait_type ? featuredTraits.includes(attr.trait_type) : false
                         ) ?? [];
-                      const metadataUrl = metadataLink(token.tokenURI);
 
                       return (
                         <div
@@ -214,7 +211,7 @@ const LibraryPage = () => {
                                 loading="lazy"
                               />
                             ) : (
-                              <div className="text-slate-600 text-sm">Sin preview disponible</div>
+                              <div className="text-slate-600 text-sm">No preview available</div>
                             )}
                           </div>
                           <div className="p-4 space-y-4 flex-1 flex flex-col">
