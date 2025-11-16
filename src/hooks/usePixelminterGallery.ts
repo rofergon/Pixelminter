@@ -82,7 +82,9 @@ export const usePixelminterGallery = (owner?: `0x${string}` | string | null) => 
     abi: pixelminterAbi,
     functionName: 'totalSupply',
     chainId: PIXELMINTER_CHAIN_ID,
-    watch: true,
+    query: {
+      refetchInterval: 10000,
+    },
   });
 
   const hasLoadedSupply = typeof totalSupplyData === 'bigint';
