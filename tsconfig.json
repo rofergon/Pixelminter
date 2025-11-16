@@ -29,8 +29,10 @@
   },
   "include": [
     "src",
-    "pages/index.tsx"
-, "pages/_app.tsx"  ],
+    "pages/index.tsx",
+    "pages/_app.tsx",
+    "pages/library.tsx"
+  ],
   "exclude": [
     "node_modules"
   ]

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import SidePanel from './SidePanel';
 import ToolPanel from './ToolPanel';
 import { State, BrushData, Feedback } from '../types/types';
@@ -78,8 +78,12 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
   onionSkinningCanvas,
   day
 }) => {
-  // Local state for animation frame rate
-  const [fps, setFps] = useState(30);
+  // FPS is part of the shared editor state so metadata/export stay consistent
+  const fps = state.fps ?? 30;
+  const handleSetFps = useCallback(
+    (newFps: number) => updateState({ fps: newFps }),
+    [updateState]
+  );
   // Local state to control side panel visibility
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(true);
   // Flag to track if component has mounted on client side (for SSR compatibility)
@@ -214,7 +218,7 @@ const PixelArtUI: React.FC<PixelArtUIProps> = ({
         <AnimationControls
           state={state}
           fps={fps}
-          setFps={setFps}
+          setFps={handleSetFps}
           updateState={updateState}
           saveState={saveState}
           updateCanvasDisplay={updateCanvasDisplay}

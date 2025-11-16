@@ -11,15 +11,28 @@ async function main() {
 
   console.log("🔍 Basescan API Key loaded:", apiKey.substring(0, 6) + "..." + apiKey.substring(apiKey.length - 4));
 
-  // Contract details - UPDATE THIS AFTER DEPLOYMENT
-  const contractAddress = "0x162ee7D340439C181394E1A7B4fdD922B20115D5";
-  const initialMintFee = process.env.INITIAL_MINT_FEE || "1000000000000000";
+  // Contract details - Get from command line args or use default
+  const contractAddress = process.argv[2];
+  if (!contractAddress) {
+    console.error("❌ Error: Contract address is required");
+    console.log("\nUsage: npx hardhat run scripts/verify.js --network <network> <contract_address>");
+    console.log("Example: npx hardhat run scripts/verify.js --network baseMainnet 0x1234...");
+    process.exit(1);
+  }
+
+  const initialMintFee = process.env.INITIAL_MINT_FEE || "0";
   const contractURI = process.env.CONTRACT_URI || "ipfs://QmDefaultContractMetadata";
+
+  // Determine Basescan URL based on network
+  const basescanUrl = hre.network.name === "baseMainnet" 
+    ? "https://basescan.org" 
+    : "https://sepolia.basescan.org";
 
   console.log("\n📋 Verification Details:");
   console.log("   Contract Address:", contractAddress);
   console.log("   Constructor Args:", [initialMintFee, contractURI]);
   console.log("   Network:", hre.network.name);
+  console.log("   Basescan URL:", basescanUrl);
 
   try {
     console.log("\n⏳ Starting verification on Basescan...");
@@ -30,11 +43,11 @@ async function main() {
     });
 
     console.log("\n✅ Contract verified successfully!");
-    console.log(`🔗 View on Basescan: https://sepolia.basescan.org/address/${contractAddress}#code`);
+    console.log(`🔗 View on Basescan: ${basescanUrl}/address/${contractAddress}#code`);
   } catch (error) {
     if (error.message.includes("Already Verified")) {
       console.log("\n✅ Contract is already verified!");
-      console.log(`🔗 View on Basescan: https://sepolia.basescan.org/address/${contractAddress}#code`);
+      console.log(`🔗 View on Basescan: ${basescanUrl}/address/${contractAddress}#code`);
     } else {
       console.error("\n❌ Verification failed:");
       console.error(error.message);
