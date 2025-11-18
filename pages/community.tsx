@@ -14,7 +14,6 @@ import { usePixelminterGallery } from '@/hooks/usePixelminterGallery';
 import { useGalleryFilters } from '@/hooks/useGalleryFilters';
 import { ArtistSelectOption } from '@/components/ArtistSelectOption';
 import GalleryTokenCard from '@/components/GalleryTokenCard';
-import { AddressDisplay } from '@/components/AddressDisplay';
 
 const CommunityPage = () => {
   const {

@@ -30,13 +30,13 @@ const toFilterKey = (value?: string) => value?.trim().toLowerCase() ?? '';
 
 export interface UseGalleryFiltersResult {
   artistFilter: string;
-  setArtistFilter: (value: string) => void;
+  setArtistFilter: (_value: string) => void;
   artistOptions: GalleryFilterOption[];
   themeFilter: string;
-  setThemeFilter: (value: string) => void;
+  setThemeFilter: (_value: string) => void;
   themeOptions: GalleryFilterOption[];
   dayFilter: string;
-  setDayFilter: (value: string) => void;
+  setDayFilter: (_value: string) => void;
   dayOptions: GalleryFilterOption[];
   filteredTokens: PixelminterToken[];
   highlightedTokens: PixelminterToken[];
