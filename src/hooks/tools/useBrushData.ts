@@ -230,12 +230,20 @@ export const useBrushData = () => {
     }
 
     try {
-      const tokenId = userTokenIds[0];
-      const pixelsPerDay = await fetchBrushStrength(tokenId);
+      let selectedToken = userTokenIds[0];
+      let maxPixels = 0;
+
+      for (const tokenId of userTokenIds) {
+        const strength = await fetchBrushStrength(tokenId);
+        if (strength > maxPixels) {
+          maxPixels = strength;
+          selectedToken = tokenId;
+        }
+      }
 
       const newBrushData = {
-        tokenId: tokenId.toString(),
-        pixelsPerDay: Number.isFinite(pixelsPerDay) ? pixelsPerDay : 0,
+        tokenId: selectedToken.toString(),
+        pixelsPerDay: Number.isFinite(maxPixels) ? maxPixels : 0,
       };
 
       setBrushData(newBrushData);
