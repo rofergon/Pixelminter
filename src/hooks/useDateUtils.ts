@@ -69,7 +69,7 @@ export { alternativeClient };
 // Export tertiary client for additional load distribution
 export { tertiaryClient };
 
-const CONTRACT_ADDRESS = '0xBa5e05cb26b78eDa3A2f8e3b3814726305dcAc83';
+export const BASE_PAINT_CONTRACT_ADDRESS = '0xBa5e05cb26b78eDa3A2f8e3b3814726305dcAc83';
 const METADATA_REGISTRY_ADDRESS = '0x5104482a2Ef3a03b6270D3e931eac890b86FaD01';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -86,7 +86,7 @@ export const calculateDay = async (retries = 2, backoff = 1500): Promise<number>
   
   try {
     const today = await client.readContract({
-      address: CONTRACT_ADDRESS,
+      address: BASE_PAINT_CONTRACT_ADDRESS,
       abi: BasePaintAbi,
       functionName: 'today',
     });
@@ -194,7 +194,7 @@ export const getTotalPixelsPaintedToday = async (retries = 2, backoff = 1500): P
     await delay(500);
     
     const canvas = await client.readContract({
-      address: CONTRACT_ADDRESS,
+      address: BASE_PAINT_CONTRACT_ADDRESS,
       abi: BasePaintAbi,
       functionName: 'canvases',
       args: [BigInt(today)],
