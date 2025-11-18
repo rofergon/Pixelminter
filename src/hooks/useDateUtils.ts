@@ -2,6 +2,7 @@
 import { createPublicClient, http, fallback } from 'viem';
 import { base } from 'viem/chains';
 import { BasePaintAbi } from '../abi/BasePaintAbi';
+import { BasePaintMetadataRegistryAbi } from '../abi/BasePaintMetadataRegistryAbi';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
@@ -69,6 +70,7 @@ export { alternativeClient };
 export { tertiaryClient };
 
 const CONTRACT_ADDRESS = '0xBa5e05cb26b78eDa3A2f8e3b3814726305dcAc83';
+const METADATA_REGISTRY_ADDRESS = '0x5104482a2Ef3a03b6270D3e931eac890b86FaD01';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -119,6 +121,56 @@ export const calculateDay = async (retries = 2, backoff = 1500): Promise<number>
 export function getCurrentDayUTC(): string {
     return dayjs().utc().format('YYYY-MM-DD');
 }
+
+interface RawMetadata {
+  name: string;
+  palette: readonly bigint[];
+  size: bigint;
+  proposer: string;
+}
+
+export interface DayMetadata {
+  name: string;
+  palette: string[];
+  size: number;
+  proposer: string;
+}
+
+const uint24ToHex = (value: bigint | number): string => {
+  const numeric = typeof value === 'bigint' ? Number(value) : value;
+  if (!Number.isFinite(numeric) || numeric < 0) {
+    return '#000000';
+  }
+  return `#${numeric.toString(16).padStart(6, '0')}`;
+};
+
+export const getBasePaintDayMetadata = async (day: number): Promise<DayMetadata | null> => {
+  if (!Number.isFinite(day) || day <= 0) {
+    return null;
+  }
+
+  const metadata = await client.readContract({
+    address: METADATA_REGISTRY_ADDRESS,
+    abi: BasePaintMetadataRegistryAbi,
+    functionName: 'getMetadata',
+    args: [BigInt(day)],
+  }) as RawMetadata;
+
+  if (!metadata) {
+    return null;
+  }
+
+  const palette = Array.isArray(metadata.palette)
+    ? metadata.palette.map(uint24ToHex)
+    : [];
+
+  return {
+    name: metadata.name ?? '',
+    palette,
+    size: Number(metadata.size ?? 0n),
+    proposer: metadata.proposer ?? '0x0000000000000000000000000000000000000000',
+  };
+};
 
 /**
  * Obtiene la cantidad total de píxeles pintados para el día actual with cache.

@@ -40,9 +40,10 @@ const useCanvasDisplay = ({ canvasRef, stateRef, state }: CanvasRefs): CanvasDis
         finalUrl = `${url}${separator}_t=${timestamp}`;
       }
       
-      // Use the proxy to avoid CORS issues
-      const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(finalUrl)}`;
-      img.src = proxyUrl;
+      // Use the proxy only for remote sources to avoid CORS issues
+      const isRemoteUrl = /^https?:\/\//i.test(finalUrl);
+      const sourceUrl = isRemoteUrl ? `/api/proxy-image?url=${encodeURIComponent(finalUrl)}` : finalUrl;
+      img.src = sourceUrl;
     });
   }, []);
 

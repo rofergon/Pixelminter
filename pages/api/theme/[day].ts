@@ -1,35 +1,52 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { calculateDay } from '../../../src/hooks/useDateUtils';
+import { calculateDay, getBasePaintDayMetadata } from '../../../src/hooks/useDateUtils';
+
+const DEFAULT_SCALE = 20;
+const REMOTE_IMAGE_BASE = 'https://basepaint.xyz/api/art/image';
+
+const sanitizePalette = (palette: unknown): string[] => {
+  if (!Array.isArray(palette)) return [];
+  return palette
+    .map((color) => (typeof color === 'string' ? color.trim() : ''))
+    .filter((color): color is string => Boolean(color));
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const numericDay = await calculateDay();
+    const pathDay = Array.isArray(req.query.day) ? req.query.day[0] : req.query.day;
+    const parsedPathDay = pathDay ? parseInt(pathDay, 10) : NaN;
+    const numericDay = Number.isFinite(parsedPathDay) && parsedPathDay > 0 ? parsedPathDay : await calculateDay();
 
-    
+    // Metadata is stored on-chain in BasePaintMetadataRegistry
+    const metadata = await getBasePaintDayMetadata(numericDay);
 
-    // Establecer la zona horaria a UTC-10:00
-    process.env.TZ = 'Pacific/Honolulu'
-
-    // Construir las URLs de las APIs externas
-    const themeUrl = `https://basepaint.xyz/api/theme/${numericDay}`
-    const imageUrl = `https://basepaint.xyz/api/art/image?day=${numericDay}&scale=20&v=3`
-
-    try {
-      const themeResponse = await fetch(themeUrl)
-      if (!themeResponse.ok) throw new Error('Failed to fetch theme data from API')
-      const themeData = await themeResponse.json()
-
-      // Combinar los datos del tema con la URL de la imagen
-      const responseData = {
-        ...themeData,
-        imageUrl: imageUrl
-      }
-
-      res.status(200).json(responseData)
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch data from API', details: error instanceof Error ? error.message : 'Unknown error' })
+    if (!metadata || !metadata.palette.length) {
+      return res.status(404).json({
+        error: 'Metadata not found for requested day',
+      });
     }
+
+    const palette = sanitizePalette(metadata.palette);
+
+    const paletteQuery = palette.map((color) => encodeURIComponent(color)).join(',');
+    const reconstructedImageUrl = palette.length
+      ? `/api/basepaint/image?day=${numericDay}&scale=${DEFAULT_SCALE}&palette=${paletteQuery}`
+      : '';
+    const remoteImageUrl = `${REMOTE_IMAGE_BASE}?day=${numericDay}&scale=${DEFAULT_SCALE}&v=3`;
+    const selectedImageUrl = reconstructedImageUrl || remoteImageUrl;
+
+    res.status(200).json({
+      day: numericDay,
+      theme: metadata.name || `BasePaint Day ${numericDay}`,
+      palette,
+      imageUrl: selectedImageUrl,
+      canvasSize: metadata.size,
+      proposer: metadata.proposer,
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to calculate day', details: error instanceof Error ? error.message : 'Unknown error' })
+    res.status(500).json({
+      error: 'Failed to fetch BasePaint metadata',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    });
   }
 }

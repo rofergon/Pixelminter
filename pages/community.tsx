@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, Images, ShieldCheck, Sparkles } from 'lucide-react';
-import { useAccount, useContractRead } from 'wagmi';
+import { useContractRead } from 'wagmi';
 import { formatEther } from 'viem';
 import { Button } from '@/components/ui/button';
 import { pixelminterAbi } from '@/abi/pixelminterAbi';
@@ -11,13 +11,12 @@ import {
   PIXELMINTER_ETHERSCAN_URL,
 } from '@/constants/pixelminter';
 import { usePixelminterGallery } from '@/hooks/usePixelminterGallery';
-import { AddressDisplay } from '@/components/AddressDisplay';
 import { useGalleryFilters } from '@/hooks/useGalleryFilters';
+import { ArtistSelectOption } from '@/components/ArtistSelectOption';
 import GalleryTokenCard from '@/components/GalleryTokenCard';
+import { AddressDisplay } from '@/components/AddressDisplay';
 
-const LibraryPage = () => {
-  const { address } = useAccount();
-
+const CommunityPage = () => {
   const {
     tokens,
     totalSupply,
@@ -25,22 +24,25 @@ const LibraryPage = () => {
     isLoading,
     error,
   } = usePixelminterGallery({
-    owner: address,
-    scope: 'personal',
+    scope: 'global',
   });
 
   const {
+    artistFilter,
+    setArtistFilter,
     themeFilter,
     setThemeFilter,
     dayFilter,
     setDayFilter,
+    artistOptions,
     themeOptions,
     dayOptions,
     filteredTokens,
     highlightedTokens,
     hasActiveFilters,
+    shouldShowArtistFilter,
     clearFilters,
-  } = useGalleryFilters(tokens, 'personal');
+  } = useGalleryFilters(tokens, 'global');
 
   const { data: mintFeeData } = useContractRead({
     address: PIXELMINTER_CONTRACT_ADDRESS,
@@ -50,32 +52,29 @@ const LibraryPage = () => {
   });
 
   const mintFee = mintFeeData ? formatEther(mintFeeData as bigint) : null;
-  const canShowGallery = Boolean(address);
-  const galleryStatTitle = 'Your pieces';
-  const galleryStatDescription =
-    'The list is built by calling ownerOf() + tokenURI() for each token and validating that the owner is your current wallet.';
+  const galleryStatTitle = 'Community pieces';
+  const galleryStatDescription = 'Browse every animation minted from Pixelminter to see what the rest of the BasePaint community is producing.';
   const emptyGalleryMessage = hasActiveFilters
-    ? 'No animations match your filters. Try a different theme or day.'
-    : 'You haven’t minted any animations on this contract yet. Go back to the canvas and mint your first piece to see it here.';
+    ? 'No animations match your filters. Try a different artist, theme, or day.'
+    : 'No animations have been minted on this contract yet. Check back soon to discover the latest pieces.';
   const hasTokens = tokens.length > 0;
   const showInitialSkeleton = isLoading && !hasTokens;
-  const filterDescription = 'Refine this gallery by spotlighting common themes or the day it was created.';
+  const filterDescription = 'Refine this gallery by spotlighting artists, common themes, or the day it was created.';
 
   return (
     <>
       <Head>
-        <title>Pixelminter | NFT Library</title>
+        <title>Pixelminter | Community Gallery</title>
       </Head>
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
         <div className="max-w-6xl mx-auto px-4 py-12 space-y-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div className="space-y-4 max-w-2xl">
               <p className="text-sm uppercase tracking-[0.35em] text-emerald-300">Pixelminter</p>
-              <h1 className="text-4xl font-semibold">Your BasePaint animation library</h1>
+              <h1 className="text-4xl font-semibold">Community gallery</h1>
               <p className="text-slate-400">
-                Explore the GIFs you minted directly to the contract{' '}
-                <span className="font-mono text-slate-200"><AddressDisplay address={PIXELMINTER_CONTRACT_ADDRESS} /></span> and
-                verify that each token points to assets hosted on Lighthouse.
+                Explore every animation minted to Pixelminter in one place and get inspired by what the BasePaint
+                community is sharing.
               </p>
               <div className="flex flex-wrap gap-3 pt-2">
                 <Button
@@ -93,18 +92,16 @@ const LibraryPage = () => {
                   variant="ghost"
                   className="text-slate-100 border border-slate-800 hover:bg-slate-900/60"
                 >
-                  <Link href="/community">Community gallery</Link>
+                  <Link href="/library">Your library</Link>
                 </Button>
               </div>
             </div>
             <div className="w-full md:w-auto bg-slate-900/70 border border-slate-800 rounded-2xl p-4 shadow-pixel">
-              <p className="text-xs uppercase text-slate-500 tracking-[0.3em]">Wallet</p>
-              <p className="text-xl font-semibold mt-1">
-                <AddressDisplay address={address} />
+              <p className="text-xs uppercase text-slate-500 tracking-[0.3em]">Community feed</p>
+              <p className="text-xl font-semibold mt-1">Global gallery</p>
+              <p className="mt-2 text-xs text-slate-400">
+                No wallet connection required to browse every mint from the Pixelminter contract.
               </p>
-              <div className="mt-4 flex justify-end">
-                <appkit-button balance="hide" />
-              </div>
             </div>
           </div>
 
@@ -144,7 +141,7 @@ const LibraryPage = () => {
                 </div>
               </div>
               <p className="mt-3 text-sm text-slate-400">
-                Start collecting your own animated WIPs and build your unique pixel art gallery.
+                Follow the growing catalog and watch every animation minted from Pixelminter.
               </p>
             </div>
             <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 shadow-pixel">
@@ -166,19 +163,13 @@ const LibraryPage = () => {
               </div>
             </div>
 
-            {!canShowGallery && (
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-slate-400">
-                Connect your wallet to see the NFTs you have minted.
-              </div>
-            )}
-
-            {canShowGallery && error && (
+            {error && (
               <div className="rounded-2xl border border-red-900/80 bg-red-950/60 p-4 text-red-200 text-sm">
                 {error}
               </div>
             )}
 
-            {canShowGallery && !error && (
+            {!error && (
               <>
                 {tokens.length > 0 && (
                   <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-4 space-y-4">
@@ -194,7 +185,22 @@ const LibraryPage = () => {
                         </button>
                       )}
                     </div>
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className={`grid gap-4 ${shouldShowArtistFilter ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+                      {shouldShowArtistFilter && (
+                        <div className="space-y-1">
+                          <label className="text-xs uppercase tracking-[0.3em] text-slate-500">Artist</label>
+                          <select
+                            value={artistFilter}
+                            onChange={(event) => setArtistFilter(event.target.value)}
+                            className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-100 focus:border-indigo-500 focus:outline-none"
+                          >
+                            <option value="all">All artists</option>
+                            {artistOptions.map((option) => (
+                              <ArtistSelectOption key={option.value} value={option.value} label={option.label} />
+                            ))}
+                          </select>
+                        </div>
+                      )}
                       <div className="space-y-1">
                         <label className="text-xs uppercase tracking-[0.3em] text-slate-500">Theme</label>
                         <select
@@ -251,7 +257,7 @@ const LibraryPage = () => {
                     {highlightedTokens.length > 0 && (
                       <div className="space-y-3">
                         <div className="flex flex-col gap-1">
-                          <h3 className="text-xl font-semibold">Lo más destacado</h3>
+                          <h3 className="text-xl font-semibold">Highlights</h3>
                           <p className="text-sm text-slate-400">
                             {hasActiveFilters
                               ? 'Picks that match your current filters.'
@@ -260,14 +266,14 @@ const LibraryPage = () => {
                         </div>
                         <div className="grid gap-6 md:grid-cols-3">
                           {highlightedTokens.map((token) => (
-                            <GalleryTokenCard key={token.tokenId} token={token} isPersonalGallery />
+                            <GalleryTokenCard key={token.tokenId} token={token} isPersonalGallery={false} />
                           ))}
                         </div>
                       </div>
                     )}
                     <div className="space-y-3">
                       <div className="flex flex-col gap-1">
-                        <h3 className="text-xl font-semibold">Todo</h3>
+                        <h3 className="text-xl font-semibold">Everything</h3>
                         <p className="text-sm text-slate-400">
                           {hasActiveFilters
                             ? 'Every animation that matches your current filters.'
@@ -276,7 +282,7 @@ const LibraryPage = () => {
                       </div>
                       <div className="grid gap-6 sm:grid-cols-2">
                         {filteredTokens.map((token) => (
-                          <GalleryTokenCard key={token.tokenId} token={token} isPersonalGallery />
+                          <GalleryTokenCard key={token.tokenId} token={token} isPersonalGallery={false} />
                         ))}
                       </div>
                     </div>
@@ -291,4 +297,4 @@ const LibraryPage = () => {
   );
 };
 
-export default LibraryPage;
+export default CommunityPage;
