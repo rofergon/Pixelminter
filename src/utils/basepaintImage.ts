@@ -6,7 +6,7 @@ const GRID_SIZE = 256;
 const DEFAULT_SCALE = 20;
 const MAX_SCALE = 40;
 const MIN_SCALE = 1;
-const LOOKBACK_BLOCKS = 400000n;
+const LOOKBACK_BLOCKS = BigInt(400000);
 const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes cache to reduce RPC pressure
 
 const paintedEvent = parseAbiItem(
@@ -86,7 +86,8 @@ const storeCachedImage = (key: string, buffer: Buffer): void => {
 
 const fetchPaintLogs = async (day: number) => {
   const latestBlock = await baseClient.getBlockNumber();
-  const fromBlock = latestBlock > LOOKBACK_BLOCKS ? latestBlock - LOOKBACK_BLOCKS : 0n;
+  const zero = BigInt(0);
+  const fromBlock = latestBlock > LOOKBACK_BLOCKS ? latestBlock - LOOKBACK_BLOCKS : zero;
 
   let logs = await baseClient.getLogs({
     address: BASE_PAINT_CONTRACT_ADDRESS,
@@ -96,12 +97,12 @@ const fetchPaintLogs = async (day: number) => {
     toBlock: latestBlock,
   });
 
-  if (!logs.length && fromBlock > 0n) {
+  if (!logs.length && fromBlock > zero) {
     logs = await baseClient.getLogs({
       address: BASE_PAINT_CONTRACT_ADDRESS,
       event: paintedEvent,
       args: { day: BigInt(day) },
-      fromBlock: 0n,
+      fromBlock: zero,
       toBlock: latestBlock,
     });
   }

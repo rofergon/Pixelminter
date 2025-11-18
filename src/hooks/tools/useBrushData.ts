@@ -205,31 +205,55 @@ export const useBrushData = () => {
     }
   }, [address, fetchContractData]);
 
-  const fetchBrushData = useCallback(async () => {
-    if (userTokenIds.length > 0) {
+  const fetchBrushStrength = useCallback(async (tokenId: number) => {
+    const clients = [baseClient, alternativeClient, tertiaryClient];
+    for (const client of clients) {
       try {
-        const response = await fetch(`/api/brush/${userTokenIds[0]}`);
-        if (!response.ok) throw new Error('Error obtaining brush data');
-        const data = await response.json();
-        
-        const pixelsPerDay = data.attributes.find((attr: { trait_type: string; value: any }) => 
-          attr.trait_type === 'Pixels per day'
-        )?.value;
-
-        const newBrushData = {
-          tokenId: data.tokenId,
-          pixelsPerDay: pixelsPerDay ? Number(pixelsPerDay) : 0
-        };
-
-        setBrushData(newBrushData);
-        return newBrushData;
+        const strength = await client.readContract({
+          address: contractAddress,
+          abi: BasePaintBrushAbi,
+          functionName: 'strengths',
+          args: [BigInt(tokenId)],
+        });
+        return Number(strength);
       } catch (error) {
-        console.error('Error fetching brush data:', error);
-        return null;
+        console.error(`Error fetching strength for token ${tokenId}`, error);
       }
     }
-    return null;
-  }, [userTokenIds]);
+    throw new Error('Unable to fetch brush strength');
+  }, []);
+
+  const fetchBrushData = useCallback(async () => {
+    if (userTokenIds.length === 0) {
+      setBrushData(null);
+      return null;
+    }
+
+    try {
+      let selectedToken = userTokenIds[0];
+      let maxPixels = 0;
+
+      for (const tokenId of userTokenIds) {
+        const strength = await fetchBrushStrength(tokenId);
+        if (strength > maxPixels) {
+          maxPixels = strength;
+          selectedToken = tokenId;
+        }
+      }
+
+      const newBrushData = {
+        tokenId: selectedToken.toString(),
+        pixelsPerDay: Number.isFinite(maxPixels) ? maxPixels : 0,
+      };
+
+      setBrushData(newBrushData);
+      return newBrushData;
+    } catch (error) {
+      console.error('Error reading brush data from contract:', error);
+      setBrushData(null);
+      return null;
+    }
+  }, [userTokenIds, fetchBrushStrength]);
 
   useEffect(() => {
     if (address) {

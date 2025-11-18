@@ -87,6 +87,7 @@
     "@types/gif.js": "^0.2.5",
     "@types/istanbul-lib-coverage": "^2.0.6",
     "@types/istanbul-reports": "^3.0.4",
+    "@types/pngjs": "^6.0.5",
     "@types/prop-types": "^15.7.12",
     "dotenv": "^17.2.3",
     "eslint-plugin-react": "^7.35.0",
