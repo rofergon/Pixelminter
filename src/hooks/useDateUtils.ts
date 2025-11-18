@@ -164,10 +164,12 @@ export const getBasePaintDayMetadata = async (day: number): Promise<DayMetadata 
     ? metadata.palette.map(uint24ToHex)
     : [];
 
+  const sizeValue = typeof metadata.size === 'bigint' ? Number(metadata.size) : 0;
+
   return {
     name: metadata.name ?? '',
     palette,
-    size: Number(metadata.size ?? 0n),
+    size: sizeValue,
     proposer: metadata.proposer ?? '0x0000000000000000000000000000000000000000',
   };
 };
