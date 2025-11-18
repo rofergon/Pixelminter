@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ExternalLink, Images, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Images, ShieldCheck, Sparkles } from 'lucide-react';
 import { useAccount, useContractRead } from 'wagmi';
 import { formatEther } from 'viem';
 import { Button } from '@/components/ui/button';
@@ -12,67 +11,12 @@ import {
   PIXELMINTER_ETHERSCAN_URL,
 } from '@/constants/pixelminter';
 import { usePixelminterGallery } from '@/hooks/usePixelminterGallery';
-import type { PixelminterGalleryScope, PixelminterToken } from '@/hooks/usePixelminterGallery';
 import { AddressDisplay } from '@/components/AddressDisplay';
-import { useAddressName } from '@/hooks/useAddressName';
-
-const featuredTraits = ['Theme', 'FPS', 'Frame Count', 'Total Pixels', 'Creation Date', 'Author'];
-const ARTIST_AUTHOR_PREFIX = 'author|';
-const ARTIST_OWNER_PREFIX = 'owner|';
-
-const getTraitValue = (token: PixelminterToken, traitType: string) => {
-  return token.metadata?.attributes?.find((attr) =>
-    attr.trait_type?.toLowerCase() === traitType.toLowerCase()
-  )?.value;
-};
-
-const getTraitValueText = (token: PixelminterToken, traitType: string) => {
-  const traitValue = getTraitValue(token, traitType);
-  if (typeof traitValue === 'string') {
-    return traitValue;
-  }
-  if (typeof traitValue === 'number') {
-    return traitValue.toString();
-  }
-  return undefined;
-};
-
-const toFilterKey = (value?: string) => value?.trim().toLowerCase() ?? '';
+import { useGalleryFilters } from '@/hooks/useGalleryFilters';
+import GalleryTokenCard from '@/components/GalleryTokenCard';
 
 const LibraryPage = () => {
   const { address } = useAccount();
-  const scopeHasBeenSetManually = useRef(false);
-  const [galleryScope, setGalleryScope] = useState<PixelminterGalleryScope>(address ? 'personal' : 'global');
-  const isPersonalGallery = galleryScope === 'personal';
-  const shouldShowArtistFilter = !isPersonalGallery;
-  const [artistFilter, setArtistFilter] = useState('all');
-  const [themeFilter, setThemeFilter] = useState('all');
-  const [dayFilter, setDayFilter] = useState('all');
-
-  useEffect(() => {
-    if (!address && galleryScope === 'personal') {
-      scopeHasBeenSetManually.current = false;
-      setGalleryScope('global');
-    }
-  }, [address, galleryScope]);
-
-  useEffect(() => {
-    if (address && !scopeHasBeenSetManually.current) {
-      setGalleryScope('personal');
-    }
-  }, [address]);
-
-  useEffect(() => {
-    setArtistFilter('all');
-    setThemeFilter('all');
-    setDayFilter('all');
-  }, [galleryScope]);
-
-  const handleGalleryScopeChange = (scope: PixelminterGalleryScope) => {
-    if (scope === 'personal' && !address) return;
-    scopeHasBeenSetManually.current = true;
-    setGalleryScope(scope);
-  };
 
   const {
     tokens,
@@ -82,136 +26,21 @@ const LibraryPage = () => {
     error,
   } = usePixelminterGallery({
     owner: address,
-    scope: galleryScope,
+    scope: 'personal',
   });
 
-  const { artistOptions, themeOptions, dayOptions } = useMemo(() => {
-    const includeArtistOptions = shouldShowArtistFilter;
-    const artistsMap = new Map<string, { value: string; label: string }>();
-    const themesMap = new Map<string, { value: string; label: string }>();
-    const daysMap = new Map<string, { value: string; label: string }>();
-
-    tokens.forEach((token) => {
-      if (includeArtistOptions) {
-        const author = getTraitValueText(token, 'Author');
-        if (author) {
-          const normalized = toFilterKey(author);
-          if (normalized) {
-            const key = `${ARTIST_AUTHOR_PREFIX}${normalized}`;
-            if (!artistsMap.has(key)) {
-              artistsMap.set(key, { value: key, label: author });
-            }
-          }
-        } else if (token.owner) {
-          const ownerKey = `${ARTIST_OWNER_PREFIX}${token.owner.toLowerCase()}`;
-          if (!artistsMap.has(ownerKey)) {
-            // Store full address in label - will be resolved to ENS/Basename in UI
-            artistsMap.set(ownerKey, { value: ownerKey, label: token.owner });
-          }
-        }
-      }
-
-      const theme = getTraitValueText(token, 'Theme');
-      if (theme) {
-        const normalizedTheme = toFilterKey(theme);
-        if (normalizedTheme && !themesMap.has(normalizedTheme)) {
-          themesMap.set(normalizedTheme, { value: normalizedTheme, label: theme });
-        }
-      }
-
-      const dayNumber = getTraitValueText(token, 'Day');
-      if (dayNumber) {
-        const normalizedDay = toFilterKey(dayNumber);
-        if (normalizedDay && !daysMap.has(normalizedDay)) {
-          daysMap.set(normalizedDay, { value: normalizedDay, label: dayNumber });
-        }
-      }
-    });
-
-    const sortAlphabetically = (options: { value: string; label: string }[]) =>
-      options.sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }));
-
-    return {
-      artistOptions: includeArtistOptions ? sortAlphabetically(Array.from(artistsMap.values())) : [],
-      themeOptions: sortAlphabetically(Array.from(themesMap.values())),
-      dayOptions: sortAlphabetically(Array.from(daysMap.values())),
-    };
-  }, [tokens, shouldShowArtistFilter]);
-
-  useEffect(() => {
-    if (!shouldShowArtistFilter) {
-      if (artistFilter !== 'all') {
-        setArtistFilter('all');
-      }
-      return;
-    }
-
-    if (artistFilter !== 'all' && !artistOptions.some((option) => option.value === artistFilter)) {
-      setArtistFilter('all');
-    }
-  }, [artistFilter, artistOptions, shouldShowArtistFilter]);
-
-  useEffect(() => {
-    if (themeFilter !== 'all' && !themeOptions.some((option) => option.value === themeFilter)) {
-      setThemeFilter('all');
-    }
-  }, [themeFilter, themeOptions]);
-
-  useEffect(() => {
-    if (dayFilter !== 'all' && !dayOptions.some((option) => option.value === dayFilter)) {
-      setDayFilter('all');
-    }
-  }, [dayFilter, dayOptions]);
-
-  const filteredTokens = useMemo(() => {
-    if (!tokens.length) {
-      return [];
-    }
-
-    return tokens.filter((token) => {
-      const matchesArtist =
-        !shouldShowArtistFilter ||
-        artistFilter === 'all' ||
-        (() => {
-          if (artistFilter.startsWith(ARTIST_AUTHOR_PREFIX)) {
-            const target = artistFilter.slice(ARTIST_AUTHOR_PREFIX.length);
-            const author = getTraitValueText(token, 'Author');
-            return author ? toFilterKey(author) === target : false;
-          }
-
-          if (artistFilter.startsWith(ARTIST_OWNER_PREFIX)) {
-            const target = artistFilter.slice(ARTIST_OWNER_PREFIX.length);
-            return token.owner ? token.owner.toLowerCase() === target : false;
-          }
-
-          return false;
-        })();
-
-      if (!matchesArtist) {
-        return false;
-      }
-
-      const matchesTheme =
-        themeFilter === 'all' ||
-        (() => {
-          const theme = getTraitValueText(token, 'Theme');
-          return theme ? toFilterKey(theme) === themeFilter : false;
-        })();
-
-      if (!matchesTheme) {
-        return false;
-      }
-
-      const matchesDay =
-        dayFilter === 'all' ||
-        (() => {
-          const dayNumber = getTraitValueText(token, 'Day');
-          return dayNumber ? toFilterKey(dayNumber) === dayFilter : false;
-        })();
-
-      return matchesDay;
-    });
-  }, [tokens, artistFilter, themeFilter, dayFilter, shouldShowArtistFilter]);
+  const {
+    themeFilter,
+    setThemeFilter,
+    dayFilter,
+    setDayFilter,
+    themeOptions,
+    dayOptions,
+    filteredTokens,
+    highlightedTokens,
+    hasActiveFilters,
+    clearFilters,
+  } = useGalleryFilters(tokens, 'personal');
 
   const { data: mintFeeData } = useContractRead({
     address: PIXELMINTER_CONTRACT_ADDRESS,
@@ -221,140 +50,16 @@ const LibraryPage = () => {
   });
 
   const mintFee = mintFeeData ? formatEther(mintFeeData as bigint) : null;
-  const canShowGallery = isPersonalGallery ? Boolean(address) : true;
-  const galleryStatTitle = isPersonalGallery ? 'Your pieces' : 'Community pieces';
-  const galleryStatDescription = isPersonalGallery
-    ? 'The list is built by calling ownerOf() + tokenURI() for each token and validating that the owner is your current wallet.'
-    : 'Browse every animation minted from Pixelminter to see what the rest of the BasePaint community is producing.';
-  const highlightedTokens = filteredTokens.slice(0, Math.min(filteredTokens.length, 3));
-  const hasActiveFilters = artistFilter !== 'all' || themeFilter !== 'all' || dayFilter !== 'all';
+  const canShowGallery = Boolean(address);
+  const galleryStatTitle = 'Your pieces';
+  const galleryStatDescription =
+    'The list is built by calling ownerOf() + tokenURI() for each token and validating that the owner is your current wallet.';
   const emptyGalleryMessage = hasActiveFilters
-    ? shouldShowArtistFilter
-      ? 'No animations match your filters. Try a different artist, theme, or day.'
-      : 'No animations match your filters. Try a different theme or day.'
-    : isPersonalGallery
-      ? 'You haven’t minted any animations on this contract yet. Go back to the canvas and mint your first piece to see it here.'
-      : 'No animations have been minted on this contract yet. Check back soon to discover the latest pieces.';
+    ? 'No animations match your filters. Try a different theme or day.'
+    : 'You haven’t minted any animations on this contract yet. Go back to the canvas and mint your first piece to see it here.';
   const hasTokens = tokens.length > 0;
   const showInitialSkeleton = isLoading && !hasTokens;
-  const filterDescription = shouldShowArtistFilter
-    ? 'Refine this gallery by spotlighting artists, common themes, or the day it was created.'
-    : 'Refine this gallery by spotlighting common themes or the day it was created.';
-
-  const clearFilters = () => {
-    setArtistFilter('all');
-    setThemeFilter('all');
-    setDayFilter('all');
-  };
-
-  // Helper to check if a string is an Ethereum address
-  const isAddress = (value: string | number): boolean => {
-    if (typeof value !== 'string') return false;
-    return /^0x[a-fA-F0-9]{40}$/.test(value);
-  };
-
-  // Helper component to resolve address to display name for select options
-  const useResolvedArtistLabel = (label: string): string => {
-    const { displayName } = useAddressName(isAddress(label) ? label : null);
-    return isAddress(label) ? displayName : label;
-  };
-
-  // Component wrapper for artist select option
-  const ArtistSelectOption = ({ value, label }: { value: string; label: string }) => {
-    const resolvedLabel = useResolvedArtistLabel(label);
-    return (
-      <option value={value}>
-        {resolvedLabel}
-      </option>
-    );
-  };
-
-  // Component to render trait value with address resolution for Author field
-  const TraitValue = ({ traitType, value }: { traitType: string; value: string | number | undefined }) => {
-    if (!value) return <>—</>;
-    if (traitType === 'Author' && isAddress(value)) {
-      return <AddressDisplay address={value as string} />;
-    }
-    return <>{value}</>;
-  };
-
-  const renderTokenCard = (token: PixelminterToken) => {
-    const traits =
-      token.metadata?.attributes?.filter((attr) =>
-        attr.trait_type ? featuredTraits.includes(attr.trait_type) : false
-      ) ?? [];
-
-    return (
-      <div
-        key={token.tokenId}
-        className="rounded-3xl border border-slate-900 bg-slate-900/60 overflow-hidden shadow-pixel flex flex-col"
-      >
-        <div className="bg-slate-950/80 p-4 border-b border-slate-900">
-          <p className="text-xs text-slate-500 uppercase tracking-[0.35em]">Token #{token.tokenId}</p>
-                <p className="text-xl font-semibold mt-1">
-                  {token.metadata?.name ?? `Pixelminter #${token.tokenId}`}
-                </p>
-                {!isPersonalGallery && token.owner && (
-                  <p className="text-xs text-slate-500 mt-2">
-                    Owned by <span className="font-mono text-slate-200"><AddressDisplay address={token.owner} /></span>
-                  </p>
-                )}
-        </div>
-        <div className="aspect-square bg-slate-950 flex items-center justify-center border-b border-slate-900">
-          {token.animationUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={token.animationUrl}
-              alt={token.metadata?.name ?? `Token ${token.tokenId}`}
-              className="max-h-full max-w-full object-contain"
-              loading="lazy"
-            />
-          ) : (
-            <div className="relative h-full w-full overflow-hidden rounded-xl border border-slate-900 bg-slate-900">
-              <div className="absolute inset-0 animate-pulse bg-[length:200%_200%] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900" />
-              <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-xs text-slate-400">
-                <RefreshCw className="mb-2 h-4 w-4 animate-spin text-emerald-300" />
-                Loading preview…
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="p-4 space-y-4 flex-1 flex flex-col">
-          <p className="text-sm text-slate-400">
-            {token.metadata?.description ?? 'This animation was minted from Pixelminter.'}
-          </p>
-          {traits.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {traits.map((trait) => (
-                <span
-                  key={`${token.tokenId}-${trait.trait_type}`}
-                  className="text-xs px-2 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 text-slate-200"
-                >
-                  <span className="text-slate-500">{trait.trait_type}:</span>{' '}
-                  <span className="font-semibold">
-                    <TraitValue traitType={trait.trait_type || ''} value={trait.value} />
-                  </span>
-                </span>
-              ))}
-            </div>
-          )}
-          <div className="mt-auto flex flex-wrap gap-2">
-            {token.animationUrl && (
-              <a
-                href={token.animationUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-300 hover:text-emerald-200"
-              >
-                View animation
-                <ExternalLink className="h-3 w-3" />
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const filterDescription = 'Refine this gallery by spotlighting common themes or the day it was created.';
 
   return (
     <>
@@ -382,6 +87,13 @@ const LibraryPage = () => {
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back to canvas
                   </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="text-slate-100 border border-slate-800 hover:bg-slate-900/60"
+                >
+                  <Link href="/community">Community gallery</Link>
                 </Button>
               </div>
             </div>
@@ -452,38 +164,6 @@ const LibraryPage = () => {
               <div>
                 <h2 className="text-2xl font-semibold">Gallery</h2>
               </div>
-              <div className="flex flex-col gap-2 text-sm text-slate-400">
-                <span className="text-xs uppercase tracking-[0.35em] text-slate-500 text-right md:text-left">
-                  View
-                </span>
-                <div className="inline-flex rounded-full border border-slate-800 bg-slate-900/70 p-1">
-                  <button
-                    type="button"
-                    onClick={() => handleGalleryScopeChange('personal')}
-                    disabled={!address}
-                    aria-pressed={isPersonalGallery}
-                    className={`px-4 py-2 text-xs font-semibold rounded-full transition ${
-                      isPersonalGallery
-                        ? 'bg-indigo-600 text-white shadow-neon'
-                        : 'text-slate-400 hover:text-slate-100'
-                    } ${!address ? 'cursor-not-allowed opacity-40' : ''}`}
-                  >
-                    Personal
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleGalleryScopeChange('global')}
-                    aria-pressed={!isPersonalGallery}
-                    className={`px-4 py-2 text-xs font-semibold rounded-full transition ${
-                      !isPersonalGallery
-                        ? 'bg-indigo-600 text-white shadow-neon'
-                        : 'text-slate-400 hover:text-slate-100'
-                    }`}
-                  >
-                    Community
-                  </button>
-                </div>
-              </div>
             </div>
 
             {!canShowGallery && (
@@ -514,22 +194,7 @@ const LibraryPage = () => {
                         </button>
                       )}
                     </div>
-                    <div className={`grid gap-4 ${shouldShowArtistFilter ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
-                      {shouldShowArtistFilter && (
-                        <div className="space-y-1">
-                          <label className="text-xs uppercase tracking-[0.3em] text-slate-500">Artist</label>
-                          <select
-                            value={artistFilter}
-                            onChange={(event) => setArtistFilter(event.target.value)}
-                            className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-100 focus:border-indigo-500 focus:outline-none"
-                          >
-                            <option value="all">All artists</option>
-                            {artistOptions.map((option) => (
-                              <ArtistSelectOption key={option.value} value={option.value} label={option.label} />
-                            ))}
-                          </select>
-                        </div>
-                      )}
+                    <div className="grid gap-4 md:grid-cols-2">
                       <div className="space-y-1">
                         <label className="text-xs uppercase tracking-[0.3em] text-slate-500">Theme</label>
                         <select
@@ -594,7 +259,9 @@ const LibraryPage = () => {
                           </p>
                         </div>
                         <div className="grid gap-6 md:grid-cols-3">
-                          {highlightedTokens.map((token) => renderTokenCard(token))}
+                          {highlightedTokens.map((token) => (
+                            <GalleryTokenCard key={token.tokenId} token={token} isPersonalGallery />
+                          ))}
                         </div>
                       </div>
                     )}
@@ -608,7 +275,9 @@ const LibraryPage = () => {
                         </p>
                       </div>
                       <div className="grid gap-6 sm:grid-cols-2">
-                        {filteredTokens.map((token) => renderTokenCard(token))}
+                        {filteredTokens.map((token) => (
+                          <GalleryTokenCard key={token.tokenId} token={token} isPersonalGallery />
+                        ))}
                       </div>
                     </div>
                   </>
