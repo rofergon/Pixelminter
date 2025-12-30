@@ -12,19 +12,19 @@ dayjs.extend(utc);
 const cache = {
   today: { value: null as number | null, timestamp: 0 },
   totalPixels: { value: null as bigint | null, timestamp: 0, day: 0 },
-  
+
   // Cache valid for 5 minutes (300000ms)
   CACHE_TTL: 300000,
-  
-  isTodayValid: function() {
-    return this.today.value !== null && 
-           (Date.now() - this.today.timestamp) < this.CACHE_TTL;
+
+  isTodayValid: function () {
+    return this.today.value !== null &&
+      (Date.now() - this.today.timestamp) < this.CACHE_TTL;
   },
-  
-  isTotalPixelsValid: function(day: number) {
-    return this.totalPixels.value !== null && 
-           this.totalPixels.day === day && 
-           (Date.now() - this.totalPixels.timestamp) < this.CACHE_TTL;
+
+  isTotalPixelsValid: function (day: number) {
+    return this.totalPixels.value !== null &&
+      this.totalPixels.day === day &&
+      (Date.now() - this.totalPixels.timestamp) < this.CACHE_TTL;
   }
 };
 
@@ -32,9 +32,9 @@ const cache = {
 // Using only endpoints verified to work from browser with proper CORS headers
 const transports = [
   // Most reliable CORS-enabled public RPCs for Base mainnet
-  http('https://mainnet.base.org', { timeout: 10000 }),                    // Official Base RPC: 0.375s avg, CORS-enabled
+  http('https://base-rpc.publicnode.com', { timeout: 10000 }),                    // Official Base RPC: 0.375s avg, CORS-enabled
   http('https://base-rpc.publicnode.com', { timeout: 10000 }),             // Very reliable: 0.309s avg, CORS-enabled
-  http('https://base.llamarpc.com', { timeout: 10000 }),                   // Fast: 0.285s avg, CORS-enabled
+  http('https://base.blockpi.network/v1/rpc/public', { timeout: 10000 }),                   // Fast: 0.285s avg, CORS-enabled
   http('https://gateway.tenderly.co/public/base', { timeout: 12000 }),     // Tenderly public: 0.289s avg, CORS-enabled
   http('https://base.drpc.org', { timeout: 12000 }),                       // Good fallback: 0.700s avg
 ];
@@ -83,24 +83,24 @@ export const calculateDay = async (retries = 2, backoff = 1500): Promise<number>
   if (cache.isTodayValid()) {
     return cache.today.value as number;
   }
-  
+
   try {
     const today = await client.readContract({
       address: BASE_PAINT_CONTRACT_ADDRESS,
       abi: BasePaintAbi,
       functionName: 'today',
     });
-    
+
     const todayNumber = Number(today);
-    
+
     // Update cache
     cache.today.value = todayNumber;
     cache.today.timestamp = Date.now();
-    
+
     return todayNumber;
   } catch (error) {
     console.error('Error fetching today:', error);
-    
+
     if (retries > 0) {
       // Conservative backoff to respect rate limits
       await delay(backoff);
@@ -119,7 +119,7 @@ export const calculateDay = async (retries = 2, backoff = 1500): Promise<number>
 };
 
 export function getCurrentDayUTC(): string {
-    return dayjs().utc().format('YYYY-MM-DD');
+  return dayjs().utc().format('YYYY-MM-DD');
 }
 
 interface RawMetadata {
@@ -181,34 +181,34 @@ export const getBasePaintDayMetadata = async (day: number): Promise<DayMetadata 
 export const getTotalPixelsPaintedToday = async (retries = 2, backoff = 1500): Promise<bigint> => {
   try {
     // Use cached day if available to avoid extra requests
-    const today = cache.isTodayValid() 
+    const today = cache.isTodayValid()
       ? cache.today.value as number
       : await calculateDay();
-    
+
     // Check cache first
     if (cache.isTotalPixelsValid(today)) {
       return cache.totalPixels.value as bigint;
     }
-    
+
     // Increased delay to respect rate limits
     await delay(500);
-    
+
     const canvas = await client.readContract({
       address: BASE_PAINT_CONTRACT_ADDRESS,
       abi: BasePaintAbi,
       functionName: 'canvases',
       args: [BigInt(today)],
     });
-    
+
     // Verificamos que canvas sea un array y tenga al menos un elemento
     if (Array.isArray(canvas) && canvas.length > 0) {
       const totalContributions = canvas[0];
-      
+
       // Update cache
       cache.totalPixels.value = totalContributions;
       cache.totalPixels.timestamp = Date.now();
       cache.totalPixels.day = today;
-      
+
       return totalContributions;
     } else {
       console.error('Formato de respuesta del canvas inesperado:', canvas);
