@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useEnsName } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
+import { useEnsName, usePublicClient } from 'wagmi';
+import { mainnet, base } from 'wagmi/chains';
 
 /**
  * Hook to resolve address names in priority order:
@@ -20,6 +20,8 @@ export const useAddressName = (address?: string | null) => {
     address: address as `0x${string}` | undefined,
     chainId: mainnet.id,
   });
+
+  const publicClient = usePublicClient({ chainId: base.id });
 
   useEffect(() => {
     const resolveAddressName = async () => {
@@ -41,11 +43,13 @@ export const useAddressName = (address?: string | null) => {
         // 2. Try to resolve Basename from Base L2
         // Basename uses a reverse resolver pattern similar to ENS
         // We'll query the Base L2 public resolver
-        const basename = await resolveBasename(address);
-        if (basename) {
-          setDisplayName(basename);
-          setIsLoading(false);
-          return;
+        if (publicClient) {
+          const basename = await resolveBasename(address, publicClient);
+          if (basename) {
+            setDisplayName(basename);
+            setIsLoading(false);
+            return;
+          }
         }
 
         // 3. Fallback to shortened address
@@ -71,38 +75,36 @@ export const useAddressName = (address?: string | null) => {
  * @param address - The wallet address
  * @returns The Basename or null
  */
-const resolveBasename = async (address: string): Promise<string | null> => {
+/**
+ * Resolve Basename from Base L2 using the public resolver
+ * Basenames follow the pattern: name.base.eth
+ * 
+ * @param address - The wallet address
+ * @param client - The Viem public client
+ * @returns The Basename or null
+ */
+const resolveBasename = async (address: string, client: any): Promise<string | null> => {
   try {
-    // Use Base's public RPC to query the reverse resolver
-    // Base uses the same ENS infrastructure but on L2
-    const response = await fetch('https://mainnet.base.org', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'eth_call',
-        params: [
-          {
-            // L2 Reverse Registrar contract on Base
-            to: '0xC6d566A56A1aFf6508b41f6c90ff131615583BCD',
-            data: `0x55ea6c47${address.slice(2).padStart(64, '0')}`, // node(bytes32)
-          },
-          'latest',
-        ],
-      }),
+    const reverseNode = `0x55ea6c47${address.slice(2).padStart(64, '0')}`; // node(bytes32) of the reverse record name
+    const L2_RESOLVER_ADDRESS = '0xC6d566A56A1aFf6508b41f6c90ff131615583BCD';
+
+    // We can't use standard ENS hooks easily for L2 Basenames yet without custom config,
+    // so we manually query the resolver contract.
+    // Function: name(bytes32 node) returns (string)
+    // Selector for name(bytes32) is 0x691f3431
+
+    // However, the L2 resolver usually works with the reverse registrar.
+    // The previous code simulated a low-level call. Let's try to use readContract if we knew the ABI,
+    // or just use call/raw request via the client to avoid ABI bloat if we want to mimic the previous behavior safely.
+
+    // A safer way matching the previous logic (calling L2 Reverse Registrar):
+    const data = await client.call({
+      to: L2_RESOLVER_ADDRESS,
+      data: `${reverseNode}`,
     });
 
-    const data = await response.json();
-    
-    if (data.result && data.result !== '0x') {
-      // Decode the result to get the basename
-      const basename = decodeBasename(data.result);
-      if (basename) {
-        return basename;
-      }
+    if (data.data && data.data !== '0x') {
+      return decodeBasename(data.data);
     }
 
     return null;
@@ -120,18 +122,22 @@ const resolveBasename = async (address: string): Promise<string | null> => {
  */
 const decodeBasename = (hexResult: string): string | null => {
   try {
-    // Remove 0x prefix and decode
-    const hex = hexResult.slice(2);
-    
-    // Skip the first 64 characters (offset pointer) and next 64 (length)
+    // Basic hex to string decoding for specific contract return
+    // Remove 0x
+    const hex = hexResult.startsWith('0x') ? hexResult.slice(2) : hexResult;
+
+    // The return is usually abi-encoded string.
+    // Offset (32 bytes) + Length (32 bytes) + String data
+    if (hex.length < 128) return null; // Too short
+
+    // Skip offset and length (64 bytes = 128 chars)
     const dataHex = hex.slice(128);
-    
-    // Convert hex to string
+
     let basename = '';
     for (let i = 0; i < dataHex.length; i += 2) {
-      const charCode = parseInt(dataHex.substr(i, 2), 16);
-      if (charCode === 0) break;
-      basename += String.fromCharCode(charCode);
+      const code = parseInt(dataHex.substr(i, 2), 16);
+      if (code === 0) break;
+      basename += String.fromCharCode(code);
     }
 
     return basename.trim() || null;
