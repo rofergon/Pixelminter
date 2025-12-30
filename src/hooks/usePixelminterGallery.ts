@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useContractRead, usePublicClient } from 'wagmi';
+import { useReadContract, usePublicClient } from 'wagmi';
 import { pixelminterAbi } from '@/abi/pixelminterAbi';
 import {
   LIGHTHOUSE_GATEWAY_URL,
@@ -112,7 +112,7 @@ export const usePixelminterGallery = (options: UsePixelminterGalleryOptions = {}
     isFetching: isFetchingTotalSupply,
     refetch: refetchTotalSupply,
     error: totalSupplyError,
-  } = useContractRead({
+  } = useReadContract({
     address: PIXELMINTER_CONTRACT_ADDRESS,
     abi: pixelminterAbi,
     functionName: 'totalSupply',
