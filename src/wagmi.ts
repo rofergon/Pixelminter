@@ -27,13 +27,12 @@ export const metadata = {
 export const wagmiAdapter = new WagmiAdapter({
   storage: createStorage({
     storage: cookieStorage
-  }),
+  }) as any,
   ssr: true,
   projectId,
   networks,
   transports: {
     [base.id]: fallback([
-      http('https://mainnet.base.org'),
       http('https://base-rpc.publicnode.com'),
       http('https://base.blockpi.network/v1/rpc/public'),
     ]),
