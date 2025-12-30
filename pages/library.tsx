@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, Images, ShieldCheck, Sparkles } from 'lucide-react';
-import { useAccount, useContractRead } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 import { formatEther } from 'viem';
 import { Button } from '@/components/ui/button';
 import { pixelminterAbi } from '@/abi/pixelminterAbi';
@@ -42,7 +42,7 @@ const LibraryPage = () => {
     clearFilters,
   } = useGalleryFilters(tokens, 'personal');
 
-  const { data: mintFeeData } = useContractRead({
+  const { data: mintFeeData } = useReadContract({
     address: PIXELMINTER_CONTRACT_ADDRESS,
     abi: pixelminterAbi,
     functionName: 'getMintFee',
