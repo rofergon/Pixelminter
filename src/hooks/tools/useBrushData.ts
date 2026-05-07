@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 import { getContract, parseAbiItem, type Address } from 'viem';
 import { BasePaintBrushAbi } from '../../abi/BasePaintBrushAbi';
 import { BrushData } from '../../types/types';
-import { baseClient, alternativeClient, tertiaryClient } from '../../hooks/useDateUtils';
+import { baseClient } from '../../hooks/useDateUtils';
 
 const contractAddress = '0xD68fe5b53e7E1AbeB5A4d0A6660667791f39263a';
 const transferEvent = parseAbiItem(
@@ -164,32 +164,17 @@ export const useBrushData = () => {
     try {
       setIsLoading(true);
 
-      // Fetch balance with fewer retries and better error handling
-      let balanceResult: bigint | undefined;
+      const contract = getContract({
+        address: contractAddress,
+        abi: BasePaintBrushAbi,
+        client: baseClient,
+      });
 
-      // Only 1 retry since we have multiple RPCs in fallback with internal retries
-      for (let i = 0; i < 1; i++) {
-        try {
-          const contract = getContract({
-            address: contractAddress,
-            abi: BasePaintBrushAbi,
-            client: baseClient,
-          });
+      const balanceResult = await contract.read.balanceOf([address]);
 
-          // Get balance
-          balanceResult = await contract.read.balanceOf([address]);
-
-          // Update cache
-          brushTokenCache.balanceOf.address = normalizeAddress(address);
-          brushTokenCache.balanceOf.value = balanceResult;
-          brushTokenCache.balanceOf.timestamp = Date.now();
-
-          break; // Exit retry loop if successful
-        } catch (err) {
-          console.error(`Attempt ${i + 1} failed:`, err);
-          if (i === 0) throw err; // Re-throw on final attempt
-        }
-      }
+      brushTokenCache.balanceOf.address = normalizeAddress(address);
+      brushTokenCache.balanceOf.value = balanceResult;
+      brushTokenCache.balanceOf.timestamp = Date.now();
 
       setBalance(balanceResult);
       return { balance: balanceResult };
@@ -295,21 +280,14 @@ export const useBrushData = () => {
   }, [address, fetchContractData]);
 
   const fetchBrushStrength = useCallback(async (tokenId: number) => {
-    const clients = [baseClient, alternativeClient, tertiaryClient];
-    for (const client of clients) {
-      try {
-        const strength = await client.readContract({
-          address: contractAddress,
-          abi: BasePaintBrushAbi,
-          functionName: 'strengths',
-          args: [BigInt(tokenId)],
-        });
-        return Number(strength);
-      } catch (error) {
-        console.error(`Error fetching strength for token ${tokenId}`, error);
-      }
-    }
-    throw new Error('Unable to fetch brush strength');
+    const strength = await baseClient.readContract({
+      address: contractAddress,
+      abi: BasePaintBrushAbi,
+      functionName: 'strengths',
+      args: [BigInt(tokenId)],
+    });
+
+    return Number(strength);
   }, []);
 
   const fetchBrushData = useCallback(async () => {

@@ -39,11 +39,19 @@ const initializeAppKit = () => {
     projectId,
     networks: [base],
     defaultNetwork: base,
-    metadata,
+    metadata: {
+      ...metadata,
+      url: window.location.origin,
+    },
+    allWallets: 'ONLY_MOBILE',
+    enableWalletGuide: false,
     features: {
-      analytics: true,
+      analytics: false,
       email: false,
       socials: false,
+      swaps: false,
+      onramp: false,
+      allWallets: false,
     },
     themeMode: 'dark',
     themeVariables: {

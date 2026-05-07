@@ -28,45 +28,29 @@ const cache = {
   }
 };
 
-// Create an array of transport providers with CORS-enabled reliable RPCs
-// Using only endpoints verified to work from browser with proper CORS headers
+// CORS-enabled Base RPCs. A single ranked fallback client keeps calls bounded:
+// Viem tries the fastest healthy endpoint without every hook creating its own RPC fan-out.
 const transports = [
-  // CORS-enabled public RPCs for Base mainnet
   http('https://base-rpc.publicnode.com', { timeout: 10000 }),
   http('https://mainnet.base.org', { timeout: 10000 }),
-  http('https://gateway.tenderly.co/public/base', { timeout: 12000 }),     // Tenderly public: 0.289s avg, CORS-enabled
-  http('https://base.drpc.org', { timeout: 12000 }),                       // Good fallback: 0.700s avg
+  http('https://gateway.tenderly.co/public/base', { timeout: 12000 }),
+  http('https://base.drpc.org', { timeout: 12000 }),
 ];
 
 // Create client with fallback functionality and automatic ranking
 const client = createPublicClient({
   chain: base,
   transport: fallback(transports, {
-    rank: true,  // Automatically ranks by performance
-    retryCount: 2,
-    retryDelay: 1000,
+    rank: true,
+    retryCount: 1,
+    retryDelay: 750,
   }),
 });
 
 // Export the client for use in other files
 export { client as baseClient };
-
-// Additional clients for parallel brush searches - using different CORS-enabled endpoints
-const alternativeClient = createPublicClient({
-  chain: base,
-  transport: http('https://base.gateway.tenderly.co', { timeout: 12000 }),
-});
-
-const tertiaryClient = createPublicClient({
-  chain: base,
-  transport: http('https://endpoints.omniatech.io/v1/base/mainnet/public', { timeout: 12000 }),
-});
-
-// Export the alternative client for parallel searches
-export { alternativeClient };
-
-// Export tertiary client for additional load distribution
-export { tertiaryClient };
+export { client as alternativeClient };
+export { client as tertiaryClient };
 
 export const BASE_PAINT_CONTRACT_ADDRESS = '0xBa5e05cb26b78eDa3A2f8e3b3814726305dcAc83';
 const METADATA_REGISTRY_ADDRESS = '0x5104482a2Ef3a03b6270D3e931eac890b86FaD01';
