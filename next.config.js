@@ -4,6 +4,10 @@ const nextConfig = {
     // Configuración de webpack para Reown AppKit
     webpack: (config) => {
       config.externals.push('pino-pretty', 'lokijs', 'encoding');
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@gemini-wallet/core': false,
+      };
       // Ignorar módulos de React Native que no son necesarios en web
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -39,9 +43,6 @@ const nextConfig = {
       ];
     },
     // Añade esta línea
-    publicRuntimeConfig: {
-      staticFolder: '/public',
-    },
   }
   
   module.exports = nextConfig

@@ -63,7 +63,7 @@ export const useAddressName = (address?: string | null) => {
     };
 
     resolveAddressName();
-  }, [address, ensName]);
+  }, [address, ensName, publicClient]);
 
   return { displayName, isLoading: isLoading || ensLoading };
 };

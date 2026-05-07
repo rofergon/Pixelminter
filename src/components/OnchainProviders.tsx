@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { createAppKit } from '@reown/appkit/react';
-import { wagmiAdapter, projectId, metadata } from '../wagmi';
+import { isReownConfigured, wagmiAdapter, projectId, metadata } from '../wagmi';
 
 // Set up queryClient
 const queryClient = new QueryClient({
@@ -20,12 +20,8 @@ const queryClient = new QueryClient({
   },
 });
 
-if (!projectId) {
-  throw new Error('Project ID is not defined');
-}
-
 const initializeAppKit = () => {
-  if (typeof window === 'undefined') {
+  if (typeof window === 'undefined' || !isReownConfigured) {
     return;
   }
 

@@ -6,11 +6,8 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 // Get your free Project ID at https://dashboard.reown.com
 const projectIdEnv = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID
 
-if (!projectIdEnv) {
-  throw new Error('NEXT_PUBLIC_REOWN_PROJECT_ID is not defined. Get one at https://dashboard.reown.com')
-}
-
-export const projectId: string = projectIdEnv
+export const projectId: string = projectIdEnv ?? ''
+export const isReownConfigured = Boolean(projectId)
 
 // Include mainnet for ENS resolution, Base for main operations
 export const networks = [base, mainnet]
@@ -34,7 +31,7 @@ export const wagmiAdapter = new WagmiAdapter({
   transports: {
     [base.id]: fallback([
       http('https://base-rpc.publicnode.com'),
-      http('https://base.blockpi.network/v1/rpc/public'),
+      http('https://mainnet.base.org'),
     ]),
     [mainnet.id]: fallback([
       http('https://eth.llamarpc.com'),

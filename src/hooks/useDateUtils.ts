@@ -31,10 +31,9 @@ const cache = {
 // Create an array of transport providers with CORS-enabled reliable RPCs
 // Using only endpoints verified to work from browser with proper CORS headers
 const transports = [
-  // Most reliable CORS-enabled public RPCs for Base mainnet
-  http('https://base-rpc.publicnode.com', { timeout: 10000 }),                    // Official Base RPC: 0.375s avg, CORS-enabled
-  http('https://base-rpc.publicnode.com', { timeout: 10000 }),             // Very reliable: 0.309s avg, CORS-enabled
-  http('https://base.blockpi.network/v1/rpc/public', { timeout: 10000 }),                   // Fast: 0.285s avg, CORS-enabled
+  // CORS-enabled public RPCs for Base mainnet
+  http('https://base-rpc.publicnode.com', { timeout: 10000 }),
+  http('https://mainnet.base.org', { timeout: 10000 }),
   http('https://gateway.tenderly.co/public/base', { timeout: 12000 }),     // Tenderly public: 0.289s avg, CORS-enabled
   http('https://base.drpc.org', { timeout: 12000 }),                       // Good fallback: 0.700s avg
 ];

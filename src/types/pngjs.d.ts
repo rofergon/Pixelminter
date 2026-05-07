@@ -3,9 +3,10 @@ declare module 'pngjs' {
     width: number;
     height: number;
     data: Uint8Array;
-    constructor(options?: { width?: number; height?: number });
+    constructor(_options?: { width?: number; height?: number });
     static sync: {
-      write(png: PNG): Buffer;
+      read(_buffer: Buffer): PNG;
+      write(_png: PNG): Buffer;
     };
   }
 }
