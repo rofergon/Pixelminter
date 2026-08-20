@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import { getContract, parseAbiItem, type Address } from 'viem';
 import { BasePaintBrushAbi } from '../../abi/BasePaintBrushAbi';
@@ -28,6 +28,37 @@ type BrushTokenCacheEntry = {
 };
 
 const normalizeAddress = (address: string) => address.toLowerCase();
+
+// Manual brush token override, persisted per address so the automatic
+// log scan can be skipped entirely on subsequent visits.
+const MANUAL_BRUSH_TOKEN_KEY = 'pixelminter-manual-brush-token';
+
+const readManualTokenCache = (address: string): number | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(MANUAL_BRUSH_TOKEN_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const token = parsed[normalizeAddress(address)];
+    const tokenNumber = Number(token);
+    return Number.isFinite(tokenNumber) && tokenNumber > 0 ? tokenNumber : null;
+  } catch (error) {
+    console.error('Error reading manual brush token cache:', error);
+    return null;
+  }
+};
+
+const writeManualTokenCache = (address: string, tokenId: number) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = window.localStorage.getItem(MANUAL_BRUSH_TOKEN_KEY);
+    const parsed = raw ? (JSON.parse(raw) as Record<string, number>) : {};
+    parsed[normalizeAddress(address)] = tokenId;
+    window.localStorage.setItem(MANUAL_BRUSH_TOKEN_KEY, JSON.stringify(parsed));
+  } catch (error) {
+    console.error('Error writing manual brush token cache:', error);
+  }
+};
 
 const readPersistentTokenCache = (address: string): BrushTokenCacheEntry | null => {
   if (typeof window === 'undefined') return null;
@@ -93,10 +124,18 @@ const fetchTransferLogs = async (address: string, fromBlock: bigint, toBlock: bi
   return sortLogs([...toLogs, ...fromLogs] as TransferLog[]);
 };
 
-const fetchTransferLogsWithFallback = async (address: string, fromBlock: bigint, toBlock: bigint): Promise<TransferLog[]> => {
+const fetchTransferLogsWithFallback = async (
+  address: string,
+  fromBlock: bigint,
+  toBlock: bigint,
+  isCancelled?: () => boolean
+): Promise<TransferLog[]> => {
+  if (isCancelled?.()) return [];
+
   try {
     return await fetchTransferLogs(address, fromBlock, toBlock);
   } catch (error) {
+    if (isCancelled?.()) return [];
     console.warn('Full-range log query failed, retrying in chunks:', error);
   }
 
@@ -105,6 +144,7 @@ const fetchTransferLogsWithFallback = async (address: string, fromBlock: bigint,
   let start = fromBlock;
 
   while (start <= toBlock) {
+    if (isCancelled?.()) return sortLogs(logs);
     const end = start + chunkSize - 1n > toBlock ? toBlock : start + chunkSize - 1n;
     const chunkLogs = await fetchTransferLogs(address, start, end);
     logs.push(...chunkLogs);
@@ -141,11 +181,29 @@ export const useBrushData = () => {
   const [userTokenIds, setUserTokenIds] = useState<number[]>([]);
   const [brushData, setBrushData] = useState<BrushData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
   const [balance, setBalance] = useState<bigint | undefined>();
+  const [manualTokenId, setManualTokenIdState] = useState<number | null>(null);
+
+  // Manual override (number) halts every automatic RPC lookup once set.
+  // The generation counter aborts in-flight block scans.
+  const manualOverrideRef = useRef<number | null>(null);
+  const scanGenerationRef = useRef(0);
+  const brushDataResolvedRef = useRef(false);
+
+  // Sync manual override from cache before any fetch effect runs.
+  useEffect(() => {
+    scanGenerationRef.current += 1;
+    brushDataResolvedRef.current = false;
+    setIsSearching(false);
+    const cached = address ? readManualTokenCache(address) : null;
+    manualOverrideRef.current = cached;
+    setManualTokenIdState(cached);
+  }, [address]);
 
   // Fetch contract data with caching and retries
   const fetchContractData = useCallback(async () => {
-    if (!address) {
+    if (!address || manualOverrideRef.current) {
       setIsLoading(false);
       return { balance: undefined };
     }
@@ -187,10 +245,14 @@ export const useBrushData = () => {
   }, [address]);
 
   const fetchUserTokenIds = useCallback(async () => {
-    if (!address) {
+    if (!address || manualOverrideRef.current) {
       setUserTokenIds([]);
       return;
     }
+
+    const generation = scanGenerationRef.current;
+    const isCancelled = () =>
+      manualOverrideRef.current !== null || scanGenerationRef.current !== generation;
 
     // Check cache for user tokens
     if (
@@ -203,7 +265,10 @@ export const useBrushData = () => {
     }
 
     try {
+      setIsSearching(true);
       const { balance } = await fetchContractData();
+
+      if (isCancelled()) return;
 
       const persistentCache = readPersistentTokenCache(address);
       const cachedTokens = (persistentCache?.tokens ?? []).filter(token => Number.isFinite(token));
@@ -253,10 +318,12 @@ export const useBrushData = () => {
 
       const ownedTokens = new Set<number>(cachedTokens);
       const latestBlock = await baseClient.getBlockNumber();
+      if (isCancelled()) return;
       const fromBlock = cachedLastScannedBlock > 0n ? cachedLastScannedBlock + 1n : 0n;
 
       if (fromBlock <= latestBlock) {
-        const logs = await fetchTransferLogsWithFallback(address, fromBlock, latestBlock);
+        const logs = await fetchTransferLogsWithFallback(address, fromBlock, latestBlock, isCancelled);
+        if (isCancelled()) return;
         applyTransferLogs(ownedTokens, logs, address);
       }
 
@@ -276,6 +343,10 @@ export const useBrushData = () => {
       setUserTokenIds(tokenIds);
     } catch (error) {
       console.error('Error fetching user token IDs:', error);
+    } finally {
+      if (scanGenerationRef.current === generation && manualOverrideRef.current === null) {
+        setIsSearching(false);
+      }
     }
   }, [address, fetchContractData]);
 
@@ -291,6 +362,10 @@ export const useBrushData = () => {
   }, []);
 
   const fetchBrushData = useCallback(async () => {
+    if (manualOverrideRef.current || brushDataResolvedRef.current) {
+      return null;
+    }
+
     if (userTokenIds.length === 0) {
       setBrushData(null);
       return null;
@@ -302,6 +377,7 @@ export const useBrushData = () => {
 
       for (const tokenId of userTokenIds) {
         const strength = await fetchBrushStrength(tokenId);
+        if (manualOverrideRef.current) return null;
         if (strength > maxPixels) {
           maxPixels = strength;
           selectedToken = tokenId;
@@ -313,6 +389,7 @@ export const useBrushData = () => {
         pixelsPerDay: Number.isFinite(maxPixels) ? maxPixels : 0,
       };
 
+      brushDataResolvedRef.current = true;
       setBrushData(newBrushData);
       return newBrushData;
     } catch (error) {
@@ -321,6 +398,51 @@ export const useBrushData = () => {
       return null;
     }
   }, [userTokenIds, fetchBrushStrength]);
+
+  // Manually set the brush token ID: persists the override and permanently
+  // stops the automatic scan. Brush data is resolved by the effect below.
+  const setManualTokenId = useCallback((tokenId: number): boolean => {
+    if (!address) return false;
+    const parsed = Number(tokenId);
+    if (!Number.isFinite(parsed) || parsed <= 0) return false;
+
+    scanGenerationRef.current += 1;
+    manualOverrideRef.current = parsed;
+    brushDataResolvedRef.current = true;
+    setManualTokenIdState(parsed);
+    setIsSearching(false);
+    writeManualTokenCache(address, parsed);
+
+    return true;
+  }, [address]);
+
+  // Resolve brush data for the manual token (fresh entry or restored from cache).
+  useEffect(() => {
+    if (manualTokenId === null) return;
+    let cancelled = false;
+
+    const resolve = async () => {
+      try {
+        const strength = await fetchBrushStrength(manualTokenId);
+        if (!cancelled) {
+          setBrushData({
+            tokenId: manualTokenId.toString(),
+            pixelsPerDay: Number.isFinite(strength) ? strength : 0,
+          });
+        }
+      } catch (error) {
+        console.error('Error reading manual brush strength:', error);
+        if (!cancelled) {
+          setBrushData({ tokenId: manualTokenId.toString(), pixelsPerDay: 0 });
+        }
+      }
+    };
+
+    resolve();
+    return () => {
+      cancelled = true;
+    };
+  }, [manualTokenId, fetchBrushStrength]);
 
   useEffect(() => {
     if (address) {
@@ -341,6 +463,9 @@ export const useBrushData = () => {
     userTokenIds,
     brushData,
     isLoading,
+    isSearching,
     balance,
+    manualTokenId,
+    setManualTokenId,
   };
 };

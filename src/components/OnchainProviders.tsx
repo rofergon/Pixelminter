@@ -43,15 +43,15 @@ const initializeAppKit = () => {
       ...metadata,
       url: window.location.origin,
     },
-    allWallets: 'ONLY_MOBILE',
-    enableWalletGuide: false,
+    allWallets: true,
+    enableWalletGuide: true,
     features: {
       analytics: false,
       email: false,
       socials: false,
       swaps: false,
       onramp: false,
-      allWallets: false,
+    allWallets: 'SHOW',
     },
     themeMode: 'dark',
     themeVariables: {
