@@ -1,0 +1,623 @@
+- generic [active] [ref=e1]:
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e7]:
+        - link [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "Paint" [ref=e16] [cursor=pointer]:
+          - /url: /paint
+        - link "Mint" [ref=e17] [cursor=pointer]:
+          - /url: /mint
+        - link "Gallery" [ref=e18] [cursor=pointer]:
+          - /url: /gallery
+        - link "Vote" [ref=e19] [cursor=pointer]:
+          - /url: /theme
+        - button "⋯" [ref=e21]
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - heading "BasePaint" [level=1] [ref=e26]
+            - paragraph [ref=e27]: The Internet's Daily Canvas
+            - paragraph [ref=e28]:
+              - 'link "Day #1144: Violent Pickles" [ref=e29] [cursor=pointer]':
+                - /url: /paint
+            - generic [ref=e30]:
+              - link "Paint" [ref=e31] [cursor=pointer]:
+                - /url: /paint
+              - link "Collect" [ref=e32] [cursor=pointer]:
+                - /url: /mint
+            - generic [ref=e33]:
+              - generic [ref=e34]: Follow us for daily art
+              - generic [ref=e35]:
+                - link "Follow BasePaint on X" [ref=e36] [cursor=pointer]:
+                  - /url: https://x.com/basepaint_xyz
+                - link "Follow BasePaint on Instagram" [ref=e39] [cursor=pointer]:
+                  - /url: https://www.instagram.com/basepaint_xyz/
+                - link "Follow BasePaint on TikTok" [ref=e42] [cursor=pointer]:
+                  - /url: https://www.tiktok.com/@basepaint_xyz
+                - link "Follow BasePaint on YouTube" [ref=e45] [cursor=pointer]:
+                  - /url: https://www.youtube.com/@basepaint_xyz
+                - link "Follow BasePaint on Telegram" [ref=e48] [cursor=pointer]:
+                  - /url: https://t.me/basepaint_art
+                - link "Follow BasePaint on Farcaster" [ref=e51] [cursor=pointer]:
+                  - /url: https://farcaster.xyz/~/channel/basepaint
+          - 'link "Live BasePaint canvas for day 1144: Violent Pickles 20 users online 0xB689…b1f4 painted 200 pixels 4 minutes ago 0x1F3f…D4bf painted 27 pixels 4 minutes ago 0x758b…43AB painted 1453 pixels 5 minutes ago Aseprite" [ref=e57]':
+            - /url: /paint
+            - generic [ref=e58]:
+              - 'img "Live BasePaint canvas for day 1144: Violent Pickles" [ref=e59]'
+              - generic [ref=e60]:
+                - generic [ref=e61]: 20 users online
+                - list [ref=e63]:
+                  - listitem [ref=e64]:
+                    - generic [ref=e65]: 0xB689…b1f4
+                    - text: painted
+                    - generic [ref=e66]: 200 pixels
+                    - text: 4 minutes ago
+                  - listitem [ref=e67]:
+                    - generic [ref=e68]: 0x1F3f…D4bf
+                    - text: painted
+                    - generic [ref=e69]: 27 pixels
+                    - text: 4 minutes ago
+                  - listitem [ref=e70]:
+                    - generic [ref=e71]: 0x758b…43AB
+                    - text: painted
+                    - generic [ref=e72]: 1453 pixels
+                    - text: 5 minutes ago
+              - generic [ref=e73]: Aseprite
+        - generic [ref=e75]:
+          - generic [ref=e76]:
+            - generic [ref=e77]: 1,143
+            - generic [ref=e80]: Paintings
+          - generic [ref=e81]:
+            - generic [ref=e83]:
+              - generic [ref=e84]: 4,124
+              - generic [aria-hidden]: "+19"
+            - generic [ref=e85]: Artists
+          - generic [ref=e86]:
+            - generic [ref=e88]:
+              - generic [ref=e89]: 141,250,324
+              - generic [aria-hidden]: +19,840,747
+            - generic [ref=e90]: Pixels
+          - generic [ref=e91]:
+            - generic [ref=e93]:
+              - generic [ref=e94]: $1,798,229
+              - generic [aria-hidden]: +$46,336
+            - generic [ref=e95]: Earned
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - 'link "BasePaint Day 1143 artwork for sale Day #1143: Submarine Collect"':
+            - /url: /mint
+            - img "BasePaint Day 1143 artwork for sale" [ref=e99] [cursor=pointer]
+            - generic [ref=e100] [cursor=pointer]: "Day #1143: Submarine"
+            - generic [ref=e102] [cursor=pointer]: Collect
+        - generic [ref=e104]:
+          - generic [ref=e105]: On sale only for 18:54:34
+          - heading "Collect Art. Support Artists." [level=2] [ref=e106]
+          - paragraph [ref=e107]: Each finished canvas is made by people from all over the world. When you collect canvases, you help pay the artists and keep a piece of that day forever.
+          - generic [ref=e108]:
+            - 'link "Collect day #1143" [ref=e109] [cursor=pointer]':
+              - /url: /mint
+            - link "Subscribe" [ref=e110] [cursor=pointer]:
+              - /url: /subscription
+            - link "Get a Brush" [ref=e111] [cursor=pointer]:
+              - /url: /brush
+          - generic [ref=e112]:
+            - generic [ref=e113]:
+              - heading "Artists get paid" [level=3] [ref=e114]
+              - paragraph [ref=e115]: When you collect, the artists who painted the canvas get paid.
+            - generic [ref=e116]:
+              - heading "Shared fairly" [level=3] [ref=e117]
+              - paragraph [ref=e118]: Rewards are split across contributors, so the whole crew shares in the sale.
+            - generic [ref=e119]:
+              - heading "Yours to keep" [level=3] [ref=e120]
+              - paragraph [ref=e121]: You get a digital collectible you can hold, display, or trade later.
+      - generic [ref=e123]:
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - generic [ref=e126]: Sold out
+            - heading "Recent Canvases" [level=2] [ref=e127]
+          - link "View gallery" [ref=e128] [cursor=pointer]:
+            - /url: /gallery
+        - generic [ref=e129]:
+          - 'link "BasePaint Day 1142 Day #1142" [ref=e130] [cursor=pointer]':
+            - /url: /canvas/1142
+            - img "BasePaint Day 1142" [ref=e131]
+            - generic [ref=e132]: "Day #1142"
+          - 'link "BasePaint Day 1141 Day #1141" [ref=e134] [cursor=pointer]':
+            - /url: /canvas/1141
+            - img "BasePaint Day 1141" [ref=e135]
+            - generic [ref=e136]: "Day #1141"
+          - 'link "BasePaint Day 1140 Day #1140" [ref=e138] [cursor=pointer]':
+            - /url: /canvas/1140
+            - img "BasePaint Day 1140" [ref=e139]
+            - generic [ref=e140]: "Day #1140"
+          - 'link "BasePaint Day 1139 Day #1139" [ref=e142] [cursor=pointer]':
+            - /url: /canvas/1139
+            - img "BasePaint Day 1139" [ref=e143]
+            - generic [ref=e144]: "Day #1139"
+          - 'link "BasePaint Day 1138 Day #1138" [ref=e146] [cursor=pointer]':
+            - /url: /canvas/1138
+            - img "BasePaint Day 1138" [ref=e147]
+            - generic [ref=e148]: "Day #1138"
+          - 'link "BasePaint Day 1137 Day #1137" [ref=e150] [cursor=pointer]':
+            - /url: /canvas/1137
+            - img "BasePaint Day 1137" [ref=e151]
+            - generic [ref=e152]: "Day #1137"
+          - 'link "BasePaint Day 1136 Day #1136" [ref=e154] [cursor=pointer]':
+            - /url: /canvas/1136
+            - img "BasePaint Day 1136" [ref=e155]
+            - generic [ref=e156]: "Day #1136"
+          - 'link "BasePaint Day 1135 Day #1135" [ref=e158] [cursor=pointer]':
+            - /url: /canvas/1135
+            - img "BasePaint Day 1135" [ref=e159]
+            - generic [ref=e160]: "Day #1135"
+          - 'link "BasePaint Day 1134 Day #1134" [ref=e162] [cursor=pointer]':
+            - /url: /canvas/1134
+            - img "BasePaint Day 1134" [ref=e163]
+            - generic [ref=e164]: "Day #1134"
+          - 'link "BasePaint Day 1133 Day #1133" [ref=e166] [cursor=pointer]':
+            - /url: /canvas/1133
+            - img "BasePaint Day 1133" [ref=e167]
+            - generic [ref=e168]: "Day #1133"
+          - 'link "BasePaint Day 1132 Day #1132" [ref=e170] [cursor=pointer]':
+            - /url: /canvas/1132
+            - img "BasePaint Day 1132" [ref=e171]
+            - generic [ref=e172]: "Day #1132"
+          - 'link "BasePaint Day 1131 Day #1131" [ref=e174] [cursor=pointer]':
+            - /url: /canvas/1131
+            - img "BasePaint Day 1131" [ref=e175]
+            - generic [ref=e176]: "Day #1131"
+          - 'link "BasePaint Day 1130 Day #1130" [ref=e178] [cursor=pointer]':
+            - /url: /canvas/1130
+            - img "BasePaint Day 1130" [ref=e179]
+            - generic [ref=e180]: "Day #1130"
+          - 'link "BasePaint Day 1129 Day #1129" [ref=e182] [cursor=pointer]':
+            - /url: /canvas/1129
+            - img "BasePaint Day 1129" [ref=e183]
+            - generic [ref=e184]: "Day #1129"
+          - 'link "BasePaint Day 1128 Day #1128" [ref=e186] [cursor=pointer]':
+            - /url: /canvas/1128
+            - img "BasePaint Day 1128" [ref=e187]
+            - generic [ref=e188]: "Day #1128"
+          - 'link "BasePaint Day 1127 Day #1127" [ref=e190] [cursor=pointer]':
+            - /url: /canvas/1127
+            - img "BasePaint Day 1127" [ref=e191]
+            - generic [ref=e192]: "Day #1127"
+          - 'link "BasePaint Day 1126 Day #1126" [ref=e194] [cursor=pointer]':
+            - /url: /canvas/1126
+            - img "BasePaint Day 1126" [ref=e195]
+            - generic [ref=e196]: "Day #1126"
+          - 'link "BasePaint Day 1125 Day #1125" [ref=e198] [cursor=pointer]':
+            - /url: /canvas/1125
+            - img "BasePaint Day 1125" [ref=e199]
+            - generic [ref=e200]: "Day #1125"
+          - 'link "BasePaint Day 1124 Day #1124" [ref=e202] [cursor=pointer]':
+            - /url: /canvas/1124
+            - img "BasePaint Day 1124" [ref=e203]
+            - generic [ref=e204]: "Day #1124"
+          - 'link "BasePaint Day 1123 Day #1123" [ref=e206] [cursor=pointer]':
+            - /url: /canvas/1123
+            - img "BasePaint Day 1123" [ref=e207]
+            - generic [ref=e208]: "Day #1123"
+          - 'link "BasePaint Day 1122 Day #1122" [ref=e210] [cursor=pointer]':
+            - /url: /canvas/1122
+            - img "BasePaint Day 1122" [ref=e211]
+            - generic [ref=e212]: "Day #1122"
+          - 'link "BasePaint Day 1121 Day #1121" [ref=e214] [cursor=pointer]':
+            - /url: /canvas/1121
+            - img "BasePaint Day 1121" [ref=e215]
+            - generic [ref=e216]: "Day #1121"
+          - 'link "BasePaint Day 1120 Day #1120" [ref=e218] [cursor=pointer]':
+            - /url: /canvas/1120
+            - img "BasePaint Day 1120" [ref=e219]
+            - generic [ref=e220]: "Day #1120"
+          - 'link "BasePaint Day 1119 Day #1119" [ref=e222] [cursor=pointer]':
+            - /url: /canvas/1119
+            - img "BasePaint Day 1119" [ref=e223]
+            - generic [ref=e224]: "Day #1119"
+          - 'link "BasePaint Day 1118 Day #1118" [ref=e226] [cursor=pointer]':
+            - /url: /canvas/1118
+            - img "BasePaint Day 1118" [ref=e227]
+            - generic [ref=e228]: "Day #1118"
+          - 'link "BasePaint Day 1117 Day #1117" [ref=e230] [cursor=pointer]':
+            - /url: /canvas/1117
+            - img "BasePaint Day 1117" [ref=e231]
+            - generic [ref=e232]: "Day #1117"
+          - 'link "BasePaint Day 1116 Day #1116" [ref=e234] [cursor=pointer]':
+            - /url: /canvas/1116
+            - img "BasePaint Day 1116" [ref=e235]
+            - generic [ref=e236]: "Day #1116"
+          - 'link "BasePaint Day 1115 Day #1115" [ref=e238] [cursor=pointer]':
+            - /url: /canvas/1115
+            - img "BasePaint Day 1115" [ref=e239]
+            - generic [ref=e240]: "Day #1115"
+          - 'link "BasePaint Day 1114 Day #1114" [ref=e242] [cursor=pointer]':
+            - /url: /canvas/1114
+            - img "BasePaint Day 1114" [ref=e243]
+            - generic [ref=e244]: "Day #1114"
+          - 'link "BasePaint Day 1113 Day #1113" [ref=e246] [cursor=pointer]':
+            - /url: /canvas/1113
+            - img "BasePaint Day 1113" [ref=e247]
+            - generic [ref=e248]: "Day #1113"
+          - 'link "BasePaint Day 1112 Day #1112" [ref=e250] [cursor=pointer]':
+            - /url: /canvas/1112
+            - img "BasePaint Day 1112" [ref=e251]
+            - generic [ref=e252]: "Day #1112"
+          - 'link "BasePaint Day 1111 Day #1111" [ref=e254] [cursor=pointer]':
+            - /url: /canvas/1111
+            - img "BasePaint Day 1111" [ref=e255]
+            - generic [ref=e256]: "Day #1111"
+          - 'link "BasePaint Day 1110 Day #1110" [ref=e258] [cursor=pointer]':
+            - /url: /canvas/1110
+            - img "BasePaint Day 1110" [ref=e259]
+            - generic [ref=e260]: "Day #1110"
+          - 'link "BasePaint Day 1109 Day #1109" [ref=e262] [cursor=pointer]':
+            - /url: /canvas/1109
+            - img "BasePaint Day 1109" [ref=e263]
+            - generic [ref=e264]: "Day #1109"
+          - 'link "BasePaint Day 1108 Day #1108" [ref=e266] [cursor=pointer]':
+            - /url: /canvas/1108
+            - img "BasePaint Day 1108" [ref=e267]
+            - generic [ref=e268]: "Day #1108"
+          - 'link "BasePaint Day 1107 Day #1107" [ref=e270] [cursor=pointer]':
+            - /url: /canvas/1107
+            - img "BasePaint Day 1107" [ref=e271]
+            - generic [ref=e272]: "Day #1107"
+          - 'link "BasePaint Day 1106 Day #1106" [ref=e274] [cursor=pointer]':
+            - /url: /canvas/1106
+            - img "BasePaint Day 1106" [ref=e275]
+            - generic [ref=e276]: "Day #1106"
+          - 'link "BasePaint Day 1105 Day #1105" [ref=e278] [cursor=pointer]':
+            - /url: /canvas/1105
+            - img "BasePaint Day 1105" [ref=e279]
+            - generic [ref=e280]: "Day #1105"
+          - 'link "BasePaint Day 1104 Day #1104" [ref=e282] [cursor=pointer]':
+            - /url: /canvas/1104
+            - img "BasePaint Day 1104" [ref=e283]
+            - generic [ref=e284]: "Day #1104"
+          - 'link "BasePaint Day 1103 Day #1103" [ref=e286] [cursor=pointer]':
+            - /url: /canvas/1103
+            - img "BasePaint Day 1103" [ref=e287]
+            - generic [ref=e288]: "Day #1103"
+          - 'link "BasePaint Day 1102 Day #1102" [ref=e290] [cursor=pointer]':
+            - /url: /canvas/1102
+            - img "BasePaint Day 1102" [ref=e291]
+            - generic [ref=e292]: "Day #1102"
+          - 'link "BasePaint Day 1101 Day #1101" [ref=e294] [cursor=pointer]':
+            - /url: /canvas/1101
+            - img "BasePaint Day 1101" [ref=e295]
+            - generic [ref=e296]: "Day #1101"
+          - 'link "BasePaint Day 1100 Day #1100" [ref=e298] [cursor=pointer]':
+            - /url: /canvas/1100
+            - img "BasePaint Day 1100" [ref=e299]
+            - generic [ref=e300]: "Day #1100"
+          - 'link "BasePaint Day 1099 Day #1099" [ref=e302] [cursor=pointer]':
+            - /url: /canvas/1099
+            - img "BasePaint Day 1099" [ref=e303]
+            - generic [ref=e304]: "Day #1099"
+          - 'link "BasePaint Day 1098 Day #1098" [ref=e306] [cursor=pointer]':
+            - /url: /canvas/1098
+            - img "BasePaint Day 1098" [ref=e307]
+            - generic [ref=e308]: "Day #1098"
+          - 'link "BasePaint Day 1097 Day #1097" [ref=e310] [cursor=pointer]':
+            - /url: /canvas/1097
+            - img "BasePaint Day 1097" [ref=e311]
+            - generic [ref=e312]: "Day #1097"
+          - 'link "BasePaint Day 1096 Day #1096" [ref=e314] [cursor=pointer]':
+            - /url: /canvas/1096
+            - img "BasePaint Day 1096" [ref=e315]
+            - generic [ref=e316]: "Day #1096"
+          - 'link "BasePaint Day 1095 Day #1095" [ref=e318] [cursor=pointer]':
+            - /url: /canvas/1095
+            - img "BasePaint Day 1095" [ref=e319]
+            - generic [ref=e320]: "Day #1095"
+          - 'link "BasePaint Day 1094 Day #1094" [ref=e322] [cursor=pointer]':
+            - /url: /canvas/1094
+            - img "BasePaint Day 1094" [ref=e323]
+            - generic [ref=e324]: "Day #1094"
+          - 'link "BasePaint Day 1093 Day #1093" [ref=e326] [cursor=pointer]':
+            - /url: /canvas/1093
+            - img "BasePaint Day 1093" [ref=e327]
+            - generic [ref=e328]: "Day #1093"
+          - 'link "BasePaint Day 1092 Day #1092" [ref=e330] [cursor=pointer]':
+            - /url: /canvas/1092
+            - img "BasePaint Day 1092" [ref=e331]
+            - generic [ref=e332]: "Day #1092"
+          - 'link "BasePaint Day 1091 Day #1091" [ref=e334] [cursor=pointer]':
+            - /url: /canvas/1091
+            - img "BasePaint Day 1091" [ref=e335]
+            - generic [ref=e336]: "Day #1091"
+          - 'link "BasePaint Day 1090 Day #1090" [ref=e338] [cursor=pointer]':
+            - /url: /canvas/1090
+            - img "BasePaint Day 1090" [ref=e339]
+            - generic [ref=e340]: "Day #1090"
+          - 'link "BasePaint Day 1089 Day #1089" [ref=e342] [cursor=pointer]':
+            - /url: /canvas/1089
+            - img "BasePaint Day 1089" [ref=e343]
+            - generic [ref=e344]: "Day #1089"
+          - 'link "BasePaint Day 1088 Day #1088" [ref=e346] [cursor=pointer]':
+            - /url: /canvas/1088
+            - img "BasePaint Day 1088" [ref=e347]
+            - generic [ref=e348]: "Day #1088"
+          - 'link "BasePaint Day 1087 Day #1087" [ref=e350] [cursor=pointer]':
+            - /url: /canvas/1087
+            - img "BasePaint Day 1087" [ref=e351]
+            - generic [ref=e352]: "Day #1087"
+          - 'link "BasePaint Day 1086 Day #1086" [ref=e354] [cursor=pointer]':
+            - /url: /canvas/1086
+            - img "BasePaint Day 1086" [ref=e355]
+            - generic [ref=e356]: "Day #1086"
+          - 'link "BasePaint Day 1085 Day #1085" [ref=e358] [cursor=pointer]':
+            - /url: /canvas/1085
+            - img "BasePaint Day 1085" [ref=e359]
+            - generic [ref=e360]: "Day #1085"
+          - 'link "BasePaint Day 1084 Day #1084" [ref=e362] [cursor=pointer]':
+            - /url: /canvas/1084
+            - img "BasePaint Day 1084" [ref=e363]
+            - generic [ref=e364]: "Day #1084"
+          - 'link "BasePaint Day 1083 Day #1083" [ref=e366] [cursor=pointer]':
+            - /url: /canvas/1083
+            - img "BasePaint Day 1083" [ref=e367]
+            - generic [ref=e368]: "Day #1083"
+          - 'link "BasePaint Day 1082 Day #1082" [ref=e370] [cursor=pointer]':
+            - /url: /canvas/1082
+            - img "BasePaint Day 1082" [ref=e371]
+            - generic [ref=e372]: "Day #1082"
+          - 'link "BasePaint Day 1081 Day #1081" [ref=e374] [cursor=pointer]':
+            - /url: /canvas/1081
+            - img "BasePaint Day 1081" [ref=e375]
+            - generic [ref=e376]: "Day #1081"
+          - 'link "BasePaint Day 1080 Day #1080" [ref=e378] [cursor=pointer]':
+            - /url: /canvas/1080
+            - img "BasePaint Day 1080" [ref=e379]
+            - generic [ref=e380]: "Day #1080"
+          - 'link "BasePaint Day 1079 Day #1079" [ref=e382] [cursor=pointer]':
+            - /url: /canvas/1079
+            - img "BasePaint Day 1079" [ref=e383]
+            - generic [ref=e384]: "Day #1079"
+          - 'link "BasePaint Day 1078 Day #1078" [ref=e386] [cursor=pointer]':
+            - /url: /canvas/1078
+            - img "BasePaint Day 1078" [ref=e387]
+            - generic [ref=e388]: "Day #1078"
+          - 'link "BasePaint Day 1077 Day #1077" [ref=e390] [cursor=pointer]':
+            - /url: /canvas/1077
+            - img "BasePaint Day 1077" [ref=e391]
+            - generic [ref=e392]: "Day #1077"
+          - 'link "BasePaint Day 1076 Day #1076" [ref=e394] [cursor=pointer]':
+            - /url: /canvas/1076
+            - img "BasePaint Day 1076" [ref=e395]
+            - generic [ref=e396]: "Day #1076"
+          - 'link "BasePaint Day 1075 Day #1075" [ref=e398] [cursor=pointer]':
+            - /url: /canvas/1075
+            - img "BasePaint Day 1075" [ref=e399]
+            - generic [ref=e400]: "Day #1075"
+          - 'link "BasePaint Day 1074 Day #1074" [ref=e402] [cursor=pointer]':
+            - /url: /canvas/1074
+            - img "BasePaint Day 1074" [ref=e403]
+            - generic [ref=e404]: "Day #1074"
+          - 'link "BasePaint Day 1073 Day #1073" [ref=e406] [cursor=pointer]':
+            - /url: /canvas/1073
+            - img "BasePaint Day 1073" [ref=e407]
+            - generic [ref=e408]: "Day #1073"
+          - 'link "BasePaint Day 1072 Day #1072" [ref=e410] [cursor=pointer]':
+            - /url: /canvas/1072
+            - img "BasePaint Day 1072" [ref=e411]
+            - generic [ref=e412]: "Day #1072"
+          - 'link "BasePaint Day 1071 Day #1071" [ref=e414] [cursor=pointer]':
+            - /url: /canvas/1071
+            - img "BasePaint Day 1071" [ref=e415]
+            - generic [ref=e416]: "Day #1071"
+          - 'link "BasePaint Day 1070 Day #1070" [ref=e418] [cursor=pointer]':
+            - /url: /canvas/1070
+            - img "BasePaint Day 1070" [ref=e419]
+            - generic [ref=e420]: "Day #1070"
+          - 'link "BasePaint Day 1069 Day #1069" [ref=e422] [cursor=pointer]':
+            - /url: /canvas/1069
+            - img "BasePaint Day 1069" [ref=e423]
+            - generic [ref=e424]: "Day #1069"
+          - 'link "BasePaint Day 1068 Day #1068" [ref=e426] [cursor=pointer]':
+            - /url: /canvas/1068
+            - img "BasePaint Day 1068" [ref=e427]
+            - generic [ref=e428]: "Day #1068"
+          - 'link "BasePaint Day 1067 Day #1067" [ref=e430] [cursor=pointer]':
+            - /url: /canvas/1067
+            - img "BasePaint Day 1067" [ref=e431]
+            - generic [ref=e432]: "Day #1067"
+          - 'link "BasePaint Day 1066 Day #1066" [ref=e434] [cursor=pointer]':
+            - /url: /canvas/1066
+            - img "BasePaint Day 1066" [ref=e435]
+            - generic [ref=e436]: "Day #1066"
+          - 'link "BasePaint Day 1065 Day #1065" [ref=e438] [cursor=pointer]':
+            - /url: /canvas/1065
+            - img "BasePaint Day 1065" [ref=e439]
+            - generic [ref=e440]: "Day #1065"
+          - 'link "BasePaint Day 1064 Day #1064" [ref=e442] [cursor=pointer]':
+            - /url: /canvas/1064
+            - img "BasePaint Day 1064" [ref=e443]
+            - generic [ref=e444]: "Day #1064"
+          - 'link "BasePaint Day 1063 Day #1063" [ref=e446] [cursor=pointer]':
+            - /url: /canvas/1063
+            - img "BasePaint Day 1063" [ref=e447]
+            - generic [ref=e448]: "Day #1063"
+          - 'link "BasePaint Day 1062 Day #1062" [ref=e450] [cursor=pointer]':
+            - /url: /canvas/1062
+            - img "BasePaint Day 1062" [ref=e451]
+            - generic [ref=e452]: "Day #1062"
+          - 'link "BasePaint Day 1061 Day #1061" [ref=e454] [cursor=pointer]':
+            - /url: /canvas/1061
+            - img "BasePaint Day 1061" [ref=e455]
+            - generic [ref=e456]: "Day #1061"
+          - 'link "BasePaint Day 1060 Day #1060" [ref=e458] [cursor=pointer]':
+            - /url: /canvas/1060
+            - img "BasePaint Day 1060" [ref=e459]
+            - generic [ref=e460]: "Day #1060"
+          - 'link "BasePaint Day 1059 Day #1059" [ref=e462] [cursor=pointer]':
+            - /url: /canvas/1059
+            - img "BasePaint Day 1059" [ref=e463]
+            - generic [ref=e464]: "Day #1059"
+          - 'link "BasePaint Day 1058 Day #1058" [ref=e466] [cursor=pointer]':
+            - /url: /canvas/1058
+            - img "BasePaint Day 1058" [ref=e467]
+            - generic [ref=e468]: "Day #1058"
+          - 'link "BasePaint Day 1057 Day #1057" [ref=e470] [cursor=pointer]':
+            - /url: /canvas/1057
+            - img "BasePaint Day 1057" [ref=e471]
+            - generic [ref=e472]: "Day #1057"
+          - 'link "BasePaint Day 1056 Day #1056" [ref=e474] [cursor=pointer]':
+            - /url: /canvas/1056
+            - img "BasePaint Day 1056" [ref=e475]
+            - generic [ref=e476]: "Day #1056"
+          - 'link "BasePaint Day 1055 Day #1055" [ref=e478] [cursor=pointer]':
+            - /url: /canvas/1055
+            - img "BasePaint Day 1055" [ref=e479]
+            - generic [ref=e480]: "Day #1055"
+          - 'link "BasePaint Day 1054 Day #1054" [ref=e482] [cursor=pointer]':
+            - /url: /canvas/1054
+            - img "BasePaint Day 1054" [ref=e483]
+            - generic [ref=e484]: "Day #1054"
+          - 'link "BasePaint Day 1053 Day #1053" [ref=e486] [cursor=pointer]':
+            - /url: /canvas/1053
+            - img "BasePaint Day 1053" [ref=e487]
+            - generic [ref=e488]: "Day #1053"
+          - 'link "BasePaint Day 1052 Day #1052" [ref=e490] [cursor=pointer]':
+            - /url: /canvas/1052
+            - img "BasePaint Day 1052" [ref=e491]
+            - generic [ref=e492]: "Day #1052"
+          - 'link "BasePaint Day 1051 Day #1051" [ref=e494] [cursor=pointer]':
+            - /url: /canvas/1051
+            - img "BasePaint Day 1051" [ref=e495]
+            - generic [ref=e496]: "Day #1051"
+          - 'link "BasePaint Day 1050 Day #1050" [ref=e498] [cursor=pointer]':
+            - /url: /canvas/1050
+            - img "BasePaint Day 1050" [ref=e499]
+            - generic [ref=e500]: "Day #1050"
+          - 'link "BasePaint Day 1049 Day #1049" [ref=e502] [cursor=pointer]':
+            - /url: /canvas/1049
+            - img "BasePaint Day 1049" [ref=e503]
+            - generic [ref=e504]: "Day #1049"
+          - 'link "BasePaint Day 1048 Day #1048" [ref=e506] [cursor=pointer]':
+            - /url: /canvas/1048
+            - img "BasePaint Day 1048" [ref=e507]
+            - generic [ref=e508]: "Day #1048"
+          - 'link "BasePaint Day 1047 Day #1047" [ref=e510] [cursor=pointer]':
+            - /url: /canvas/1047
+            - img "BasePaint Day 1047" [ref=e511]
+            - generic [ref=e512]: "Day #1047"
+          - 'link "BasePaint Day 1046 Day #1046" [ref=e514] [cursor=pointer]':
+            - /url: /canvas/1046
+            - img "BasePaint Day 1046" [ref=e515]
+            - generic [ref=e516]: "Day #1046"
+          - 'link "BasePaint Day 1045 Day #1045" [ref=e518] [cursor=pointer]':
+            - /url: /canvas/1045
+            - img "BasePaint Day 1045" [ref=e519]
+            - generic [ref=e520]: "Day #1045"
+          - 'link "BasePaint Day 1044 Day #1044" [ref=e522] [cursor=pointer]':
+            - /url: /canvas/1044
+            - img "BasePaint Day 1044" [ref=e523]
+            - generic [ref=e524]: "Day #1044"
+          - 'link "BasePaint Day 1043 Day #1043" [ref=e526] [cursor=pointer]':
+            - /url: /canvas/1043
+            - img "BasePaint Day 1043" [ref=e527]
+            - generic [ref=e528]: "Day #1043"
+          - 'link "BasePaint Day 1042 Day #1042" [ref=e530] [cursor=pointer]':
+            - /url: /canvas/1042
+            - img "BasePaint Day 1042" [ref=e531]
+            - generic [ref=e532]: "Day #1042"
+          - 'link "BasePaint Day 1041 Day #1041" [ref=e534] [cursor=pointer]':
+            - /url: /canvas/1041
+            - img "BasePaint Day 1041" [ref=e535]
+            - generic [ref=e536]: "Day #1041"
+          - 'link "BasePaint Day 1040 Day #1040" [ref=e538] [cursor=pointer]':
+            - /url: /canvas/1040
+            - img "BasePaint Day 1040" [ref=e539]
+            - generic [ref=e540]: "Day #1040"
+          - 'link "BasePaint Day 1039 Day #1039" [ref=e542] [cursor=pointer]':
+            - /url: /canvas/1039
+            - img "BasePaint Day 1039" [ref=e543]
+            - generic [ref=e544]: "Day #1039"
+          - 'link "BasePaint Day 1038 Day #1038" [ref=e546] [cursor=pointer]':
+            - /url: /canvas/1038
+            - img "BasePaint Day 1038" [ref=e547]
+            - generic [ref=e548]: "Day #1038"
+          - 'link "BasePaint Day 1037 Day #1037" [ref=e550] [cursor=pointer]':
+            - /url: /canvas/1037
+            - img "BasePaint Day 1037" [ref=e551]
+            - generic [ref=e552]: "Day #1037"
+          - 'link "BasePaint Day 1036 Day #1036" [ref=e554] [cursor=pointer]':
+            - /url: /canvas/1036
+            - img "BasePaint Day 1036" [ref=e555]
+            - generic [ref=e556]: "Day #1036"
+          - 'link "BasePaint Day 1035 Day #1035" [ref=e558] [cursor=pointer]':
+            - /url: /canvas/1035
+            - img "BasePaint Day 1035" [ref=e559]
+            - generic [ref=e560]: "Day #1035"
+          - 'link "BasePaint Day 1034 Day #1034" [ref=e562] [cursor=pointer]':
+            - /url: /canvas/1034
+            - img "BasePaint Day 1034" [ref=e563]
+            - generic [ref=e564]: "Day #1034"
+          - 'link "BasePaint Day 1033 Day #1033" [ref=e566] [cursor=pointer]':
+            - /url: /canvas/1033
+            - img "BasePaint Day 1033" [ref=e567]
+            - generic [ref=e568]: "Day #1033"
+          - 'link "BasePaint Day 1032 Day #1032" [ref=e570] [cursor=pointer]':
+            - /url: /canvas/1032
+            - img "BasePaint Day 1032" [ref=e571]
+            - generic [ref=e572]: "Day #1032"
+          - 'link "BasePaint Day 1031 Day #1031" [ref=e574] [cursor=pointer]':
+            - /url: /canvas/1031
+            - img "BasePaint Day 1031" [ref=e575]
+            - generic [ref=e576]: "Day #1031"
+          - 'link "BasePaint Day 1030 Day #1030" [ref=e578] [cursor=pointer]':
+            - /url: /canvas/1030
+            - img "BasePaint Day 1030" [ref=e579]
+            - generic [ref=e580]: "Day #1030"
+          - 'link "BasePaint Day 1029 Day #1029" [ref=e582] [cursor=pointer]':
+            - /url: /canvas/1029
+            - img "BasePaint Day 1029" [ref=e583]
+            - generic [ref=e584]: "Day #1029"
+          - 'link "BasePaint Day 1028 Day #1028" [ref=e586] [cursor=pointer]':
+            - /url: /canvas/1028
+            - img "BasePaint Day 1028" [ref=e587]
+            - generic [ref=e588]: "Day #1028"
+          - 'link "BasePaint Day 1027 Day #1027" [ref=e590] [cursor=pointer]':
+            - /url: /canvas/1027
+            - img "BasePaint Day 1027" [ref=e591]
+            - generic [ref=e592]: "Day #1027"
+          - 'link "BasePaint Day 1026 Day #1026" [ref=e594] [cursor=pointer]':
+            - /url: /canvas/1026
+            - img "BasePaint Day 1026" [ref=e595]
+            - generic [ref=e596]: "Day #1026"
+          - 'link "BasePaint Day 1025 Day #1025" [ref=e598] [cursor=pointer]':
+            - /url: /canvas/1025
+            - img "BasePaint Day 1025" [ref=e599]
+            - generic [ref=e600]: "Day #1025"
+          - 'link "BasePaint Day 1024 Day #1024" [ref=e602] [cursor=pointer]':
+            - /url: /canvas/1024
+            - img "BasePaint Day 1024" [ref=e603]
+            - generic [ref=e604]: "Day #1024"
+          - 'link "BasePaint Day 1023 Day #1023" [ref=e606] [cursor=pointer]':
+            - /url: /canvas/1023
+            - img "BasePaint Day 1023" [ref=e607]
+            - generic [ref=e608]: "Day #1023"
+        - generic [ref=e610]:
+          - generic [ref=e611]: Showing 120 of 1142 sold out canvases
+          - button "Load more canvases" [ref=e612]
+          - generic [ref=e614]:
+            - generic [ref=e615]: Subscribe to daily artwork
+            - generic [ref=e616]:
+              - link "Follow BasePaint on X" [ref=e617] [cursor=pointer]:
+                - /url: https://x.com/basepaint_xyz
+              - link "Follow BasePaint on Instagram" [ref=e620] [cursor=pointer]:
+                - /url: https://www.instagram.com/basepaint_xyz/
+              - link "Follow BasePaint on TikTok" [ref=e623] [cursor=pointer]:
+                - /url: https://www.tiktok.com/@basepaint_xyz
+              - link "Follow BasePaint on YouTube" [ref=e626] [cursor=pointer]:
+                - /url: https://www.youtube.com/@basepaint_xyz
+              - link "Follow BasePaint on Telegram" [ref=e629] [cursor=pointer]:
+                - /url: https://t.me/basepaint_art
+              - link "Follow BasePaint on Farcaster" [ref=e632] [cursor=pointer]:
+                - /url: https://farcaster.xyz/~/channel/basepaint
+  - generic:
+    - generic:
+      - region "Notifications alt+T"
+  - alert [ref=e636]

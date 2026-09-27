@@ -19,11 +19,13 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import UploadPixelArt from '@/components/UploadPixelArt';
 import { clearCache } from '@/hooks/useCacheState';
 import PaletteButton from './PaletteButton';
+import AiProposals from '@/components/AiProposals';
+import AutoPixelImport from '@/components/AutoPixelImport';
 
 interface SidePanelProps {
   state: State;
   updateState: (_newState: Partial<State> | ((_prevState: State) => Partial<State>)) => void;
-  handleExtractPalette: () => void;
+  handleExtractPalette: () => void | Promise<void>;
   onGridSizeChange: (_newSize: number) => void;
   addLayer: () => void;
   removeLayer: (_id: string) => void;
@@ -211,6 +213,12 @@ const SidePanel: React.FC<SidePanelProps> = ({
             </div>
           </div>
 
+          <AiProposals
+            state={state}
+            updateState={updateState}
+            handleExtractPalette={handleExtractPalette}
+          />
+
           <div className="tool-container rounded-lg shadow-md overflow-hidden">
             <button
               onClick={() => setIsCustomPaletteOpen(!isCustomPaletteOpen)}
@@ -320,7 +328,13 @@ const SidePanel: React.FC<SidePanelProps> = ({
             )}
           </div>
 
-          <UploadPixelArt 
+          <AutoPixelImport
+            state={state}
+            updateState={updateState}
+            onGridSizeChange={onGridSizeChange}
+          />
+
+          <UploadPixelArt
             state={state}
             updateState={updateState}
           />

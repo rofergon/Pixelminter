@@ -12,6 +12,8 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  // mcp/ packages carry their own node:test suites
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/mcp/'],
   testMatch: [
     '**/__tests__/**/*.test.[jt]s?(x)',
     '**/?(*.)+(spec|test).[jt]s?(x)'

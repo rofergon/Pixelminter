@@ -1,19 +1,16 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAccount } from 'wagmi';
-import { getContract, parseAbiItem, type Address } from 'viem';
+import { getContract, type Address } from 'viem';
 import { BasePaintBrushAbi } from '../../abi/BasePaintBrushAbi';
 import { BrushData } from '../../types/types';
 import { baseClient } from '../../hooks/useDateUtils';
 
 const contractAddress = '0xD68fe5b53e7E1AbeB5A4d0A6660667791f39263a';
-const transferEvent = parseAbiItem(
-  'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)'
-);
 
 // Cache for brush data with improved TTL
 const brushTokenCache = {
   balanceOf: { address: null as string | null | undefined, value: null as bigint | null, timestamp: 0 },
-  userTokens: { address: null as string | null | undefined, tokens: [] as number[], timestamp: 0, lastScannedBlock: 0n },
+  userTokens: { address: null as string | null | undefined, tokens: [] as number[], timestamp: 0 },
   CACHE_TTL: 300000 // 5 minutes
 };
 
@@ -23,14 +20,13 @@ const BRUSH_TOKEN_CACHE_KEY = 'pixelminter-brush-token-cache';
 
 type BrushTokenCacheEntry = {
   tokens: number[];
-  lastScannedBlock: string;
   timestamp: number;
 };
 
 const normalizeAddress = (address: string) => address.toLowerCase();
 
 // Manual brush token override, persisted per address so the automatic
-// log scan can be skipped entirely on subsequent visits.
+// ownership lookup can be skipped entirely on subsequent visits.
 const MANUAL_BRUSH_TOKEN_KEY = 'pixelminter-manual-brush-token';
 
 const readManualTokenCache = (address: string): number | null => {
@@ -87,93 +83,62 @@ const writePersistentTokenCache = (address: string, entry: BrushTokenCacheEntry)
   }
 };
 
-type TransferLog = {
-  args?: { from?: string; to?: string; tokenId?: bigint };
-  blockNumber?: bigint;
-  logIndex?: number;
+// Brush token ids are sequential (1..totalSupply) and the contract is not
+// enumerable, so ownership is resolved with batched ownerOf multicalls instead
+// of scanning Transfer logs across the whole chain history.
+const OWNER_BATCH_SIZE = 250;
+const OWNER_BATCH_RETRIES = 2;
+
+const readOwnersBatch = async (tokenIds: bigint[]) => {
+  for (let attempt = 0; ; attempt++) {
+    const results = await baseClient.multicall({
+      contracts: tokenIds.map((tokenId) => ({
+        address: contractAddress as Address,
+        abi: BasePaintBrushAbi,
+        functionName: 'ownerOf' as const,
+        args: [tokenId] as const,
+      })),
+      allowFailure: true,
+    });
+    // Every call failing means the RPC request failed, not individual reverts.
+    const transportFailed = results.every((result) => result.status === 'failure');
+    if (!transportFailed) return results;
+    if (attempt >= OWNER_BATCH_RETRIES) throw results[0].error;
+    await delay(800 * (attempt + 1));
+  }
 };
 
-const sortLogs = (logs: TransferLog[]) =>
-  logs.sort((a, b) => {
-    const blockA = a.blockNumber ? Number(a.blockNumber) : 0;
-    const blockB = b.blockNumber ? Number(b.blockNumber) : 0;
-    if (blockA !== blockB) return blockA - blockB;
-    const indexA = a.logIndex ?? 0;
-    const indexB = b.logIndex ?? 0;
-    return indexA - indexB;
-  });
-
-const fetchTransferLogs = async (address: string, fromBlock: bigint, toBlock: bigint): Promise<TransferLog[]> => {
-  const [toLogs, fromLogs] = await Promise.all([
-    baseClient.getLogs({
-      address: contractAddress as Address,
-      event: transferEvent,
-      args: { to: address as Address },
-      fromBlock,
-      toBlock
-    }),
-    baseClient.getLogs({
-      address: contractAddress as Address,
-      event: transferEvent,
-      args: { from: address as Address },
-      fromBlock,
-      toBlock
-    })
-  ]);
-
-  return sortLogs([...toLogs, ...fromLogs] as TransferLog[]);
-};
-
-const fetchTransferLogsWithFallback = async (
+/**
+ * Finds the brushes owned by `address`, newest tokens first, stopping as soon
+ * as `expectedCount` (the balanceOf result) tokens are found.
+ */
+export const findOwnedTokens = async (
   address: string,
-  fromBlock: bigint,
-  toBlock: bigint,
-  isCancelled?: () => boolean
-): Promise<TransferLog[]> => {
-  if (isCancelled?.()) return [];
-
-  try {
-    return await fetchTransferLogs(address, fromBlock, toBlock);
-  } catch (error) {
-    if (isCancelled?.()) return [];
-    console.warn('Full-range log query failed, retrying in chunks:', error);
-  }
-
-  const chunkSize = 100000n;
-  const logs: TransferLog[] = [];
-  let start = fromBlock;
-
-  while (start <= toBlock) {
-    if (isCancelled?.()) return sortLogs(logs);
-    const end = start + chunkSize - 1n > toBlock ? toBlock : start + chunkSize - 1n;
-    const chunkLogs = await fetchTransferLogs(address, start, end);
-    logs.push(...chunkLogs);
-    start = end + 1n;
-    if (start <= toBlock) {
-      await delay(150);
-    }
-  }
-
-  return sortLogs(logs);
-};
-
-const applyTransferLogs = (ownedTokens: Set<number>, logs: TransferLog[], address: string) => {
-  const addressLower = normalizeAddress(address);
-  logs.forEach((log) => {
-    const from = log.args?.from ? normalizeAddress(log.args.from) : '';
-    const to = log.args?.to ? normalizeAddress(log.args.to) : '';
-    const tokenId = log.args?.tokenId;
-    if (tokenId === undefined) return;
-    const tokenNumber = Number(tokenId);
-    if (!Number.isFinite(tokenNumber)) return;
-
-    if (from === addressLower) {
-      ownedTokens.delete(tokenNumber);
-    }
-    if (to === addressLower) {
-      ownedTokens.add(tokenNumber);
-    }
+  expectedCount: number,
+  isCancelled: () => boolean
+): Promise<number[]> => {
+  const supply = await baseClient.readContract({
+    address: contractAddress,
+    abi: BasePaintBrushAbi,
+    functionName: 'totalSupply',
   });
+  const owner = normalizeAddress(address);
+  const owned: number[] = [];
+
+  for (let high = supply; high >= 1n && owned.length < expectedCount; high -= BigInt(OWNER_BATCH_SIZE)) {
+    if (isCancelled()) return owned;
+    const tokenIds: bigint[] = [];
+    for (let id = high; id >= 1n && id > high - BigInt(OWNER_BATCH_SIZE); id--) tokenIds.push(id);
+
+    const results = await readOwnersBatch(tokenIds);
+    results.forEach((result, index) => {
+      if (result.status === 'success' && normalizeAddress(result.result as string) === owner) {
+        owned.push(Number(tokenIds[index]));
+      }
+    });
+  }
+
+  return owned.sort((a, b) => a - b);
 };
 
 export const useBrushData = () => {
@@ -272,14 +237,6 @@ export const useBrushData = () => {
 
       const persistentCache = readPersistentTokenCache(address);
       const cachedTokens = (persistentCache?.tokens ?? []).filter(token => Number.isFinite(token));
-      let cachedLastScannedBlock = 0n;
-      if (persistentCache?.lastScannedBlock) {
-        try {
-          cachedLastScannedBlock = BigInt(persistentCache.lastScannedBlock);
-        } catch {
-          cachedLastScannedBlock = 0n;
-        }
-      }
       const cachedTimestamp = persistentCache?.timestamp ?? 0;
 
       if (!balance) {
@@ -294,12 +251,7 @@ export const useBrushData = () => {
         brushTokenCache.userTokens.address = normalizeAddress(address);
         brushTokenCache.userTokens.tokens = [];
         brushTokenCache.userTokens.timestamp = Date.now();
-        brushTokenCache.userTokens.lastScannedBlock = cachedLastScannedBlock;
-        writePersistentTokenCache(address, {
-          tokens: [],
-          lastScannedBlock: cachedLastScannedBlock.toString(),
-          timestamp: Date.now()
-        });
+        writePersistentTokenCache(address, { tokens: [], timestamp: Date.now() });
         setUserTokenIds([]);
         return;
       }
@@ -311,34 +263,18 @@ export const useBrushData = () => {
         brushTokenCache.userTokens.address = normalizeAddress(address);
         brushTokenCache.userTokens.tokens = cachedTokens;
         brushTokenCache.userTokens.timestamp = cachedTimestamp;
-        brushTokenCache.userTokens.lastScannedBlock = cachedLastScannedBlock;
         setUserTokenIds(cachedTokens);
         return;
       }
 
-      const ownedTokens = new Set<number>(cachedTokens);
-      const latestBlock = await baseClient.getBlockNumber();
+      const tokenIds = await findOwnedTokens(address, balanceNum, isCancelled);
       if (isCancelled()) return;
-      const fromBlock = cachedLastScannedBlock > 0n ? cachedLastScannedBlock + 1n : 0n;
-
-      if (fromBlock <= latestBlock) {
-        const logs = await fetchTransferLogsWithFallback(address, fromBlock, latestBlock, isCancelled);
-        if (isCancelled()) return;
-        applyTransferLogs(ownedTokens, logs, address);
-      }
-
-      const tokenIds = Array.from(ownedTokens).sort((a, b) => a - b);
 
       // Update cache
       brushTokenCache.userTokens.address = normalizeAddress(address);
       brushTokenCache.userTokens.tokens = tokenIds;
       brushTokenCache.userTokens.timestamp = Date.now();
-      brushTokenCache.userTokens.lastScannedBlock = latestBlock;
-      writePersistentTokenCache(address, {
-        tokens: tokenIds,
-        lastScannedBlock: latestBlock.toString(),
-        timestamp: Date.now()
-      });
+      writePersistentTokenCache(address, { tokens: tokenIds, timestamp: Date.now() });
 
       setUserTokenIds(tokenIds);
     } catch (error) {

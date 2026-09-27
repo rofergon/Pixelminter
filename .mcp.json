@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "basepaint": {
+      "command": "node",
+      "args": ["mcp/basepaint/dist/src/index.js"]
+    }
+  }
+}

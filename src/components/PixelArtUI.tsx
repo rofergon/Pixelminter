@@ -18,7 +18,7 @@ interface PixelArtUIProps {
   updateCanvasDisplay: () => void; // Function to refresh the canvas display
   saveState: () => void; // Function to save current state to history
   drawGrid: () => void; // Function to draw the pixel grid overlay
-  handleExtractPalette: () => void; // Function to extract color palette from image
+  handleExtractPalette: () => void | Promise<void>; // Function to extract color palette from image
   handleZoom: (_zoomIn: boolean) => void; // Function to handle zoom in/out operations
   clearCanvas: () => void; // Function to clear the entire canvas
   onGridSizeChange: (_newSize: number) => void; // Function to handle grid size changes

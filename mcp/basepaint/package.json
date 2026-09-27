@@ -1,0 +1,31 @@
+{
+  "name": "basepaint-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server that reads the daily BasePaint canvas and previews/encodes pixel-art proposals",
+  "type": "module",
+  "bin": {
+    "basepaint-mcp": "dist/src/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "start": "node dist/src/index.js",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.1",
+    "pngjs": "^7.0.0",
+    "viem": "^2.56.9",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "@types/pngjs": "^6.0.5",
+    "typescript": "^5.9.3"
+  }
+}
